@@ -27,7 +27,7 @@ def validate_api_url(api_url: str) -> HttpUrl:
     try:
         # This will raise a ValueError if the URL is not valid
         valid_url = HttpUrl(api_url)
-    except ValueError as e:
+    except ValueError:
         err_console.print(f"[bold red]Error: Invalid URL format: {api_url}[/bold red]")
         err_console.print(
             "[yellow]Tip: Ensure the URL is correctly formatted. Example: https://api.example.com[/yellow]"
