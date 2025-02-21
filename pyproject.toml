@@ -15,7 +15,7 @@ maintainers = [
 ]
 
 readme = "README.md"
-keywords = ["Bioinformatics", "Prokaryote", "Genomics", "Pangenome", "comparative-genomics", "database", "API"]
+keywords = ["Bioinformatics", "Prokaryotes", "Genomics", "Pangenome", "comparative-genomics", "database", "API"]
 classifiers=[
     "Environment :: Console",
     "Intended Audience :: Science/Research",
