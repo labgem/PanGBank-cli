@@ -26,7 +26,7 @@ pytest
 To get the percentage of coverage of the test suit can be obtain as follow:
 
 ```bash
-pytest --cov=pangbank 
+pytest --cov=pangbank_cli
 ```
 
 
