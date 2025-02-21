@@ -10,23 +10,32 @@ import logging
 logger = logging.getLogger(__name__)
 
 app = typer.Typer(
-    help="PanGBank CLI: Command-line tool for retrieving pangenomes using the PanGBank API."
+    help=f"PanGBank CLI {__version__}: Command-line tool for retrieving pangenomes using the PanGBank API.",
 )
 
 
-def version_callback(value: bool):
+def version_callback(
+    value: bool,
+    ctx: typer.Context,
+):
     """Prints the version and exits if --version is passed."""
+    if ctx.resilient_parsing:
+        return
+
     if value:
         typer.echo(f"PanGBank {__version__}")
         raise typer.Exit()
 
 
-@app.command(no_args_is_help=True)
+@app.callback(no_args_is_help=True)
 def main(
     version: Annotated[
         Optional[bool],
         typer.Option(
-            "--version", callback=version_callback, help="Show the version and exit."
+            "--version",
+            callback=version_callback,
+            is_eager=True,
+            help="Show the version and exit.",
         ),
     ] = None,
 ):
@@ -44,6 +53,24 @@ def main(
         "PanGBank CLI is under development. Run `pangbank --help` for available commands.",
         color=True,
     )
+
+
+@app.command(no_args_is_help=True)
+def list_collections():
+    """List available collections."""
+    pass
+
+
+@app.command(no_args_is_help=True)
+def search_pangenomes():
+    """Search for pangenomes."""
+    pass
+
+
+@app.command(no_args_is_help=True)
+def match_pangenome():
+    """Match a pangenome from an input genome."""
+    pass
 
 
 if __name__ == "__main__":
