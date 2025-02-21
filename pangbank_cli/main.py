@@ -10,14 +10,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 app = typer.Typer(
-    help="TAtouScan: A tool for identifying toxin-antitoxin (TA) systems."
+    help="PanGBank CLI: Command-line tool for retrieving pangenomes using the PanGBank API."
 )
 
 
 def version_callback(value: bool):
     """Prints the version and exits if --version is passed."""
     if value:
-        typer.echo(f"TAtouScan {__version__}")
+        typer.echo(f"PanGBank {__version__}")
         raise typer.Exit()
 
 
@@ -39,9 +39,9 @@ def main(
         handlers=[RichHandler()],
     )
 
-    """Main entry point for TAtouScan CLI."""
+    """Main entry point for PanGBank CLI."""
     typer.echo(
-        "TAtouScan CLI is under development. Run `tatouscan --help` for available commands.",
+        "PanGBank CLI is under development. Run `pangbank --help` for available commands.",
         color=True,
     )
 
