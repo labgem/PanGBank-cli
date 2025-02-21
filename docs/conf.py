@@ -6,6 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
+from typing import Any, Dict
 from pangbank_cli import __version__
 
 project = "PanGBank-cli"
@@ -75,7 +76,7 @@ html_static_path = ["_static"]
 nbsphinx_requirejs_path = ""
 
 # Ensures that the `require.js` is loaded for Plotly to function correctly
-nbsphinx_requirejs_options = {
+nbsphinx_requirejs_options: Dict[str, Any] = {
     "paths": {"plotly": "https://cdn.plot.ly/plotly-latest.min"},
     "shim": {"plotly": {"exports": "Plotly"}},
 }
