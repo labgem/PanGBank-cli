@@ -1,0 +1,79 @@
+[build-system]
+requires = ["setuptools>=61.0.0"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "PanGBank-cli"
+description = "Command-line tool for retrieving pangenomes using the PanGBank API. "
+dynamic = ["version"]
+authors = [
+    {name = "Jean Mainguy"},
+]
+maintainers = [
+    {name = "Jean Mainguy"},
+]
+
+readme = "README.md"
+keywords = ["Bioinformatics", "Prokaryote", "Genomics", "Pangenome", "comparative-genomics", "database", "API"]
+classifiers=[
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: POSIX :: Linux",   
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Typing :: Typed",
+    ]
+
+license = {file="LICENCE"}
+
+requires-python = ">=3.10"
+dependencies = [
+    "pyfastx>=2.0.0,<3.0.0",
+    "typer>=0.15.0,<0.16.0",
+    "pyhmmer>=0.11.0,<0.12.0"
+]
+
+
+[project.optional-dependencies]
+
+doc = [
+    "sphinx==6.2.1",
+    "sphinx_rtd_theme==1.2.2",
+    "readthedocs-sphinx-search==0.3.1",
+    "sphinx-autobuild==2021.3.14",
+    "myst-parser==1.0.0",
+    "docutils==0.18.1", #"myst-nb",
+    "nbsphinx==0.9.5",
+    "nbsphinx_link==1.3.0",
+    "sphinx-book-theme==1.0.1",
+    "sphinxcontrib.mermaid",
+    "sphinx_togglebutton==0.3.2"
+     ]
+
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov",
+    "black>=8.0.0"
+]
+#
+[project.urls]
+Repository = "https://github.com/labgem/PanGBank-cli"
+Changelog = "https://github.com/labgem/PanGBank-cli/CHANGELOG.md"
+Documentation = "https://pangbank-cli.readthedocs.io"
+#
+#
+[project.scripts]
+pangbank = "pangbank_cli.main:app"
+
+[tool.setuptools]
+packages = ["pangbank_cli"]
+
+
+[tool.setuptools.dynamic]
+version = {attr = "pangbank_cli.__version__"}
