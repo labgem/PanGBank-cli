@@ -10,7 +10,12 @@ import requests
 
 from pydantic import HttpUrl
 from rich.console import Console
-from pangbank_cli.collections import query_collections
+from pangbank_cli.collections import (
+    query_collections,
+    format_collections_to_dataframe,
+    print_dataframe_as_rich_table,
+)
+import yaml
 
 logger = logging.getLogger(__name__)
 err_console = Console(stderr=True)
@@ -101,12 +106,23 @@ def list_collections(
         typer.Option(
             envvar="PANGBANK_URL_API",
             parser=validate_api_url,
-            callback=version_callback,
+            # callback=version_callback,
         ),
-    ] = HttpUrl("http://127.0.0.1:8000")
+    ] = HttpUrl("http://127.0.0.1:8000"),
 ):
     """List available collections."""
-    query_collections(api_url)
+    collections = query_collections(api_url)
+    df = format_collections_to_dataframe(collections)
+
+    print_dataframe_as_rich_table(df)
+
+    # collection_dict = [collection.model_dump() for collection in collections]
+
+    # yaml_str = yaml.dump(collection_dict, sort_keys=False, default_flow_style=False)
+
+    # console = Console()
+    # syntax = Syntax(yaml_str, "yaml")
+    # console.print(syntax)
 
 
 @app.command(no_args_is_help=True)
