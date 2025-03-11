@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Optional
 
 import typer
@@ -13,9 +14,15 @@ from rich.console import Console
 from pangbank_cli.collections import (
     query_collections,
     format_collections_to_dataframe,
-    print_dataframe_as_rich_table,
 )
-import yaml
+from pangbank_cli.utils import print_dataframe_as_rich_table
+
+from pangbank_cli.pangenomes import (
+    query_pangenomes,
+    format_pangenomes_to_dataframe,
+    download_pangenomes,
+)
+
 
 logger = logging.getLogger(__name__)
 err_console = Console(stderr=True)
@@ -99,36 +106,50 @@ def main(
     """Main entry point for PanGBank CLI."""
 
 
+ApiUrlOption = typer.Option(
+    HttpUrl("http://127.0.0.1:8000"),
+    envvar="PANGBANK_URL_API",
+    parser=validate_api_url,
+    help="URL of the PanGBank API.",
+)
+
+
 @app.command(no_args_is_help=False)
 def list_collections(
-    api_url: Annotated[
-        HttpUrl,
-        typer.Option(
-            envvar="PANGBANK_URL_API",
-            parser=validate_api_url,
-            # callback=version_callback,
-        ),
-    ] = HttpUrl("http://127.0.0.1:8000"),
+    api_url: HttpUrl = ApiUrlOption,
 ):
     """List available collections."""
     collections = query_collections(api_url)
     df = format_collections_to_dataframe(collections)
 
-    print_dataframe_as_rich_table(df)
-
-    # collection_dict = [collection.model_dump() for collection in collections]
-
-    # yaml_str = yaml.dump(collection_dict, sort_keys=False, default_flow_style=False)
-
-    # console = Console()
-    # syntax = Syntax(yaml_str, "yaml")
-    # console.print(syntax)
+    print_dataframe_as_rich_table(df, title="Avalaible collections of PanGBank:")
 
 
 @app.command(no_args_is_help=True)
-def search_pangenomes():
+def search_pangenomes(
+    api_url: HttpUrl = ApiUrlOption,
+    taxon: str = typer.Option(
+        None,
+        help="Filter pangenomes by taxonomy.",
+    ),
+    download: bool = typer.Option(
+        False,
+        help="Download the pangenomes.",
+    ),
+    outdir: Path = typer.Option(
+        Path("pangbank"),
+        help="Output directory for downloaded pangenomes.",
+    ),
+):
     """Search for pangenomes."""
-    pass
+    pangenomes = query_pangenomes(api_url, taxon_name=taxon)
+    df = format_pangenomes_to_dataframe(pangenomes)
+
+    print_dataframe_as_rich_table(
+        df, title=f"Pangenome in PanGBank matching taxon={taxon}:"
+    )
+    if download:
+        download_pangenomes(api_url, pangenomes, outdir)
 
 
 @app.command(no_args_is_help=True)
