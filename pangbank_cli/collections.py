@@ -1,13 +1,12 @@
 import requests
 from rich.console import Console
 from rich.table import Table
-from datetime import datetime
 from pydantic import HttpUrl, ValidationError
 from typing import Any, List, Dict
 import logging
 import pandas as pd
 
-from app.models import CollectionPublicWithReleases
+from pangbank_api.models import CollectionPublicWithReleases
 
 
 logger = logging.getLogger(__name__)
@@ -57,10 +56,11 @@ def format_collections_to_dataframe(
 
                 data.append(
                     {
-                        "Collection Name": collection.name,
+                        "Collection": collection.name,
                         "Description": collection.description,
                         "Latest release": release.version,
                         "Release date": release.date.strftime("%d %b %Y"),
+                        "Taxonomy": f"{release.taxonomy_source.name}:{release.taxonomy_source.version}",
                         "Pangenome Count": release.pangenome_count,
                     }
                 )
