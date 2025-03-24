@@ -4,7 +4,7 @@ from typing import Any, List, Dict
 import logging
 import pandas as pd
 
-from pangbank_api.models import CollectionPublicWithReleases
+from pangbank_api.models import CollectionPublicWithReleases  # type: ignore
 
 
 logger = logging.getLogger(__name__)

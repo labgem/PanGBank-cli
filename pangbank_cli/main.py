@@ -21,6 +21,7 @@ from pangbank_cli.pangenomes import (
     query_pangenomes,
     format_pangenomes_to_dataframe,
     download_pangenomes,
+    display_pangenome_info_by_collection,
 )
 
 
@@ -143,6 +144,9 @@ def search_pangenomes(
 ):
     """Search for pangenomes."""
     pangenomes = query_pangenomes(api_url, taxon_name=taxon)
+
+    display_pangenome_info_by_collection(pangenomes, False)
+
     df = format_pangenomes_to_dataframe(pangenomes)
 
     print_dataframe_as_rich_table(
