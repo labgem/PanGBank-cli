@@ -24,11 +24,11 @@ from pangbank_cli.pangenomes import (
     display_pangenome_info_by_collection,
 )
 
-
 logger = logging.getLogger(__name__)
 err_console = Console(stderr=True)
 
 app = typer.Typer(
+    name="PanGBank CLI",
     help=f"PanGBank CLI {__version__}: Command-line tool for retrieving pangenomes using the PanGBank API.",
 )
 
@@ -145,13 +145,18 @@ def search_pangenomes(
     """Search for pangenomes."""
     pangenomes = query_pangenomes(api_url, taxon_name=taxon)
 
-    display_pangenome_info_by_collection(pangenomes, False)
-
     df = format_pangenomes_to_dataframe(pangenomes)
 
-    print_dataframe_as_rich_table(
-        df, title=f"Pangenome in PanGBank matching taxon={taxon}:"
-    )
+    # print_dataframe_as_rich_table(
+    #     df, title=f"Pangenome in PanGBank matching taxon={taxon}:"
+    # )
+
+    logger.info(f"Saving pangenomes information to {outdir}")
+    outdir.mkdir(parents=True, exist_ok=True)
+    df.to_csv(outdir / "pangenomes.tsv", index=False, sep="\t")
+
+    display_pangenome_info_by_collection(pangenomes, False)
+
     if download:
         download_pangenomes(api_url, pangenomes, outdir)
 

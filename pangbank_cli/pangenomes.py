@@ -34,12 +34,20 @@ def get_pangenomes(
         "limit": limit,
     }
 
+    response = requests.get(f"{api_url}/pangenomes/", params=params, timeout=10)
     try:
-        response = requests.get(f"{api_url}/pangenomes/", params=params, timeout=10)
         response.raise_for_status()
         return response.json()
+
     except requests.exceptions.RequestException as e:
-        logger.warning(f"Request failed: {e}")
+
+        error_detail = response.json().get("detail", [])
+
+        if error_detail:
+            logger.error(f"API error: {error_detail[0].get('msg', 'Unknown error')}")
+            raise requests.HTTPError(
+                f"Failed to fetch pangenomes from {api_url}: {error_detail[0].get('msg', 'Unknown error')}"
+            )
         raise requests.HTTPError(f"Failed to fetch pangenomes from {api_url}") from e
 
 
@@ -57,6 +65,7 @@ def query_pangenomes(api_url: HttpUrl, taxon_name: Optional[str] = None):
             offset=offset,
             limit=limit,
         )
+
         logger.debug(f"Found {len(responses_pangenomes)} pangenomes at offset {offset}")
 
         if not responses_pangenomes:  # If no pangenomes are returned, exit the loop
@@ -92,25 +101,60 @@ def validate_pangenomes(pangenomes: List[Any]) -> List[PangenomePublic]:
     return validated_pangenomes
 
 
+def format_element_to_dict(element: Any, columns: list[str]):
+    """
+    Converts a list of elements into a pandas DataFrame with a specified subset of columns.
+
+    :param elements: List of elements to convert.
+    :param columns: List of strings specifying the subset of columns to include in the DataFrame.
+    :return: pandas DataFrame with the selected columns.
+    """
+
+    row: Dict[str, Optional[str]] = {}
+    for column in columns:
+        if hasattr(element, column):
+            row[column] = getattr(element, column)
+        else:
+            row[column] = None  # If column not found, set as None
+
+    return row
+
+
 def format_pangenomes_to_dataframe(
     pangenomes: List[PangenomePublic],
 ) -> pd.DataFrame:
     """Convert a list of CollectionPublicWithReleases objects into a pandas DataFrame."""
 
     data: List[Dict[str, Any]] = []
+    columns: List[str] = [
+        "genome_count",
+        "gene_count",
+        "family_count",
+        "edge_count",
+        "persistent_family_count",
+        "shell_family_count",
+        "cloud_family_count",
+        "partition_count",
+        "rgp_count",
+        "spot_count",
+        "module_count",
+    ]
 
     for pangenome in pangenomes:
+
         taxonomy = [
             taxon.name
             for taxon in sorted(pangenome.taxonomy.taxa, key=lambda x: x.depth)
         ]
 
         pangenome_info: Dict[str, Any] = {
-            "Collection": pangenome.collection_release.collection_name,
-            "Release": pangenome.collection_release.version,
-            "Genomes": pangenome.genome_count,
-            "Taxonomy": ";".join(taxonomy),
+            "collection": pangenome.collection_release.collection_name,
+            "release_version": pangenome.collection_release.version,
+            "name": taxonomy[-1],
+            "taxonomy": ";".join(taxonomy),
         }
+
+        pangenome_info.update(format_element_to_dict(pangenome, columns=columns))
 
         data.append(pangenome_info)
 
