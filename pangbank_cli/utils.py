@@ -10,7 +10,7 @@ def print_dataframe_as_rich_table(df: pd.DataFrame, title: Optional[str] = None)
         print("No data available.")
         return
 
-    console = Console()
+    console = Console(stderr=True)
     table = Table(
         title=title,
         show_header=True,

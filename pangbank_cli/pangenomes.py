@@ -9,6 +9,7 @@ from pangbank_api.models import (  # type: ignore
     PangenomePublic,
     CollectionPublic,
 )
+from pangbank_api.crud.common import FilterTaxon, PaginationParams  # type: ignore
 from itertools import groupby
 from operator import attrgetter
 
@@ -19,20 +20,13 @@ logger = logging.getLogger(__name__)
 
 def get_pangenomes(
     api_url: HttpUrl,
-    taxon_name: Optional[str],
-    substring_match: bool = True,
-    offset: int = 0,
-    limit: int = 20,
+    filter_params: FilterTaxon,
+    pagination_params: PaginationParams,
 ):
     """Fetch pangenomes from the API with filtering options."""
-    params: Dict[str, Any] = {
-        "taxon_name": taxon_name,
-        "substring_match": str(
-            substring_match
-        ).lower(),  # Convert bool to 'true'/'false'
-        "offset": offset,
-        "limit": limit,
-    }
+
+    params = filter_params.model_dump()
+    params.update(pagination_params.model_dump())
 
     response = requests.get(f"{api_url}/pangenomes/", params=params, timeout=10)
     try:
@@ -58,12 +52,14 @@ def query_pangenomes(api_url: HttpUrl, taxon_name: Optional[str] = None):
     offset = 0
     limit = 50  # Number of pangenome we retrieve per request
 
+    pagination_params = PaginationParams(offset=offset, limit=limit)
+    filter_params = FilterTaxon(taxon_name=taxon_name, substring_match=True)
+
     while True:
         responses_pangenomes = get_pangenomes(
             api_url=api_url,
-            taxon_name=taxon_name,
-            offset=offset,
-            limit=limit,
+            filter_params=filter_params,
+            pagination_params=pagination_params,
         )
 
         logger.debug(f"Found {len(responses_pangenomes)} pangenomes at offset {offset}")
