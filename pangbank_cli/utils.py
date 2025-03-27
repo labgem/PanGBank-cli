@@ -2,6 +2,10 @@ from typing import Optional
 from rich.console import Console
 from rich.table import Table
 import pandas as pd
+import logging
+import shutil
+
+logger = logging.getLogger(__name__)
 
 
 def print_dataframe_as_rich_table(df: pd.DataFrame, title: Optional[str] = None):
@@ -30,3 +34,18 @@ def print_dataframe_as_rich_table(df: pd.DataFrame, title: Optional[str] = None)
         table.add_row(*map(str, row), style=row_styles[i % 2])
 
     console.print(table, new_line_start=True)
+
+
+def check_mash_availability():
+    """
+    Check if the 'mash' tool is available in the system's PATH.
+
+    :return: None
+    """
+    if shutil.which("mash") is None:
+        logger.warning(
+            "The 'mash' tool is not found in the system's PATH. "
+            "Please install it to ensure 'pangbank match-pangenome' works correctly."
+        )
+        return False
+    return True

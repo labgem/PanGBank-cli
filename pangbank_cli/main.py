@@ -14,8 +14,9 @@ from rich.console import Console
 from pangbank_cli.collections import (
     query_collections,
     format_collections_to_dataframe,
+    get_mash_sketch_file,
 )
-from pangbank_cli.utils import print_dataframe_as_rich_table
+from pangbank_cli.utils import print_dataframe_as_rich_table, check_mash_availability
 
 from pangbank_cli.pangenomes import (
     query_pangenomes,
@@ -30,6 +31,7 @@ err_console = Console(stderr=True)
 app = typer.Typer(
     name="PanGBank CLI",
     help=f"PanGBank CLI {__version__}: Command-line tool for retrieving pangenomes using the PanGBank API.",
+    context_settings={"help_option_names": ["-h", "--help"]},
 )
 
 
@@ -89,6 +91,7 @@ def main(
         Optional[bool],
         typer.Option(
             "--version",
+            "-v",
             callback=version_callback,
             is_eager=True,
             help="Show the version and exit.",
@@ -101,7 +104,7 @@ def main(
         level=logging.INFO,
         format="%(message)s",
         datefmt="[%X]",
-        handlers=[RichHandler()],
+        handlers=[RichHandler(console=err_console)],
     )
 
     """Main entry point for PanGBank CLI."""
@@ -129,10 +132,10 @@ def list_collections(
 @app.command(no_args_is_help=True)
 def search_pangenomes(
     api_url: HttpUrl = ApiUrlOption,
-    taxon: str = typer.Option(
-        None,
-        help="Filter pangenomes by taxonomy.",
-    ),
+    taxon: Annotated[
+        Optional[str],
+        typer.Option("--taxon", "-t", help="Filter pangenomes by taxonomy."),
+    ] = None,
     download: bool = typer.Option(
         False,
         help="Download the pangenomes.",
@@ -147,10 +150,6 @@ def search_pangenomes(
 
     df = format_pangenomes_to_dataframe(pangenomes)
 
-    # print_dataframe_as_rich_table(
-    #     df, title=f"Pangenome in PanGBank matching taxon={taxon}:"
-    # )
-
     logger.info(f"Saving pangenomes information to {outdir}")
     outdir.mkdir(parents=True, exist_ok=True)
     df.to_csv(outdir / "pangenomes.tsv", index=False, sep="\t")
@@ -162,9 +161,54 @@ def search_pangenomes(
 
 
 @app.command(no_args_is_help=True)
-def match_pangenome():
+def match_pangenome(
+    collection_name: Annotated[
+        str,
+        typer.Option(
+            "--collection",
+            "-c",
+            help="The pangenome collection to match in.",
+        ),
+    ],
+    # input_genome_file: Annotated[
+    #     str,
+    #     typer.Option(
+    #         "--input_genome",
+    #         "-i",
+    #         help="Input genome to search a matching pangenome from.",
+    #     ),
+    # ],
+    api_url: HttpUrl = ApiUrlOption,
+    download: bool = typer.Option(
+        False,
+        help="Download the pangenome.",
+    ),
+    outdir: Path = typer.Option(
+        Path("pangbank"),
+        help="Output directory for downloaded pangenomes.",
+    ),
+):
     """Match a pangenome from an input genome."""
-    pass
+
+    collections = query_collections(api_url, collection_name=collection_name)
+
+    check_mash_availability()
+
+    if not collections:
+        logger.warning(f"No collections found for {collection_name}")
+        raise typer.Exit(code=1)
+
+    elif len(collections) > 1:
+        logger.warning(
+            f"Only one collection should be returned. Got {len(collections)} "
+            f"when querying collection_name={collection_name}"
+        )
+        raise typer.Exit(code=1)
+    else:
+        collection = collections[0]
+
+    mash_sketch_file = get_mash_sketch_file(api_url, collection, outdir)
+    print(mash_sketch_file)
 
 
 if __name__ == "__main__":
