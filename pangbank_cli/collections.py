@@ -2,7 +2,6 @@ import requests
 from pydantic import HttpUrl, ValidationError
 from typing import Any, List, Dict, Optional
 import logging
-from pathlib import Path
 import pandas as pd
 
 from pangbank_api.models import CollectionPublicWithReleases  # type: ignore
@@ -45,6 +44,9 @@ def query_collections(
 ) -> List[CollectionPublicWithReleases]:
     """Fetch and validate collections from the given API URL."""
 
+    name_query = f"with name: '{collection_name}'" if collection_name else ""
+
+    logger.debug(f"Fetching collections {name_query}")
     filter_params = FilterCollection(
         collection_name=collection_name, only_latest_release=True
     )
@@ -75,65 +77,3 @@ def format_collections_to_dataframe(
                 )
 
     return pd.DataFrame(data)
-
-
-def get_mash_sketch_file(
-    api_url: HttpUrl, collection: CollectionPublicWithReleases, outdir: Path
-):
-    """ """
-    latest_release = next(
-        (release for release in collection.releases if release.latest), None
-    )
-
-    if not latest_release:
-        raise ValueError(f"No latest release found for collection {collection.name}")
-
-    output_file_path = (
-        outdir
-        / "mash_sketch"
-        / f"collection_{collection.name}_{latest_release.version}.msh"
-    )
-    output_file_path.parent.mkdir(parents=True, exist_ok=True)
-
-    if output_file_path.exists():
-        logger.info(
-            f"Mash sketch file for collection {collection.name} already exists at {output_file_path}. No re-download."
-        )
-    else:
-
-        logger.info(
-            f"Downloading mash sketch file for collection to {collection.name} release {latest_release.version}"
-        )
-        download_mash_sketch(
-            api_url=api_url,
-            collection_id=collection.id,
-            output_file_path=output_file_path,
-        )
-
-    if not output_file_path.exists():
-        raise FileNotFoundError(
-            f"Failed to download mash sketch file to {output_file_path}"
-        )
-
-    return output_file_path
-
-
-def download_mash_sketch(api_url: HttpUrl, collection_id: int, output_file_path: Path):
-    """ """
-
-    try:
-        response = requests.get(
-            f"{api_url}/collections/{collection_id}/mash_sketch",
-            timeout=10,
-            stream=True,
-        )
-        response.raise_for_status()
-
-        with open(output_file_path, "wb") as f:
-            for chunk in response.iter_content(chunk_size=8192):
-                f.write(chunk)
-
-        logger.info(f"Mash sketch file saved to {output_file_path}")
-    except requests.exceptions.RequestException as e:
-        logger.error(f"Request failed: {e}")
-        exit(1)

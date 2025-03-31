@@ -9,7 +9,7 @@ from pangbank_api.models import (  # type: ignore
     PangenomePublic,
     CollectionPublic,
 )
-from pangbank_api.crud.common import FilterTaxon, PaginationParams  # type: ignore
+from pangbank_api.crud.common import FilterGenomeTaxonGenomePangenome, PaginationParams  # type: ignore
 from itertools import groupby
 from operator import attrgetter
 
@@ -20,14 +20,13 @@ logger = logging.getLogger(__name__)
 
 def get_pangenomes(
     api_url: HttpUrl,
-    filter_params: FilterTaxon,
+    filter_params: FilterGenomeTaxonGenomePangenome,
     pagination_params: PaginationParams,
 ):
     """Fetch pangenomes from the API with filtering options."""
 
     params = filter_params.model_dump()
     params.update(pagination_params.model_dump())
-
     response = requests.get(f"{api_url}/pangenomes/", params=params, timeout=10)
     try:
         response.raise_for_status()
@@ -45,16 +44,33 @@ def get_pangenomes(
         raise requests.HTTPError(f"Failed to fetch pangenomes from {api_url}") from e
 
 
-def query_pangenomes(api_url: HttpUrl, taxon_name: Optional[str] = None):
-    logger.info(f"Fetching pangenomes for taxon: {taxon_name}")
+def query_pangenomes(
+    api_url: HttpUrl,
+    taxon_name: Optional[str] = None,
+    pangenome_name: Optional[str] = None,
+    collection_name: Optional[str] = None,
+    only_latest_release: bool = True,
+    substring_taxon_match: bool = False,
+) -> List[PangenomePublic]:
 
     all_pangenomes: List[Any] = []
     offset = 0
     limit = 50  # Number of pangenome we retrieve per request
 
     pagination_params = PaginationParams(offset=offset, limit=limit)
-    filter_params = FilterTaxon(taxon_name=taxon_name, substring_match=True)
-
+    filter_params = FilterGenomeTaxonGenomePangenome(
+        taxon_name=taxon_name,
+        substring_match=True,
+        pangenome_name=pangenome_name,
+        collection_name=collection_name,
+        only_latest_release=only_latest_release,
+        substring_taxon_match=substring_taxon_match,
+    )
+    filter_logs = [
+        f"{param}={value}"
+        for param, value in filter_params.model_dump(exclude_none=True).items()
+    ]
+    logger.info(f"Fetching pangenomes for {'& '.join(filter_logs)}")
     while True:
         responses_pangenomes = get_pangenomes(
             api_url=api_url,

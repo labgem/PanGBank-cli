@@ -14,7 +14,6 @@ from rich.console import Console
 from pangbank_cli.collections import (
     query_collections,
     format_collections_to_dataframe,
-    get_mash_sketch_file,
 )
 from pangbank_cli.utils import print_dataframe_as_rich_table, check_mash_availability
 
@@ -23,6 +22,12 @@ from pangbank_cli.pangenomes import (
     format_pangenomes_to_dataframe,
     download_pangenomes,
     display_pangenome_info_by_collection,
+)
+
+from pangbank_cli.match_pangenome import (
+    get_mash_sketch_file,
+    compute_mash_distance,
+    get_matching_pangenome,
 )
 
 logger = logging.getLogger(__name__)
@@ -170,14 +175,15 @@ def match_pangenome(
             help="The pangenome collection to match in.",
         ),
     ],
-    # input_genome_file: Annotated[
-    #     str,
-    #     typer.Option(
-    #         "--input_genome",
-    #         "-i",
-    #         help="Input genome to search a matching pangenome from.",
-    #     ),
-    # ],
+    input_genome_file: Annotated[
+        Path,
+        typer.Option(
+            "--input_genome",
+            "-i",
+            help="Input genome to search a matching pangenome from.",
+            exists=True,
+        ),
+    ],
     api_url: HttpUrl = ApiUrlOption,
     download: bool = typer.Option(
         False,
@@ -189,7 +195,9 @@ def match_pangenome(
     ),
 ):
     """Match a pangenome from an input genome."""
-
+    logger.info(
+        f"Searching a matching pangenome in collection '{collection_name}' for genome '{input_genome_file}'"
+    )
     collections = query_collections(api_url, collection_name=collection_name)
 
     check_mash_availability()
@@ -207,8 +215,20 @@ def match_pangenome(
     else:
         collection = collections[0]
 
+    logger.debug(f"Collection found: {collection.name}")
     mash_sketch_file = get_mash_sketch_file(api_url, collection, outdir)
-    print(mash_sketch_file)
+
+    query_to_best_match = compute_mash_distance(mash_sketch_file, [input_genome_file])
+    if query_to_best_match is None:
+        raise typer.Exit(code=1)
+
+    get_matching_pangenome(
+        api_url=api_url,
+        collection=collection,
+        query_to_best_match=query_to_best_match,
+        outdir=outdir,
+        download=download,
+    )
 
 
 if __name__ == "__main__":
