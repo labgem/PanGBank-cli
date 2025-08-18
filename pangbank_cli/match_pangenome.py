@@ -26,7 +26,6 @@ class MashResult(BaseModel):
     p_value: float
 
 
-
 def get_mash_sketch_file(
     api_url: HttpUrl, collection: CollectionPublicWithReleases, outdir: Path
 ):
@@ -146,7 +145,12 @@ def compute_mash_distance(
         threads=threads,
     )
     if mash_result == "":
-        logger.warning(f"No matching pangenome found for the input genome files: '{('\n'.join([genome.as_posix() for genome in input_genome_files]))}'")
+        input_genome_files_str = "\n".join(
+            [genome.as_posix() for genome in input_genome_files]
+        )
+        logger.warning(
+            f"No matching pangenome found for the input genome files: '{input_genome_files_str}'"
+        )
         return
 
     genome_to_mash_hits: Dict[str, List[MashResult]] = defaultdict(list)
@@ -162,7 +166,7 @@ def compute_mash_distance(
 
         if mash_result.distance <= max_distance:
             genome_to_mash_hits[query].append(mash_result)
-            
+
     query_to_best_match = {
         query: min(results, key=lambda x: x.distance)
         for query, results in genome_to_mash_hits.items()
@@ -174,7 +178,7 @@ def compute_mash_distance(
                 f"No matching reference found for {input_genome_file.as_posix()}"
             )
             continue
-    
+
     return query_to_best_match
 
 def get_matching_pangenome(

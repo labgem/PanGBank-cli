@@ -55,12 +55,10 @@ def query_pangenomes(
 
     all_pangenomes: List[Any] = []
     offset = 0
-    limit = 50  # Number of pangenome we retrieve per request
+    limit = 100  # Number of pangenome we retrieve per request
 
-    pagination_params = PaginationParams(offset=offset, limit=limit)
     filter_params = FilterGenomeTaxonGenomePangenome(
         taxon_name=taxon_name,
-        substring_match=True,
         pangenome_name=pangenome_name,
         collection_name=collection_name,
         only_latest_release=only_latest_release,
@@ -72,6 +70,7 @@ def query_pangenomes(
     ]
     logger.info(f"Fetching pangenomes for {'& '.join(filter_logs)}")
     while True:
+        pagination_params = PaginationParams(offset=offset, limit=limit)
         responses_pangenomes = get_pangenomes(
             api_url=api_url,
             filter_params=filter_params,
@@ -232,7 +231,7 @@ def display_pangenome_info_by_collection(
 
         yaml_lines.append(f"  release: [bold yellow]{release.version}[/bold yellow]")
         yaml_lines.append(
-            f"  date: [bold yellow]{release.date.strftime("%d %b %Y")}[/bold yellow]"
+            f"  date: [bold yellow]{release.date.strftime('%d %b %Y')}[/bold yellow]"
         )
         yaml_lines.append(
             f"  pangenome_count: [bold magenta]{len(pangenomes)}[/bold magenta]"
