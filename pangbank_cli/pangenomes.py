@@ -68,7 +68,7 @@ def query_pangenomes(
         f"{param}={value}"
         for param, value in filter_params.model_dump(exclude_none=True).items()
     ]
-    logger.info(f"Fetching pangenomes for {'& '.join(filter_logs)}")
+    logger.info(f"Fetching pangenomes for {' & '.join(filter_logs)}")
     while True:
         pagination_params = PaginationParams(offset=offset, limit=limit)
         responses_pangenomes = get_pangenomes(
@@ -92,7 +92,7 @@ def query_pangenomes(
     pangenomes = validate_pangenomes(all_pangenomes)
     collection_names = {pan.collection_release.collection_name for pan in pangenomes}
     logger.info(
-        f"Found {len(pangenomes)} pangenomes from {len(collection_names)} collections."
+        f"Found {len(pangenomes)} pangenomes matching search criteria from {len(collection_names)} collections."
     )
 
     return pangenomes

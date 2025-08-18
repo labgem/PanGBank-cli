@@ -7,7 +7,6 @@ import pandas as pd
 from pangbank_api.models import CollectionPublicWithReleases  # type: ignore
 from pangbank_api.crud.common import FilterCollection  # type: ignore
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -77,3 +76,30 @@ def format_collections_to_dataframe(
                 )
 
     return pd.DataFrame(data)
+
+
+def format_collections_to_yaml(
+    collections: List[CollectionPublicWithReleases],
+):
+    """Convert a list of CollectionPublicWithReleases objects into a YAML string."""
+
+    data: List[Dict[str, Any]] = []
+
+    for collection in collections:
+        for release in collection.releases:
+            if release.latest:
+                data.append(
+                    {
+                        "Collection": collection.name,
+                        "Description": collection.description,
+                        "Latest release": release.version,
+                        "Release date": release.date.strftime("%d %b %Y"),
+                        "Taxonomy": {
+                            "name": release.taxonomy_source.name,
+                            "version": release.taxonomy_source.version,
+                        },
+                        "Pangenome Count": release.pangenome_count,
+                    }
+                )
+
+    return data

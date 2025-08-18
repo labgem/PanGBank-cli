@@ -14,8 +14,13 @@ from rich.console import Console
 from pangbank_cli.collections import (
     query_collections,
     format_collections_to_dataframe,
+    format_collections_to_yaml,
 )
-from pangbank_cli.utils import print_dataframe_as_rich_table, check_mash_availability
+from pangbank_cli.utils import (
+    print_dataframe_as_rich_table,
+    check_mash_availability,
+    print_yaml_with_rich,
+)
 
 from pangbank_cli.pangenomes import (
     query_pangenomes,
@@ -90,6 +95,29 @@ def version_callback(
         raise typer.Exit()
 
 
+def verbose_callback(
+    verbose: bool,
+):
+    """Sets the logging level to DEBUG if --verbose is passed."""
+    lvl = logging.INFO
+
+    if verbose:
+        lvl = logging.DEBUG
+
+    # Set up logging
+    logging.basicConfig(
+        level=lvl,
+        format="%(message)s",
+        datefmt="[%X]",
+        handlers=[RichHandler(console=err_console)],
+    )
+
+
+Verbose = typer.Option(
+    False, "--verbose", help="Enable verbose logging.", callback=verbose_callback
+)
+
+
 @app.callback(no_args_is_help=True)
 def main(
     version: Annotated[
@@ -104,14 +132,7 @@ def main(
     ] = None,
 ):
 
-    # Set up logging
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(message)s",
-        datefmt="[%X]",
-        handlers=[RichHandler(console=err_console)],
-    )
-
+    pass
     """Main entry point for PanGBank CLI."""
 
 
@@ -126,32 +147,47 @@ ApiUrlOption = typer.Option(
 @app.command(no_args_is_help=False)
 def list_collections(
     api_url: HttpUrl = ApiUrlOption,
+    verbose: bool = Verbose,
 ):
     """List available collections."""
     collections = query_collections(api_url)
-    df = format_collections_to_dataframe(collections)
+    logger.info(f"Found {len(collections)} collections in PanGBank.")
 
-    print_dataframe_as_rich_table(df, title="Avalaible collections of PanGBank:")
+    df = format_collections_to_dataframe(collections)
+    print_dataframe_as_rich_table(df, title="Available collections of PanGBank:")
+
+    yaml_collections = format_collections_to_yaml(collections)
+    print_yaml_with_rich(yaml_collections)
 
 
 @app.command(no_args_is_help=True)
 def search_pangenomes(
     api_url: HttpUrl = ApiUrlOption,
+    collection: Annotated[
+        Optional[str],
+        typer.Option("--collection", "-c", help="Filter pangenomes by collection."),
+    ] = None,
     taxon: Annotated[
         Optional[str],
         typer.Option("--taxon", "-t", help="Filter pangenomes by taxonomy."),
     ] = None,
     download: bool = typer.Option(
         False,
-        help="Download the pangenomes.",
+        help="Download the pangenome files.",
     ),
     outdir: Path = typer.Option(
         Path("pangbank"),
         help="Output directory for downloaded pangenomes.",
     ),
+    verbose: bool = Verbose,
 ):
     """Search for pangenomes."""
-    pangenomes = query_pangenomes(api_url, taxon_name=taxon, substring_taxon_match=True)
+    pangenomes = query_pangenomes(
+        api_url,
+        taxon_name=taxon,
+        substring_taxon_match=True,
+        collection_name=collection,
+    )
 
     df = format_pangenomes_to_dataframe(pangenomes)
 
@@ -193,6 +229,7 @@ def match_pangenome(
         Path("pangbank"),
         help="Output directory for downloaded pangenomes.",
     ),
+    verbose: bool = Verbose,
 ):
     """Match a pangenome from an input genome."""
     logger.info(

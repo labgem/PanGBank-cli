@@ -1,9 +1,12 @@
-from typing import Optional
+from typing import Optional, Dict, Any, List
 from rich.console import Console
 from rich.table import Table
+
 import pandas as pd
 import logging
 import shutil
+import yaml
+from rich.syntax import Syntax
 
 logger = logging.getLogger(__name__)
 
@@ -49,3 +52,13 @@ def check_mash_availability():
         )
         return False
     return True
+
+
+def print_yaml_with_rich(data: List[Dict[str, Any]]) -> None:
+    """Pretty-print a list of dicts as YAML using Rich."""
+
+    console = Console()
+
+    yaml_str = yaml.safe_dump(data, sort_keys=False, indent=2)
+    syntax = Syntax(yaml_str, "yaml", line_numbers=False, background_color="default")
+    console.print(syntax)
