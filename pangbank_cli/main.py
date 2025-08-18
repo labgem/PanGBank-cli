@@ -116,8 +116,8 @@ def main(
 
 
 ApiUrlOption = typer.Option(
-    HttpUrl("http://127.0.0.1:8000"),
-    envvar="PANGBANK_URL_API",
+    HttpUrl("https://pangbank-api.genoscope.cns.fr/"),
+    envvar="PANGBANK_API_URL",
     parser=validate_api_url,
     help="URL of the PanGBank API.",
 )
@@ -151,7 +151,7 @@ def search_pangenomes(
     ),
 ):
     """Search for pangenomes."""
-    pangenomes = query_pangenomes(api_url, taxon_name=taxon)
+    pangenomes = query_pangenomes(api_url, taxon_name=taxon, substring_taxon_match=True)
 
     df = format_pangenomes_to_dataframe(pangenomes)
 
