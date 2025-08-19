@@ -144,9 +144,12 @@ def query_pangenomes(
                 break
 
     pangenomes = validate_pangenomes(all_pangenomes)
-    collection_names = {pan.collection_release.collection_name for pan in pangenomes}
+    collection_names = {
+        f"'{pan.collection_release.collection_name}'" for pan in pangenomes
+    }
+    c_plural = "s" if len(collection_names) > 1 else ""
     logger.info(
-        f"Found {len(pangenomes)} pangenome{plural} matching search criteria from {len(collection_names)} collections."
+        f"The {len(pangenomes)} pangenome{plural} matching search criteria {'are' if len(pangenomes) > 1 else 'is'} from {len(collection_names)} collection{c_plural} : {', '.join(collection_names)}"
     )
     return pangenomes
 
@@ -243,10 +246,7 @@ def groupby_attribute(
     return attribute_and_elements
 
 
-console = Console()
-
-
-def display_pangenome_info_by_collection(
+def display_pangenome_summary_by_collection(
     pangenomes: List["PangenomePublic"], show_details: bool = True
 ):
     """
@@ -297,16 +297,19 @@ def display_pangenome_info_by_collection(
         )
 
     # Convert list to string and print with syntax highlighting
-    yaml_output = "\n".join(yaml_lines)
+    yaml_output = "\n".join(yaml_lines + [""])
     console.print(yaml_output)
 
 
 def format_taxonomy_to_string(taxonomy: List[TaxonPublic]) -> str:
     """Format a list of TaxonPublic objects into a string with alternating colors."""
+    taxa_names = [taxon.name for taxon in sorted(taxonomy, key=lambda x: x.depth)]
+
     taxonomy_formated: List[str] = ["[italic bright_green]root[/italic bright_green]"]
-    for i, taxon in enumerate(taxonomy):
+    for i, taxon_name in enumerate(taxa_names):
         tag = "italic bright_green" if i % 2 else "italic green"
-        taxonomy_formated.append(f"[{tag}]{taxon.name}[/{tag}]")
+        taxonomy_formated.append(f"[{tag}]{taxon_name}[/{tag}]")
+
     taxonomy_str = ";".join(taxonomy_formated)
 
     return taxonomy_str
@@ -328,6 +331,25 @@ def get_common_taxonomy(list_of_taxa: List[List[TaxonPublic]]):
     return common
 
 
+def print_pangenome_info(
+    pangenomes: List[PangenomePublic], display_count: Optional[int] = None
+):
+
+    console = Console(stderr=False)
+    if display_count is not None and len(pangenomes) > display_count:
+        logger.info(
+            f"Displaying information for the first {display_count} pangenome{'' if display_count == 1 else 's'}:"
+        )
+    else:
+        logger.info(
+            f"Displaying information for the {len(pangenomes)} pangenome{'' if len(pangenomes) == 1 else 's'}:"
+        )
+
+    for pangenome in pangenomes[:display_count]:
+        pangenome_info = format_pangenome_info(pangenome)
+        console.print("\n".join(pangenome_info))
+
+
 def format_pangenome_info(pangenome: "PangenomePublic") -> List[str]:
 
     taxonomy = [
@@ -335,17 +357,35 @@ def format_pangenome_info(pangenome: "PangenomePublic") -> List[str]:
     ]
 
     yaml_lines: List[str] = []
-    yaml_lines.append(f"    name: [bold green]{taxonomy[-1]}[/bold green]")
-    yaml_lines.append(
-        f"    genome_count: [bold green]{pangenome.genome_count}[/bold green]"
-    )
+    yaml_lines.append(f"[bold]{taxonomy[-1]}[/bold]:")
+
     taxonomy_formated: List[str] = []
     for i, taxon in enumerate(taxonomy):
         tag = "italic bright_green" if i % 2 else "italic green"
         taxonomy_formated.append(f"[{tag}]{taxon}[/{tag}]")
     taxonomy_str = ";".join(taxonomy_formated)
-
+    yaml_lines.append(f"    collection: {pangenome.collection_release.collection_name}")
     yaml_lines.append(f"    taxonomy: {taxonomy_str}")
+    yaml_lines.append(
+        f"    taxonomy_source: [bright_green]{pangenome.taxonomy.taxonomy_source.name} {pangenome.taxonomy.taxonomy_source.version}[/bright_green]"
+    )
+
+    yaml_lines.append(f"    genomes: {pangenome.genome_count}")
+
+    yaml_lines.append(f"    genes: {pangenome.gene_count}")
+    yaml_lines.append(f"    families: {pangenome.family_count}")
+    yaml_lines.append("    partitions:")
+    yaml_lines.append(
+        f"        persistent_families: {pangenome.persistent_family_count}"
+    )
+    yaml_lines.append(f"        shell_families: {pangenome.shell_family_count}")
+    yaml_lines.append(f"        cloud_families: {pangenome.cloud_family_count}")
+    yaml_lines.append(f"    modules: {pangenome.module_count}")
+
+    yaml_lines.append(f"    RGPs: {pangenome.rgp_count}")
+
+    yaml_lines.append(f"    spots: {pangenome.spot_count}")
+
     return yaml_lines
 
 
@@ -360,7 +400,8 @@ def get_pangenome_file(api_url: HttpUrl, pangenome_id: int, output_file: Path):
             for chunk in response.iter_content(chunk_size=8192):
                 f.write(chunk)
 
-        logger.info(f"Pangenome file saved to {output_file}")
+        logger.debug(f"Pangenome file saved to {output_file}")
+
     except requests.exceptions.RequestException as e:
         logger.warning(f"Request failed: {e}")
         raise requests.HTTPError(
@@ -369,11 +410,32 @@ def get_pangenome_file(api_url: HttpUrl, pangenome_id: int, output_file: Path):
 
 
 def download_pangenomes(
-    api_url: HttpUrl, pangenomes: List[PangenomePublic], outdir: Path
+    api_url: HttpUrl,
+    pangenomes: List[PangenomePublic],
+    outdir: Path,
+    disable_progress_bar: bool = False,
 ):
 
-    for pangenome in pangenomes:
-        last_taxon = sorted(pangenome.taxonomy.taxa, key=attrgetter("depth"))[-1]
-        output_file_path = outdir / last_taxon.name.replace(" ", "_") / "pangenome.h5"
-        output_file_path.parent.mkdir(parents=True, exist_ok=True)
-        get_pangenome_file(api_url, pangenome.id, output_file_path)
+    pangenomes_outdir = outdir / "pangenomes"
+    logger.info(
+        f"Downloading {len(pangenomes)} pangenome file{'' if len(pangenomes) == 1 else 's'} to '{pangenomes_outdir}/'"
+    )
+    with Progress(disable=disable_progress_bar) as progress:
+        task = progress.add_task("Downloading pangenome", total=len(pangenomes))
+
+        for pangenome in pangenomes:
+            last_taxon = sorted(pangenome.taxonomy.taxa, key=attrgetter("depth"))[
+                -1
+            ].name.replace(" ", "_")
+
+            collection_name = pangenome.collection_release.collection.name.replace(
+                " ", "_"
+            )
+            output_file_path = (
+                pangenomes_outdir
+                / f"{collection_name}_{last_taxon}_id{pangenome.id}.h5"
+            )
+            output_file_path.parent.mkdir(parents=True, exist_ok=True)
+            get_pangenome_file(api_url, pangenome.id, output_file_path)
+
+            progress.update(task, advance=1)

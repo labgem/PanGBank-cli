@@ -26,7 +26,8 @@ from pangbank_cli.pangenomes import (
     query_pangenomes,
     format_pangenomes_to_dataframe,
     download_pangenomes,
-    display_pangenome_info_by_collection,
+    display_pangenome_summary_by_collection,
+    print_pangenome_info,
 )
 
 from pangbank_cli.match_pangenome import (
@@ -42,6 +43,7 @@ app = typer.Typer(
     name="PanGBank CLI",
     help=f"PanGBank CLI {__version__}: Command-line tool for retrieving pangenomes using the PanGBank API.",
     context_settings={"help_option_names": ["-h", "--help"]},
+    add_completion=False,
 )
 
 
@@ -185,6 +187,10 @@ def search_pangenomes(
         Path("pangbank"),
         help="Output directory for downloaded pangenomes.",
     ),
+    details: bool = typer.Option(
+        False,
+        help="Display summary information for each pangenome matching the search criteria.",
+    ),
     verbose: bool = Verbose,
     progress: bool = typer.Option(
         True,
@@ -225,8 +231,9 @@ def search_pangenomes(
     outdir.mkdir(parents=True, exist_ok=True)
     df.to_csv(output_file, index=False, sep="\t")
 
-    if True:
-        display_pangenome_info_by_collection(pangenomes, True)
+    if details:
+        display_pangenome_summary_by_collection(pangenomes, True)
+        print_pangenome_info(pangenomes)
 
     if download:
         download_pangenomes(api_url, pangenomes, outdir)
@@ -259,6 +266,10 @@ def match_pangenome(
     outdir: Path = typer.Option(
         Path("pangbank"),
         help="Output directory for downloaded pangenomes.",
+    ),
+    progress: bool = typer.Option(
+        True,
+        help="Show progress bar while fetching pangenomes (disable with --no-progress).",
     ),
     verbose: bool = Verbose,
 ):
@@ -296,6 +307,7 @@ def match_pangenome(
         query_to_best_match=query_to_best_match,
         outdir=outdir,
         download=download,
+        progress=progress,
     )
 
 

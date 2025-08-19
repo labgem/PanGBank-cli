@@ -7,7 +7,11 @@ from collections import defaultdict
 import subprocess
 
 from pangbank_api.models import CollectionPublicWithReleases, PangenomePublic  # type: ignore
-from pangbank_cli.pangenomes import query_pangenomes, download_pangenomes
+from pangbank_cli.pangenomes import (
+    query_pangenomes,
+    download_pangenomes,
+    print_pangenome_info,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -181,32 +185,41 @@ def compute_mash_distance(
 
     return query_to_best_match
 
+
 def get_matching_pangenome(
-        api_url: HttpUrl,
-        collection: CollectionPublicWithReleases,
-        query_to_best_match: Dict[str, MashResult],
-        outdir: Path,
-        download: bool = False,
+    api_url: HttpUrl,
+    collection: CollectionPublicWithReleases,
+    query_to_best_match: Dict[str, MashResult],
+    outdir: Path,
+    download: bool = False,
+    progress: bool = True,
 ):
-    
+
     pangenome_to_download:List[PangenomePublic] = []
-    
+
     for query, mash_result in query_to_best_match.items():
         pangenome_name = get_pangenome_name_from_mash_reference(mash_result.reference)
         logger.info(f"Genome '{query}' matches pangenome '{pangenome_name}' with a distance of {mash_result.distance:.6f}")
 
-
-        matching_pangenomes = query_pangenomes(api_url, collection_name=collection.name, pangenome_name=pangenome_name, only_latest_release=True)
+        matching_pangenomes = query_pangenomes(
+            api_url,
+            collection_name=collection.name,
+            pangenome_name=pangenome_name,
+            only_latest_release=True,
+            disable_progress_bar=not progress,
+        )
 
         if len(matching_pangenomes) == 0:
             raise ValueError(f"No matching pangenome found for {pangenome_name} extracted from mash reference {mash_result.reference}")
+
+        print_pangenome_info(matching_pangenomes)
 
         if len(matching_pangenomes) > 1:
             logger.warning(f"{len(matching_pangenomes)} pangenomes found for {pangenome_name}. Using the first one.")
 
         pangenome = matching_pangenomes[0]
-        pangenome_to_download.append(pangenome)
 
+        pangenome_to_download.append(pangenome)
 
     if download:
         download_pangenomes(
@@ -216,6 +229,7 @@ def get_matching_pangenome(
         )
     else:
         logger.info("Download option is set to False. Skipping download.")
+
 
 def get_pangenome_name_from_mash_reference(mash_reference: str) -> str:
     """Extract the pangenome name from the mash reference string."""
