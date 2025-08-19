@@ -210,7 +210,7 @@ def search_pangenomes(
     df.to_csv(output_file, index=False, sep="\t")
 
     if True:
-        display_pangenome_info_by_collection(pangenomes, False)
+        display_pangenome_info_by_collection(pangenomes, True)
 
     if download:
         download_pangenomes(api_url, pangenomes, outdir)
