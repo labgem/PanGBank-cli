@@ -165,7 +165,9 @@ def search_pangenomes(
     api_url: HttpUrl = ApiUrlOption,
     collection: Annotated[
         Optional[str],
-        typer.Option("--collection", "-c", help="Search pangenomes by collection."),
+        typer.Option(
+            "--collection", "-c", help="Search pangenomes by collection name."
+        ),
     ] = None,
     taxon: Annotated[
         Optional[str],
@@ -200,6 +202,20 @@ def search_pangenomes(
         only_latest_release=True,
         disable_progress_bar=not progress,
     )
+
+    if not pangenomes:
+        if collection is not None:
+            collections = query_collections(api_url)
+            existing_collection_names = [c.name for c in collections]
+            if collection not in existing_collection_names:
+                names_formatted = ", ".join(
+                    (f"'{name}'" for name in existing_collection_names)
+                )
+                logger.warning(
+                    f"Collection '{collection}' not found in PanGBank. "
+                    f"Available collections are: {names_formatted}."
+                )
+        raise typer.Exit(code=1)
 
     df = format_pangenomes_to_dataframe(pangenomes)
     output_file = outdir / "pangenomes.tsv"
