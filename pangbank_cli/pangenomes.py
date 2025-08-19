@@ -8,6 +8,7 @@ from pangbank_api.models import (  # type: ignore
     CollectionReleasePublic,
     PangenomePublic,
     CollectionPublic,
+    TaxonPublic,
 )
 from pangbank_api.crud.common import FilterGenomeTaxonGenomePangenome, PaginationParams  # type: ignore
 from itertools import groupby
@@ -15,6 +16,7 @@ from operator import attrgetter
 
 from rich.console import Console
 from rich.progress import Progress
+
 
 logger = logging.getLogger(__name__)
 
@@ -100,13 +102,19 @@ def query_pangenomes(
     logger.info(f"Counting pangenomes for {' & '.join(filter_logs)}")
 
     pangenome_count = count_pangenomes(api_url, filter_params)
-    logger.info(f"Found {pangenome_count} pangenomes matching search criteria.")
 
-    logger.info(f"Fetching information for the {pangenome_count} pangenomes.")
+    if pangenome_count == 0:
+        logger.info("No pangenomes found matching the search criteria.")
+        return []
+
+    plural = "s" if pangenome_count > 1 else ""
+    logger.info(f"Found {pangenome_count} pangenome{plural} matching search criteria.")
+
+    logger.info(f"Fetching information for the {pangenome_count} pangenome{plural}.")
 
     # Progress bar for fetching
     with Progress(disable=disable_progress_bar) as progress:
-        task = progress.add_task("Fetching pangenomes", total=pangenome_count)
+        task = progress.add_task("Fetching pangenome", total=pangenome_count)
 
         while True:
 
@@ -138,7 +146,7 @@ def query_pangenomes(
     pangenomes = validate_pangenomes(all_pangenomes)
     collection_names = {pan.collection_release.collection_name for pan in pangenomes}
     logger.info(
-        f"Found {len(pangenomes)} pangenomes matching search criteria from {len(collection_names)} collections."
+        f"Found {len(pangenomes)} pangenome{plural} matching search criteria from {len(collection_names)} collections."
     )
     return pangenomes
 
@@ -279,34 +287,66 @@ def display_pangenome_info_by_collection(
             f"  date: [bold yellow]{release.date.strftime('%d %b %Y')}[/bold yellow]"
         )
         yaml_lines.append(
-            f"  pangenome_count: [bold magenta]{len(pangenomes)}[/bold magenta]"
+            f"  matching_pangenome: [bold magenta]{len(pangenomes)}[/bold magenta]"
         )
+        list_of_taxa = [pangenome.taxonomy.taxa for pangenome in pangenomes]
+        common_taxa = get_common_taxonomy(list_of_taxa)
 
-        if show_details:
-            yaml_lines.append("  pangenomes:")
-            for pangenome in pangenomes:
-                taxonomy = [
-                    taxon.name
-                    for taxon in sorted(pangenome.taxonomy.taxa, key=lambda x: x.depth)
-                ]
-
-                yaml_lines.append(f"    name: [bold green]{taxonomy[-1]}[/bold green]")
-                yaml_lines.append(
-                    f"    genome_count: [bold green]{pangenome.genome_count}[/bold green]"
-                )
-                taxonomy_formated: List[str] = []
-                for i, taxon in enumerate(taxonomy):
-                    tag = "italic bright_green" if i % 2 else "italic bright_green"
-                    taxonomy_formated.append(f"[{tag}]{taxon}[/{tag}]")
-                taxonomy_str = ";".join(taxonomy_formated)
-
-                yaml_lines.append(f"    taxonomy: {taxonomy_str}")
-
-        yaml_lines.append("")
+        yaml_lines.append(
+            f"  common_taxonomy: [bold magenta]{format_taxonomy_to_string(common_taxa)}[/bold magenta]"
+        )
 
     # Convert list to string and print with syntax highlighting
     yaml_output = "\n".join(yaml_lines)
     console.print(yaml_output)
+
+
+def format_taxonomy_to_string(taxonomy: List[TaxonPublic]) -> str:
+    """Format a list of TaxonPublic objects into a string with alternating colors."""
+    taxonomy_formated: List[str] = ["[italic bright_green]root[/italic bright_green]"]
+    for i, taxon in enumerate(taxonomy):
+        tag = "italic bright_green" if i % 2 else "italic green"
+        taxonomy_formated.append(f"[{tag}]{taxon.name}[/{tag}]")
+    taxonomy_str = ";".join(taxonomy_formated)
+
+    return taxonomy_str
+
+
+def get_common_taxonomy(list_of_taxa: List[List[TaxonPublic]]):
+    common: List[TaxonPublic] = []
+
+    if not list_of_taxa:
+        return common
+
+    # zip will group taxa at the same level across all taxonomies
+    common: List[TaxonPublic] = []
+    for taxa in zip(*list_of_taxa):
+        if all(taxon == taxa[0] for taxon in taxa):
+            common.append(taxa[0])
+        else:
+            break
+    return common
+
+
+def format_pangenome_info(pangenome: "PangenomePublic") -> List[str]:
+
+    taxonomy = [
+        taxon.name for taxon in sorted(pangenome.taxonomy.taxa, key=lambda x: x.depth)
+    ]
+
+    yaml_lines: List[str] = []
+    yaml_lines.append(f"    name: [bold green]{taxonomy[-1]}[/bold green]")
+    yaml_lines.append(
+        f"    genome_count: [bold green]{pangenome.genome_count}[/bold green]"
+    )
+    taxonomy_formated: List[str] = []
+    for i, taxon in enumerate(taxonomy):
+        tag = "italic bright_green" if i % 2 else "italic green"
+        taxonomy_formated.append(f"[{tag}]{taxon}[/{tag}]")
+    taxonomy_str = ";".join(taxonomy_formated)
+
+    yaml_lines.append(f"    taxonomy: {taxonomy_str}")
+    return yaml_lines
 
 
 def get_pangenome_file(api_url: HttpUrl, pangenome_id: int, output_file: Path):
