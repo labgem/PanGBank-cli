@@ -165,37 +165,52 @@ def search_pangenomes(
     api_url: HttpUrl = ApiUrlOption,
     collection: Annotated[
         Optional[str],
-        typer.Option("--collection", "-c", help="Filter pangenomes by collection."),
+        typer.Option("--collection", "-c", help="Search pangenomes by collection."),
     ] = None,
     taxon: Annotated[
         Optional[str],
-        typer.Option("--taxon", "-t", help="Filter pangenomes by taxonomy."),
+        typer.Option("--taxon", "-t", help="Search pangenomes by a taxon name."),
+    ] = None,
+    genome: Annotated[
+        Optional[str],
+        typer.Option("--genome", "-g", help="Search pangenomes by a genome name."),
     ] = None,
     download: bool = typer.Option(
         False,
-        help="Download the pangenome files.",
+        help="Download HDF5 pangenome files.",
     ),
     outdir: Path = typer.Option(
         Path("pangbank"),
         help="Output directory for downloaded pangenomes.",
     ),
     verbose: bool = Verbose,
+    progress: bool = typer.Option(
+        True,
+        help="Show progress bar while fetching pangenomes (disable with --no-progress).",
+    ),
 ):
     """Search for pangenomes."""
+
     pangenomes = query_pangenomes(
         api_url,
         taxon_name=taxon,
         substring_taxon_match=True,
         collection_name=collection,
+        genome_name=genome,
+        only_latest_release=True,
+        disable_progress_bar=not progress,
     )
 
     df = format_pangenomes_to_dataframe(pangenomes)
+    output_file = outdir / "pangenomes.tsv"
 
-    logger.info(f"Saving pangenomes information to {outdir}")
+    logger.info(f"Saving pangenomes information to '{output_file}'")
+
     outdir.mkdir(parents=True, exist_ok=True)
-    df.to_csv(outdir / "pangenomes.tsv", index=False, sep="\t")
+    df.to_csv(output_file, index=False, sep="\t")
 
-    display_pangenome_info_by_collection(pangenomes, False)
+    if True:
+        display_pangenome_info_by_collection(pangenomes, False)
 
     if download:
         download_pangenomes(api_url, pangenomes, outdir)

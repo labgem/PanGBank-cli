@@ -14,6 +14,7 @@ from itertools import groupby
 from operator import attrgetter
 
 from rich.console import Console
+from rich.progress import Progress
 
 logger = logging.getLogger(__name__)
 
@@ -44,13 +45,40 @@ def get_pangenomes(
         raise requests.HTTPError(f"Failed to fetch pangenomes from {api_url}") from e
 
 
+def count_pangenomes(
+    api_url: HttpUrl,
+    filter_params: FilterGenomeTaxonGenomePangenome,
+):
+    """Fetch pangenomes from the API with filtering options."""
+
+    params = filter_params.model_dump()
+    response = requests.get(f"{api_url}/pangenomes/count/", params=params, timeout=10)
+
+    try:
+        response.raise_for_status()
+        return int(response.text)
+
+    except requests.exceptions.RequestException as e:
+
+        error_detail = response.json().get("detail", [])
+
+        if error_detail:
+            logger.error(f"API error: {error_detail[0].get('msg', 'Unknown error')}")
+            raise requests.HTTPError(
+                f"Failed to fetch pangenomes from {api_url}: {error_detail[0].get('msg', 'Unknown error')}"
+            )
+        raise requests.HTTPError(f"Failed to fetch pangenomes from {api_url}") from e
+
+
 def query_pangenomes(
     api_url: HttpUrl,
     taxon_name: Optional[str] = None,
     pangenome_name: Optional[str] = None,
     collection_name: Optional[str] = None,
+    genome_name: Optional[str] = None,
     only_latest_release: bool = True,
     substring_taxon_match: bool = False,
+    disable_progress_bar: bool = False,
 ) -> List[PangenomePublic]:
 
     all_pangenomes: List[Any] = []
@@ -63,38 +91,55 @@ def query_pangenomes(
         collection_name=collection_name,
         only_latest_release=only_latest_release,
         substring_taxon_match=substring_taxon_match,
+        genome_name=genome_name,
     )
     filter_logs = [
         f"{param}={value}"
         for param, value in filter_params.model_dump(exclude_none=True).items()
     ]
-    logger.info(f"Fetching pangenomes for {' & '.join(filter_logs)}")
-    while True:
-        pagination_params = PaginationParams(offset=offset, limit=limit)
-        responses_pangenomes = get_pangenomes(
-            api_url=api_url,
-            filter_params=filter_params,
-            pagination_params=pagination_params,
-        )
+    logger.info(f"Counting pangenomes for {' & '.join(filter_logs)}")
 
-        logger.debug(f"Found {len(responses_pangenomes)} pangenomes at offset {offset}")
+    pangenome_count = count_pangenomes(api_url, filter_params)
+    logger.info(f"Found {pangenome_count} pangenomes matching search criteria.")
 
-        if not responses_pangenomes:  # If no pangenomes are returned, exit the loop
-            break
+    logger.info(f"Fetching information for the {pangenome_count} pangenomes.")
 
-        all_pangenomes.extend(responses_pangenomes)  # Add the pangenomes to the list
-        offset += limit  # Increment the offset for the next request
+    # Progress bar for fetching
+    with Progress(disable=disable_progress_bar) as progress:
+        task = progress.add_task("Fetching pangenomes", total=pangenome_count)
 
-        # If the number of pangenomes fetched is less than the limit, we have reached the end
-        if len(responses_pangenomes) < limit:
-            break
+        while True:
+
+            pagination_params = PaginationParams(offset=offset, limit=limit)
+            responses_pangenomes = get_pangenomes(
+                api_url=api_url,
+                filter_params=filter_params,
+                pagination_params=pagination_params,
+            )
+
+            logger.debug(
+                f"Found {len(responses_pangenomes)} pangenomes at offset {offset}"
+            )
+
+            if not responses_pangenomes:  # If no pangenomes are returned, exit the loop
+                break
+
+            all_pangenomes.extend(
+                responses_pangenomes
+            )  # Add the pangenomes to the list
+
+            progress.update(task, advance=len(responses_pangenomes))
+            offset += limit  # Increment the offset for the next request
+
+            # If the number of pangenomes fetched is less than the limit, we have reached the end
+            if len(responses_pangenomes) < limit:
+                break
 
     pangenomes = validate_pangenomes(all_pangenomes)
     collection_names = {pan.collection_release.collection_name for pan in pangenomes}
     logger.info(
         f"Found {len(pangenomes)} pangenomes matching search criteria from {len(collection_names)} collections."
     )
-
     return pangenomes
 
 
@@ -202,7 +247,7 @@ def display_pangenome_info_by_collection(
     :param pangenomes: List of PangenomePublic objects to display.
     :param show_details: If True, shows genome count and taxonomies for each pangenome.
     """
-    console = Console()
+    console = Console(stderr=True)
 
     collection_and_pangenomes: Generator[
         Tuple["CollectionPublic", List["PangenomePublic"]], None, None
