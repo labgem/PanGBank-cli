@@ -13,7 +13,7 @@ With **PanGBank-cli** you can:
 * Map an input genome to its corresponding pangenome in PanGBank and fetch it automatically
 
 For interactive exploration, you can also browse PanGBank collections through the web application:
-👉 **PanGBank Web**: https://pangbank.genoscope.cns.fr/
+**PanGBank Web**: https://pangbank.genoscope.cns.fr/
 
 
 ## Installation
