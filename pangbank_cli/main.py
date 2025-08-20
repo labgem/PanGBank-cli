@@ -44,6 +44,7 @@ app = typer.Typer(
     help=f"PanGBank CLI {__version__}: Command-line tool for retrieving pangenomes using the PanGBank API.",
     context_settings={"help_option_names": ["-h", "--help"]},
     add_completion=False,
+    rich_markup_mode="rich",
 )
 
 
@@ -168,16 +169,26 @@ def search_pangenomes(
     collection: Annotated[
         Optional[str],
         typer.Option(
-            "--collection", "-c", help="Search pangenomes by collection name."
+            "--collection",
+            "-c",
+            help="Search pangenomes by collection name (e.g. 'GTDB_refseq').",
         ),
     ] = None,
     taxon: Annotated[
         Optional[str],
-        typer.Option("--taxon", "-t", help="Search pangenomes by a taxon name."),
+        typer.Option(
+            "--taxon",
+            "-t",
+            help="Search pangenomes by a taxon name (e.g. 'Escherichia').",
+        ),
     ] = None,
     genome: Annotated[
         Optional[str],
-        typer.Option("--genome", "-g", help="Search pangenomes by a genome name."),
+        typer.Option(
+            "--genome",
+            "-g",
+            help="Search pangenomes by a genome assembly identifier (e.g. 'GCF_000354175.2').",
+        ),
     ] = None,
     download: bool = typer.Option(
         False,
