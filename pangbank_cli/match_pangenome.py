@@ -14,6 +14,7 @@ from pangbank_cli.pangenomes import (
     download_pangenomes,
     print_pangenome_info,
 )
+
 # from pangbank_cli.utils import compute_md5
 
 
@@ -25,8 +26,10 @@ class MashError(Exception):
 
     pass
 
+
 class MashResult(BaseModel):
     """Class to represent the result of a mash command."""
+
     query: str
     reference: str
     distance: float
@@ -151,7 +154,7 @@ def compute_mash_distance(
     max_distance: float = 0.05,
     threads: int = 1,
 ):
-    """ """     
+    """ """
 
     mash_result = launch_mash_dist(
         mash_sketch_file=mash_sketch_file,
@@ -206,11 +209,13 @@ def get_matching_pangenome(
     progress: bool = True,
 ):
 
-    pangenome_to_download:List[PangenomePublic] = []
+    pangenome_to_download: List[PangenomePublic] = []
 
     for query, mash_result in query_to_best_match.items():
         pangenome_name = get_pangenome_name_from_mash_reference(mash_result.reference)
-        logger.info(f"Genome '{query}' matches pangenome '{pangenome_name}' with a distance of {mash_result.distance:.6f}")
+        logger.info(
+            f"Genome '{query}' matches pangenome '{pangenome_name}' with a distance of {mash_result.distance:.6f}"
+        )
 
         matching_pangenomes = query_pangenomes(
             api_url,
@@ -221,12 +226,16 @@ def get_matching_pangenome(
         )
 
         if len(matching_pangenomes) == 0:
-            raise ValueError(f"No matching pangenome found for {pangenome_name} extracted from mash reference {mash_result.reference}")
+            raise ValueError(
+                f"No matching pangenome found for {pangenome_name} extracted from mash reference {mash_result.reference}"
+            )
 
         print_pangenome_info(matching_pangenomes)
 
         if len(matching_pangenomes) > 1:
-            logger.warning(f"{len(matching_pangenomes)} pangenomes found for {pangenome_name}. Using the first one.")
+            logger.warning(
+                f"{len(matching_pangenomes)} pangenomes found for {pangenome_name}. Using the first one."
+            )
 
         pangenome = matching_pangenomes[0]
 
@@ -247,7 +256,7 @@ def get_pangenome_name_from_mash_reference(mash_reference: str) -> str:
     """Extract the pangenome name from the mash reference string."""
     # Assuming the mash reference is in the format "collection_id/pangenome_name[.fasta][.gz]"
     mash_ref_path = Path(mash_reference)
-    if '.gz' in mash_ref_path.suffix:
+    if ".gz" in mash_ref_path.suffix:
         mash_ref_path = mash_ref_path.with_suffix("")
     if mash_ref_path.suffix in ["fna", ".fa", ".fasta"]:
         mash_ref_path = mash_ref_path.with_suffix("")
