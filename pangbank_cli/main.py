@@ -263,7 +263,7 @@ def match_pangenome(
     input_genome_file: Annotated[
         Path,
         typer.Option(
-            "--input_genome",
+            "--input-genome",
             "-i",
             help="Input genome to search a matching pangenome from.",
             exists=True,
