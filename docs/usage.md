@@ -1,7 +1,0 @@
-
-# Usage 
-
-## Input Files
-
-
-## Outputs
