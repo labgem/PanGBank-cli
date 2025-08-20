@@ -59,43 +59,67 @@ pip install .
 > \[!WARNING]
 > Installing **PanGBank-cli** with this method will only set up the Python dependencies. The external tool [**Mash**](https://github.com/marbl/Mash) (required for the `match-pangenome` command) is **not** included and must be installed separately to enable full functionality.
 
+
 ## Usage
 
-After installation, you can run the CLI using:
+Once installed, you can access the CLI by running:
 
 ```bash
 pangbank --help
 ```
 
+This will display the list of available commands and options.
 
-### Example: List collections of pangenomes
+---
+
+### List available collections
 
 ```bash
 pangbank list-collections
 ```
 
-### Example: Search for pangenomes
+Displays all pangenome collections available in PanGBank, along with their description and the number of pangenomes they contain.
+
+---
+
+### Search for pangenomes
 
 ```bash
 pangbank search-pangenomes --taxon "g__Escherichia"
 ```
-### Example: Search for pangenomes and print some metrics
+
+Searches PanGBank for pangenomes matching the given taxon.
+Results are saved as a **TSV file** containing summary metrics for the matching pangenomes.
+
+---
+
+### Download pangenomes
 
 ```bash
-pangbank search-pangenomes --taxon "diabolicus" --details
+pangbank search-pangenomes --taxon "g__Chlamydia" \
+    --collection GTDB_refseq \
+    --outdir Chlamydia_pangenomes/ \
+    --download
 ```
 
-### Example: Download pangenomes
+Searches for **Chlamydia** pangenomes in the `GTDB_refseq` collection, then downloads the corresponding pangenome files into `Chlamydia_pangenomes/pangenomes/`.
+
+---
+
+### Match a genome to an existing pangenome
 
 ```bash
-pangbank search-pangenomes --taxon "Streptococcus" --download --outdir strepto_pangenomes/
+pangbank match-pangenome --input-genome <genome.fasta> --collection GTDB_all
 ```
 
-### Example: Map input genome with a corresponding pangenome 
+Matches the given input genome (FASTA format) to the most similar pangenome in the selected collection using a **mash sketch**.
+The command outputs details of the best matching pangenome.
 
-```bash
-pangbank match-pangenome --input_genome <input genome in FASTA format> --collection GTDB_all
-```
+> \[!NOTE]
+> * Add the `--download` flag to download the corresponding pangenome file.
+> * The downloaded file can then be used with **PPanGGOLiN’s** `projection` command to annotate the input genome.
+  See the [PPanGGOLiN documentation](https://ppanggolin.readthedocs.io/en/latest/user/projection.html) for details.
+
 
 
 # Licence
