@@ -5,13 +5,16 @@ import logging
 from pathlib import Path
 from collections import defaultdict
 import subprocess
-
-from pangbank_api.models import CollectionPublicWithReleases, PangenomePublic  # type: ignore
+from pangbank_api.models import (  # type: ignore
+    CollectionPublicWithReleases,
+    PangenomePublic,
+)
 from pangbank_cli.pangenomes import (
     query_pangenomes,
     download_pangenomes,
     print_pangenome_info,
 )
+# from pangbank_cli.utils import compute_md5
 
 
 logger = logging.getLogger(__name__)
@@ -49,25 +52,33 @@ def get_mash_sketch_file(
     output_file_path.parent.mkdir(parents=True, exist_ok=True)
 
     if output_file_path.exists():
+        # TODO apply when md5 will be in CollectionReleasePublicWithCount model
+        # md5_hash_existing_file = compute_md5(output_file_path)
+        # if md5_hash_existing_file == latest_release.mash_sketch_md5sum:
         logger.info(
             f"Mash sketch file for collection '{collection.name}' already exists at '{output_file_path}'. No re-download."
         )
-    else:
+        return output_file_path
+        # else:
+        #     logger.warning(
+        #         f"Mash sketch file for collection '{collection.name}' exists but MD5 mismatch. Re-downloading."
+        #     )
 
-        logger.info(
-            f"Downloading mash sketch file for collection to '{collection.name}' release {latest_release.version}"
-        )
-        download_mash_sketch(
-            api_url=api_url,
-            collection_id=collection.id,
-            output_file_path=output_file_path,
-        )
+    logger.info(
+        f"Downloading mash sketch file for collection to '{collection.name}' release {latest_release.version}"
+    )
+    download_mash_sketch(
+        api_url=api_url,
+        collection_id=collection.id,
+        output_file_path=output_file_path,
+    )
 
     if not output_file_path.exists():
         raise FileNotFoundError(
             f"Failed to download mash sketch file to '{output_file_path}'"
         )
 
+    # TODO check if md5 matches when md5 is available in CollectionReleasePublicWithCount
     return output_file_path
 
 
@@ -226,6 +237,7 @@ def get_matching_pangenome(
             api_url=api_url,
             pangenomes=pangenome_to_download,
             outdir=outdir,
+            disable_progress_bar=not progress,
         )
     else:
         logger.info("Download option is set to False. Skipping download.")
@@ -239,5 +251,5 @@ def get_pangenome_name_from_mash_reference(mash_reference: str) -> str:
         mash_ref_path = mash_ref_path.with_suffix("")
     if mash_ref_path.suffix in ["fna", ".fa", ".fasta"]:
         mash_ref_path = mash_ref_path.with_suffix("")
-    
+
     return mash_ref_path.name

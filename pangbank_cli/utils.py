@@ -2,6 +2,8 @@ from typing import Optional, Dict, Any, List
 from rich.console import Console
 from rich.table import Table
 
+from pathlib import Path
+import hashlib
 import pandas as pd
 import logging
 import shutil
@@ -62,3 +64,11 @@ def print_yaml_with_rich(data: List[Dict[str, Any]]) -> None:
     yaml_str = yaml.safe_dump(data, sort_keys=False, indent=2)
     syntax = Syntax(yaml_str, "yaml", line_numbers=False, background_color="default")
     console.print(syntax)
+
+
+def compute_md5(file_path: Path):
+    md5_hash = hashlib.md5()
+    with open(file_path, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):  # Read file in chunks
+            md5_hash.update(chunk)
+    return md5_hash.hexdigest()

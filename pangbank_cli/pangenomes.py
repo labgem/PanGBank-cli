@@ -10,6 +10,7 @@ from pangbank_api.models import (  # type: ignore
     CollectionPublic,
     TaxonPublic,
 )
+from pangbank_cli.utils import compute_md5
 from pangbank_api.crud.common import FilterGenomeTaxonGenomePangenome, PaginationParams  # type: ignore
 from itertools import groupby
 from operator import attrgetter
@@ -389,24 +390,84 @@ def format_pangenome_info(pangenome: "PangenomePublic") -> List[str]:
     return yaml_lines
 
 
-def get_pangenome_file(api_url: HttpUrl, pangenome_id: int, output_file: Path):
+def get_pangenome_file(
+    api_url: HttpUrl, pangenome_id: int, output_file: Path, expected_md5sum: str
+):
+    url = f"{api_url}/pangenomes/{pangenome_id}/file"
+
+    # --- Check for existing file ---
+    if output_file.exists():
+        existing_md5 = compute_md5(output_file)
+        if existing_md5 == expected_md5sum:
+            logger.debug(
+                f"File '{output_file}' already exists with valid checksum. Skipping download."
+            )
+            return output_file
+        else:
+            logger.warning(
+                f"File '{output_file}' exists but checksum mismatch. Redownloading..."
+            )
+            logger.debug(f"Expected MD5: {expected_md5sum}, Found MD5: {existing_md5}")
+            try:
+                output_file.unlink()
+            except Exception as cleanup_err:
+                logger.error(
+                    f"Failed to remove corrupted file '{output_file}': {cleanup_err}"
+                )
+
+    # --- Download file ---
     try:
-        response = requests.get(
-            f"{api_url}/pangenomes/{pangenome_id}/file", timeout=10, stream=True
-        )
+        logger.debug(f"Downloading pangenome {pangenome_id} from {url} ...")
+        response = requests.get(url, timeout=30, stream=True)
         response.raise_for_status()
 
         with open(output_file, "wb") as f:
             for chunk in response.iter_content(chunk_size=8192):
                 f.write(chunk)
 
-        logger.debug(f"Pangenome file saved to {output_file}")
+        logger.debug(f"Pangenome {pangenome_id} successfully saved to '{output_file}'")
+
+    except requests.exceptions.Timeout:
+        logger.error(
+            f"Request timed out while downloading pangenome {pangenome_id} from {url}"
+        )
+        raise
+
+    except requests.exceptions.HTTPError as e:
+        logger.error(
+            f"HTTP error {e.response.status_code} while fetching pangenome {pangenome_id} from {url}"
+        )
+        raise
 
     except requests.exceptions.RequestException as e:
-        logger.warning(f"Request failed: {e}")
-        raise requests.HTTPError(
-            f"Failed to fetch pangenome file from {api_url}"
-        ) from e
+        logger.error(
+            f"Network error while fetching pangenome {pangenome_id} from {url}: {e}"
+        )
+        raise
+
+    # Verify checksum
+    file_md5sum = compute_md5(output_file)
+    if file_md5sum != expected_md5sum:
+        logger.error(f"MD5 checksum mismatch for '{output_file}'.")
+
+        logger.debug(f"Expected MD5: {expected_md5sum}, Found MD5: {file_md5sum}")
+        # Delete corrupt file to avoid confusion
+        try:
+            output_file.unlink(missing_ok=True)
+            logger.warning(f"Corrupted file '{output_file}' has been removed.")
+        except Exception as cleanup_err:
+            logger.warning(
+                f"Failed to remove corrupted file '{output_file}': {cleanup_err}"
+            )
+
+        raise ValueError(
+            f"MD5 checksum mismatch for pangenome {pangenome_id}. "
+            f"Expected {expected_md5sum}, got {file_md5sum}"
+        )
+
+    logger.debug(f"MD5 checksum verified for '{output_file}'")
+
+    return output_file
 
 
 def download_pangenomes(
@@ -436,6 +497,16 @@ def download_pangenomes(
                 / f"{collection_name}_{last_taxon}_id{pangenome.id}.h5"
             )
             output_file_path.parent.mkdir(parents=True, exist_ok=True)
-            get_pangenome_file(api_url, pangenome.id, output_file_path)
+            get_pangenome_file(
+                api_url,
+                pangenome.id,
+                output_file_path,
+                expected_md5sum=pangenome.file_md5sum,
+            )
 
             progress.update(task, advance=1)
+
+    logger.info(
+        f"Successfully downloaded {len(pangenomes)} pangenome file{'' if len(pangenomes) == 1 else 's'} to '{pangenomes_outdir}/'."
+    )
+    return pangenomes_outdir
