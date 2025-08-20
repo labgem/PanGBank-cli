@@ -118,8 +118,6 @@ The command outputs detailed information about the best matching pangenome.
   See the [PPanGGOLiN documentation](https://ppanggolin.readthedocs.io/en/latest/user/projection.html) for details.
 
 
-# Licence
-
 # Citation
 
 PanGBank pangenomes are constructed with PPanGGOLiN and its companion tools. If you use PanGBank or PanGBank-cli in your research, please cite the following references:
