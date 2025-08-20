@@ -34,11 +34,9 @@ license = {file="LICENCE"}
 
 requires-python = ">=3.10,<3.14"
 dependencies = [
-    "pyfastx>=2.0.0,<3.0.0",
-    "typer>=0.15.1,<0.16.0",
-    "pyhmmer>=0.11.0,<0.12.0",
-    "requests>=2.26.0,<3.0.0",
-    "rich>=10.0.0,<11.0.0",
+    "typer>=0.15.1",
+    "requests>=2.32.3",
+    "rich>=10.0.0",
     "pydantic>=2.10.0,<3.0.0",
     "pandas>=2.0.0,<3.0.0",
     "pangbank-api@git+ssh://git@github.com/labgem/PanGBank-api",
