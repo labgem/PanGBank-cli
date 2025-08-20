@@ -107,14 +107,15 @@ Searches for **Chlamydia** pangenomes in the `GTDB_refseq` collection, then down
 pangbank match-pangenome --input-genome <genome.fasta> --collection GTDB_all
 ```
 
-Matches the given input genome (FASTA format) to the most similar pangenome in the selected collection using a **mash sketch**.
-The command outputs details of the best matching pangenome.
+
+Matches the given input genome (FASTA format) to the most similar pangenome in the selected collection using [**Mash**](https://github.com/marbl/Mash) and a precomputed sketch of the collection to identify the closest pangenome.
+The command outputs detailed information about the best matching pangenome.
+
 
 > \[!NOTE]
 > * Add the `--download` flag to download the corresponding pangenome file.
 > * The downloaded file can then be used with **PPanGGOLiN’s** `projection` command to annotate the input genome.
   See the [PPanGGOLiN documentation](https://ppanggolin.readthedocs.io/en/latest/user/projection.html) for details.
-
 
 
 # Licence
