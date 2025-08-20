@@ -56,9 +56,9 @@ For minor changes like fixing typos or making small edits, create a new Pull Req
       black .
       ```  
 
-   ```{tip}
-   Configure your IDE to integrate Black for automatic code formatting as you work.
-   ```  
+   > \[TIP]
+   > Configure your IDE to integrate Black for automatic code formatting as you work.
+     
 
 ### Making Your Changes
 
