@@ -70,8 +70,6 @@ pangbank --help
 
 This will display the list of available commands and options.
 
----
-
 ### List available collections
 
 ```bash
@@ -80,7 +78,6 @@ pangbank list-collections
 
 Displays all pangenome collections available in PanGBank, along with their description and the number of pangenomes they contain.
 
----
 
 ### Search for pangenomes
 
@@ -91,7 +88,6 @@ pangbank search-pangenomes --taxon "g__Escherichia"
 Searches PanGBank for pangenomes matching the given taxon.
 Results are saved as a **TSV file** containing summary metrics for the matching pangenomes.
 
----
 
 ### Download pangenomes
 
@@ -104,7 +100,6 @@ pangbank search-pangenomes --taxon "g__Chlamydia" \
 
 Searches for **Chlamydia** pangenomes in the `GTDB_refseq` collection, then downloads the corresponding pangenome files into `Chlamydia_pangenomes/pangenomes/`.
 
----
 
 ### Match a genome to an existing pangenome
 
