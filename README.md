@@ -81,6 +81,11 @@ Displays all pangenome collections available in PanGBank, along with their descr
 
 ### Search for pangenomes
 
+![`pangbank search-pangenomes --help`](docs/img/search-pangenomes_help.svg)
+
+
+#### Search for pangenomes by taxon name
+
 ```bash
 pangbank search-pangenomes --taxon "g__Escherichia"
 ```
@@ -89,7 +94,7 @@ Searches PanGBank for pangenomes matching the given taxon.
 Results are saved as a **TSV file** named 'pangenomes_information.tsv' by default containing summary metrics for the matching pangenomes.
 
 
-### Download pangenomes
+#### Download searched pangenomes
 
 ```bash
 pangbank search-pangenomes --taxon "g__Chlamydia" \
