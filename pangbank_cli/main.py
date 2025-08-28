@@ -123,6 +123,18 @@ Verbose = typer.Option(
     callback=verbose_callback,
     rich_help_panel="Execution settings",
 )
+Outdir = typer.Option(
+    help="Output directory for downloaded pangenomes.",
+    rich_help_panel="Output and downloads",
+)
+Download = typer.Option(
+    help="Download HDF5 pangenome files.",
+    rich_help_panel="Output and downloads",
+)
+Progress = typer.Option(
+    help="Show progress bar while fetching pangenomes (disable with --no-progress).",
+    rich_help_panel="Execution settings",
+)
 
 
 @app.callback(no_args_is_help=True)
@@ -163,9 +175,10 @@ def list_collections(
 
     df = format_collections_to_dataframe(collections)
     print_dataframe_as_rich_table(df, title="Available collections of PanGBank:")
-
-    yaml_collections = format_collections_to_yaml(collections)
-    print_yaml_with_rich(yaml_collections)
+    print_yaml = False
+    if print_yaml:
+        yaml_collections = format_collections_to_yaml(collections)
+        print_yaml_with_rich(yaml_collections)
 
 
 @app.command(no_args_is_help=True)
@@ -208,18 +221,12 @@ def search_pangenomes(
     # Output and downloads
     download: Annotated[
         bool,
-        typer.Option(
-            help="Download HDF5 pangenome files.",
-            rich_help_panel="Output and downloads",
-        ),
+        Download,
     ] = False,
     outdir: Annotated[
         Path,
-        typer.Option(
-            help="Output directory for downloaded pangenomes.",
-            rich_help_panel="Output and downloads",
-        ),
-    ] = Path("pangenomes"),
+        Outdir,
+    ] = Path("pangbank"),
     details: Annotated[
         bool,
         typer.Option(
@@ -243,10 +250,7 @@ def search_pangenomes(
     verbose: bool = Verbose,
     progress: Annotated[
         bool,
-        typer.Option(
-            help="Show progress bar while fetching pangenomes (disable with --no-progress).",
-            rich_help_panel="Execution settings",
-        ),
+        Progress,
     ] = True,
 ):
 
@@ -306,6 +310,7 @@ def match_pangenome(
             "--collection",
             "-c",
             help="The pangenome collection to match in.",
+            rich_help_panel="Match parameters",
         ),
     ],
     input_genome_file: Annotated[
@@ -315,21 +320,19 @@ def match_pangenome(
             "-i",
             help="Input genome to search a matching pangenome from.",
             exists=True,
+            rich_help_panel="Match parameters",
         ),
     ],
+    download: bool = Download,
+    outdir: Annotated[
+        Path,
+        Outdir,
+    ] = Path("pangbank"),
     api_url: HttpUrl = ApiUrlOption,
-    download: bool = typer.Option(
-        False,
-        help="Download the pangenome.",
-    ),
-    outdir: Path = typer.Option(
-        Path("pangbank"),
-        help="Output directory for downloaded pangenomes.",
-    ),
-    progress: bool = typer.Option(
-        True,
-        help="Show progress bar while fetching pangenomes (disable with --no-progress).",
-    ),
+    progress: Annotated[
+        bool,
+        Progress,
+    ] = True,
     verbose: bool = Verbose,
 ):
     """Match a pangenome from an input genome."""
