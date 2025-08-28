@@ -39,9 +39,10 @@ dependencies = [
     "rich>=10.0.0",
     "pydantic>=2.10.0,<3.0.0",
     "pandas>=2.0.0,<3.0.0",
-    # "pangbank-api@git+ssh://git@github.com/labgem/PanGBank-api",
-    "pangbank-api @ git+https://github.com/labgem/PanGBank-api.git"
+    "pangbank-api@git+ssh://git@github.com/labgem/PanGBank-api",
 ]
+
+# "pangbank-api @ git+https://github.com/labgem/PanGBank-api.git"
 
 
 [project.optional-dependencies]
