@@ -1,6 +1,6 @@
 from pathlib import Path
-from typing import Optional
-
+from typing import Optional, TextIO
+import sys
 import typer
 from typing_extensions import Annotated
 
@@ -117,7 +117,11 @@ def verbose_callback(
 
 
 Verbose = typer.Option(
-    False, "--verbose", help="Enable verbose logging.", callback=verbose_callback
+    False,
+    "--verbose",
+    help="Enable verbose logging.",
+    callback=verbose_callback,
+    rich_help_panel="Execution settings",
 )
 
 
@@ -144,6 +148,7 @@ ApiUrlOption = typer.Option(
     envvar="PANGBANK_API_URL",
     parser=validate_api_url,
     help="URL of the PanGBank API.",
+    rich_help_panel="Execution settings",
 )
 
 
@@ -165,13 +170,14 @@ def list_collections(
 
 @app.command(no_args_is_help=True)
 def search_pangenomes(
-    api_url: HttpUrl = ApiUrlOption,
+    # Search filters
     collection: Annotated[
         Optional[str],
         typer.Option(
             "--collection",
             "-c",
-            help="Search pangenomes by collection name (e.g. 'GTDB_refseq').",
+            help="Filter pangenomes by collection name (e.g. 'GTDB_refseq').",
+            rich_help_panel="Search filters",
         ),
     ] = None,
     taxon: Annotated[
@@ -179,7 +185,8 @@ def search_pangenomes(
         typer.Option(
             "--taxon",
             "-t",
-            help="Search pangenomes by a taxon name (e.g. 'Escherichia').",
+            help="Filter pangenomes by taxon name (e.g. 'Escherichia').",
+            rich_help_panel="Search filters",
         ),
     ] = None,
     genome: Annotated[
@@ -187,31 +194,62 @@ def search_pangenomes(
         typer.Option(
             "--genome",
             "-g",
-            help="Search pangenomes by a genome assembly identifier (e.g. 'GCF_000354175.2').",
+            help="Filter pangenomes by genome assembly identifier (e.g. 'GCF_000354175.2').",
+            rich_help_panel="Search filters",
         ),
     ] = None,
-    exact_match: bool = typer.Option(
-        False,
-        help="Use exact string matching for collection, taxon, and genome instead of partial matches.",
-    ),
-    download: bool = typer.Option(
-        False,
-        help="Download HDF5 pangenome files.",
-    ),
-    outdir: Path = typer.Option(
-        Path("pangbank"),
-        help="Output directory for downloaded pangenomes.",
-    ),
-    details: bool = typer.Option(
-        False,
-        help="Display summary information for each pangenome matching the search criteria.",
-    ),
+    exact_match: Annotated[
+        bool,
+        typer.Option(
+            help="Use exact string matching instead of partial matches.",
+            rich_help_panel="Search filters",
+        ),
+    ] = False,
+    # Output and downloads
+    download: Annotated[
+        bool,
+        typer.Option(
+            help="Download HDF5 pangenome files.",
+            rich_help_panel="Output and downloads",
+        ),
+    ] = False,
+    outdir: Annotated[
+        Path,
+        typer.Option(
+            help="Output directory for downloaded pangenomes.",
+            rich_help_panel="Output and downloads",
+        ),
+    ] = Path("pangenomes"),
+    details: Annotated[
+        bool,
+        typer.Option(
+            help="Display summary information for each matching pangenome.",
+            rich_help_panel="Output and downloads",
+        ),
+    ] = False,
+    table_path: Annotated[
+        Path,
+        typer.Option(
+            "--table",
+            help=(
+                "Save a TSV table summarizing the matching pangenomes. "
+                "Use '-' to print the table to stdout."
+            ),
+            rich_help_panel="Output and downloads",
+        ),
+    ] = Path("pangenomes_information.tsv"),
+    # Execution settings
+    api_url: HttpUrl = ApiUrlOption,
     verbose: bool = Verbose,
-    progress: bool = typer.Option(
-        True,
-        help="Show progress bar while fetching pangenomes (disable with --no-progress).",
-    ),
+    progress: Annotated[
+        bool,
+        typer.Option(
+            help="Show progress bar while fetching pangenomes (disable with --no-progress).",
+            rich_help_panel="Execution settings",
+        ),
+    ] = True,
 ):
+
     """Search for pangenomes."""
 
     pangenomes = query_pangenomes(
@@ -239,19 +277,25 @@ def search_pangenomes(
         raise typer.Exit(code=1)
 
     df = format_pangenomes_to_dataframe(pangenomes)
-    output_file = outdir / "pangenomes.tsv"
 
-    logger.info(f"Saving pangenomes information to '{output_file}'")
+    if str(table_path) == "-":
+        logger.info("Printing pangenomes information as TSV table to stdout")
+        output_handle: TextIO | Path = sys.stdout
+    else:
+        logger.info(f"Saving pangenomes information as TSV table to file: {table_path}")
+        output_handle: TextIO | Path = table_path
 
-    outdir.mkdir(parents=True, exist_ok=True)
-    df.to_csv(output_file, index=False, sep="\t")
+    df.to_csv(output_handle, index=False, sep="\t")
 
     if details:
         display_pangenome_summary_by_collection(pangenomes, True)
         print_pangenome_info(pangenomes)
 
     if download:
-        download_pangenomes(api_url, pangenomes, outdir)
+        outdir.mkdir(parents=True, exist_ok=True)
+        download_pangenomes(
+            api_url, pangenomes, outdir, disable_progress_bar=not progress
+        )
 
 
 @app.command(no_args_is_help=True)

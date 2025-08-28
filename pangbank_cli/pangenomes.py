@@ -477,9 +477,8 @@ def download_pangenomes(
     disable_progress_bar: bool = False,
 ):
 
-    pangenomes_outdir = outdir / "pangenomes"
     logger.info(
-        f"Downloading {len(pangenomes)} pangenome file{'' if len(pangenomes) == 1 else 's'} to '{pangenomes_outdir}/'"
+        f"Downloading {len(pangenomes)} pangenome file{'' if len(pangenomes) == 1 else 's'} to '{outdir}/'"
     )
     with Progress(disable=disable_progress_bar) as progress:
         task = progress.add_task("Downloading pangenome", total=len(pangenomes))
@@ -493,8 +492,7 @@ def download_pangenomes(
                 " ", "_"
             )
             output_file_path = (
-                pangenomes_outdir
-                / f"{collection_name}_{last_taxon}_id{pangenome.id}.h5"
+                outdir / f"{collection_name}_{last_taxon}_id{pangenome.id}.h5"
             )
             output_file_path.parent.mkdir(parents=True, exist_ok=True)
             get_pangenome_file(
@@ -507,6 +505,6 @@ def download_pangenomes(
             progress.update(task, advance=1)
 
     logger.info(
-        f"Successfully downloaded {len(pangenomes)} pangenome file{'' if len(pangenomes) == 1 else 's'} to '{pangenomes_outdir}/'."
+        f"Successfully downloaded {len(pangenomes)} pangenome file{'' if len(pangenomes) == 1 else 's'} to '{outdir}/'."
     )
-    return pangenomes_outdir
+    return outdir

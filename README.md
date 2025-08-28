@@ -98,7 +98,7 @@ pangbank search-pangenomes --taxon "g__Chlamydia" \
     --download
 ```
 
-Searches for **Chlamydia** pangenomes in the `GTDB_refseq` collection, then downloads the corresponding pangenome files into `Chlamydia_pangenomes/pangenomes/`.
+Searches for **Chlamydia** pangenomes in the `GTDB_refseq` collection, then downloads the corresponding pangenome files into `Chlamydia_pangenomes/`.
 
 
 ### Match a genome to an existing pangenome
