@@ -1,22 +1,36 @@
 name: Rich-codex
 on: [push]
+
 jobs:
   rich_codex:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repo
-        uses: actions/checkout@v4
+      # 1️⃣ Checkout repo
+      - uses: actions/checkout@v4
 
-      - name: Patch pyproject.toml to use HTTPS with token
+      # 2️⃣ Install Python
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      # 3️⃣ Temporarily patch the SSH URL to HTTPS using GITHUB_TOKEN
+      - name: Install dependencies using HTTPS for private repo
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          sed -i "s|git+ssh://git@github.com/labgem/PanGBank-api|git+https://x-access-token:${GITHUB_TOKEN}@github.com/labgem/PanGBank-api.git|g" pyproject.toml
-          cat pyproject.toml
+          # Backup original pyproject.toml
+          cp pyproject.toml pyproject.toml.bak
 
-      - name: Install your custom tools
-        run: pip install .
-      
+          # Replace SSH with HTTPS using token
+          sed -i "s|git+ssh://git@github.com/labgem/PanGBank-api.git|git+https://x-access-token:${GITHUB_TOKEN}@github.com/labgem/PanGBank-api.git|g" pyproject.toml
+
+          # Install dependencies
+          pip install .
+
+          # Restore original pyproject.toml so SSH URL remains for devs
+          mv pyproject.toml.bak pyproject.toml
+
+      # 4️⃣ Run your Rich-codex step
       - name: Generate terminal images with rich-codex
         uses: ewels/rich-codex@v1
         with:
