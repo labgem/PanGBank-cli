@@ -7,6 +7,18 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
+    #   - name: Patch pyproject.toml to use HTTPS
+    #     run: |
+    #       sed -i "s|git+ssh://git@github.com/labgem/PanGBank-api.git|git+https://${GITHUB_TOKEN}@github.com/labgem/PanGBank-api.git|g" pyproject.toml
+    #       cat pyproject.toml
+
+      # Configure Git to use the token for github.com
+      - name: Configure git authentication
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
+
       - name: Install your custom tools
         run: pip install .
 
