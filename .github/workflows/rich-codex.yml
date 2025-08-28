@@ -8,27 +8,13 @@ jobs:
       # 1️⃣ Checkout repo
       - uses: actions/checkout@v4
 
-      # 2️⃣ Install Python
-      - uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-
-      # 3️⃣ Temporarily patch the SSH URL to HTTPS using GITHUB_TOKEN
-      - name: Install dependencies using HTTPS for private repo
+      - name: Install all dependencies including private repo
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Backup original pyproject.toml
-          cp pyproject.toml pyproject.toml.bak
+            pip install "pangbank-api@git+https://x-access-token:${GITHUB_TOKEN}@github.com/labgem/PanGBank-api.git"
+            pip install .
 
-          # Replace SSH with HTTPS using token
-          sed -i "s|git+ssh://git@github.com/labgem/PanGBank-api.git|git+https://x-access-token:${GITHUB_TOKEN}@github.com/labgem/PanGBank-api.git|g" pyproject.toml
-
-          # Install dependencies
-          pip install .
-
-          # Restore original pyproject.toml so SSH URL remains for devs
-          mv pyproject.toml.bak pyproject.toml
 
       # 4️⃣ Run your Rich-codex step
       - name: Generate terminal images with rich-codex
