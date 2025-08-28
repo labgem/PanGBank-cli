@@ -9,12 +9,12 @@ jobs:
 
       # Configure Git to use the token for github.com
       - name: Patch pyproject.toml to use HTTPS and Configure git authentication
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
             sed -i "s|git+ssh://git@github.com/labgem/PanGBank-api|git+https://${GITHUB_TOKEN}@github.com/labgem/PanGBank-api.git|g" pyproject.toml
             cat pyproject.toml
       - name: Install your custom tools
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pip install .
 
       - name: Generate terminal images with rich-codex
