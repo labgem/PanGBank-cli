@@ -18,7 +18,6 @@ from operator import attrgetter
 from rich.console import Console
 from rich.progress import Progress
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -96,6 +95,7 @@ def query_pangenomes(
         substring_taxon_match=substring_taxon_match,
         genome_name=genome_name,
     )
+
     filter_logs = [
         f"{param}={value}"
         for param, value in filter_params.model_dump(exclude_none=True).items()

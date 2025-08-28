@@ -70,7 +70,9 @@ def format_collections_to_dataframe(
                         "Description": collection.description,
                         "Latest release": release.version,
                         "Release date": release.date.strftime("%d %b %Y"),
-                        "Taxonomy": f"{release.taxonomy_source.name}:{release.taxonomy_source.version}",
+                        "Taxonomy": (
+                            f"{release.taxonomy_source.name}:{release.taxonomy_source.version}"
+                        ),
                         "Pangenome Count": release.pangenome_count,
                     }
                 )

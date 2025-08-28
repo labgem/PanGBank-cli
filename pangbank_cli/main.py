@@ -253,7 +253,6 @@ def search_pangenomes(
         Progress,
     ] = True,
 ):
-
     """Search for pangenomes."""
 
     pangenomes = query_pangenomes(
@@ -267,6 +266,7 @@ def search_pangenomes(
     )
 
     if not pangenomes:
+
         if collection is not None:
             collections = query_collections(api_url)
             existing_collection_names = [c.name for c in collections]
