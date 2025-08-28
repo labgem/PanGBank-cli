@@ -190,6 +190,10 @@ def search_pangenomes(
             help="Search pangenomes by a genome assembly identifier (e.g. 'GCF_000354175.2').",
         ),
     ] = None,
+    exact_match: bool = typer.Option(
+        False,
+        help="Use exact string matching for collection, taxon, and genome instead of partial matches.",
+    ),
     download: bool = typer.Option(
         False,
         help="Download HDF5 pangenome files.",
@@ -213,7 +217,7 @@ def search_pangenomes(
     pangenomes = query_pangenomes(
         api_url,
         taxon_name=taxon,
-        substring_taxon_match=True,
+        substring_taxon_match=not exact_match,
         collection_name=collection,
         genome_name=genome,
         only_latest_release=True,
