@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+
+### Added
+
+- Added `--table` option to search-pangenomes for exporting results as a TSV table
+
 ### Changed
 
 - Change the match-pangenome command option '--input_genome' by '--input-genome'
