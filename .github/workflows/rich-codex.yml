@@ -5,18 +5,15 @@ jobs:
   rich_codex:
     runs-on: ubuntu-latest
     steps:
-      # 1️⃣ Checkout repo
       - uses: actions/checkout@v4
 
       - name: Install all dependencies including private repo
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-            pip install "pangbank-api@git+https://x-access-token:${GITHUB_TOKEN}@github.com/labgem/PanGBank-api.git"
+            pip install "git+https://x-access-token:${GITHUB_TOKEN}@github.com/labgem/PanGBank-api.git"
             pip install .
 
-
-      # 4️⃣ Run your Rich-codex step
       - name: Generate terminal images with rich-codex
         uses: ewels/rich-codex@v1
         with:
