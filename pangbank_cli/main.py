@@ -323,7 +323,10 @@ def match_pangenome(
             rich_help_panel="Match parameters",
         ),
     ],
-    download: bool = Download,
+    download: Annotated[
+        bool,
+        Download,
+    ] = False,
     outdir: Annotated[
         Path,
         Outdir,
