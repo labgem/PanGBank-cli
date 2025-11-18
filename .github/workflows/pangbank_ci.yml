@@ -12,9 +12,6 @@ on:
     
 jobs:
   build:
-    defaults:
-      run:
-        shell: bash -el {0}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
