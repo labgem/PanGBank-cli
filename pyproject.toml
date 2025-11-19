@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 
 [project]
-name = "pangbank"
+name = "PanGBank-cli"
 description = "Command-line tool for retrieving pangenomes using the PanGBank API. "
 dynamic = ["version"]
 authors = [
