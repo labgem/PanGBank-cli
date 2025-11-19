@@ -60,7 +60,7 @@ jobs:
       id-token: write
     environment:
       name: testpypi
-      url: https://test.pypi.org/project/pangbank/
+      url: https://test.pypi.org/project/pangbank-cli/
       
     steps:
       - name: Retrieve release distributions
@@ -83,7 +83,7 @@ jobs:
       id-token: write
     environment:
       name: pypi
-      url: https://pypi.org/project/pangbank/
+      url: https://pypi.org/project/pangbank-cli/
       
     steps:
       - name: Retrieve release distributions
