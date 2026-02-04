@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Mash sketch files are now validated using MD5 checksum to ensure integrity
+- Added `--table-path` option to save TSV output to a file
+- Added `--no-table` flag to disable table output completely
+
+### Changed
+
+- Table output now defaults to stdout instead of a file (previous default was `pangenomes_information.tsv`)
+- Renamed `--table` option to `--table-path` for clarity
 
 ## [0.1.1] - 2025-11-09
 

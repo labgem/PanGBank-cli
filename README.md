@@ -119,9 +119,9 @@ pangbank search-pangenomes --taxon "g__Escherichia"
 ```
 
 Searches PanGBank for pangenomes matching the given taxon.
-Results are saved as a **TSV file** named 'pangenomes_information.tsv' by default containing summary metrics for the matching pangenomes.
+Results are printed to **stdout** as a TSV table by default. Use `--table-path <file>` to save to a file instead (e.g., `--table-path pangenomes_information.tsv`), or `--no-table` to disable table output.
 
-![`pangbank search-pangenomes --taxon "g__Escherichia" --no-progress`](docs/img/pangbank-search-pangenomes_taxon_Escherichia.svg)
+![`pangbank search-pangenomes --taxon "g__Escherichia" --no-progress --table-path pangenome_information.tsv`](docs/img/pangbank-search-pangenomes_taxon_Escherichia.svg)
 
 ### Download pangenomes
 
