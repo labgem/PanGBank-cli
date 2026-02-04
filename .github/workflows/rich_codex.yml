@@ -2,22 +2,15 @@ name: Rich-codex
 on:
   # Run when changes are pushed to any branch
   push:
-  # Run when a PR is closed and merged into main
-  pull_request:
-    types: [closed]
-    branches:
-      - main
   # Allow manual workflow trigger
   workflow_dispatch:
 
 jobs:
   rich_codex:
-    # Run if: manual trigger, commit has [screenshots], on main branch, or merged PR to main
+    # Run if: manual trigger or commit message contains [screenshots]
     if: |
       github.event_name == 'workflow_dispatch' ||
-      contains(github.event.head_commit.message, '[screenshots]') ||
-      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+      contains(github.event.head_commit.message, '[screenshots]')
     runs-on: ubuntu-latest
     env:
       FORCE_COLOR: "true"
