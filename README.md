@@ -1,7 +1,6 @@
 [![PyPI version](https://badge.fury.io/py/pangbank-cli.svg?cache-control=no-cache)](https://pypi.org/project/pangbank-cli/) [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/pangbank-cli/README.html) [![Anaconda-Server Badge](https://anaconda.org/bioconda/pangbank-cli/badges/version.svg)](https://anaconda.org/bioconda/pangbank-cli) [![Anaconda-Server Badge](https://anaconda.org/bioconda/pangbank-cli/badges/license.svg)](https://anaconda.org/bioconda/pangbank-cli)
 
 
-
 # PanGBank-cli
 
 **PanGBank-cli** is a command-line interface to **search, retrieve, and download pangenomes** from [PanGBank](https://pangbank.genoscope.cns.fr/) via the [PanGBank REST API](https://pangbank-api.genoscope.cns.fr/).
