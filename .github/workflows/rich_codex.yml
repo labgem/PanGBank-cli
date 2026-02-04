@@ -14,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       FORCE_COLOR: "true"
+      TERMINAL_WIDTH: 110
+
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
