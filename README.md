@@ -93,6 +93,15 @@ This will display the list of available commands and options.
 
 ![`pangbank --help`](docs/img/pangbank-help.svg)
 
+Each command has a dedicated help section. For example:
+
+```bash
+pangbank search-pangenomes --help
+```
+
+![`pangbank search-pangenomes --help`](docs/img/pangbank-search-pangenomes_help.svg)
+
+
 ### List available collections
 
 ```bash
@@ -112,7 +121,6 @@ pangbank search-pangenomes --taxon "g__Escherichia"
 Searches PanGBank for pangenomes matching the given taxon.
 Results are saved as a **TSV file** named 'pangenomes_information.tsv' by default containing summary metrics for the matching pangenomes.
 
-<!-- RICH-CODEX {use_pty: true} -->
 ![`pangbank search-pangenomes --taxon "g__Escherichia"`](docs/img/pangbank-search-pangenomes_taxon_Escherichia.svg)
 
 ### Download pangenomes

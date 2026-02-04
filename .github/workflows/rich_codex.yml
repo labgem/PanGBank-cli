@@ -3,6 +3,8 @@ on: [push]
 jobs:
   rich_codex:
     runs-on: ubuntu-latest
+    env:
+      FORCE_COLOR: "true"
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
