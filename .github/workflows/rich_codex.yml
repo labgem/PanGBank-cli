@@ -1,5 +1,15 @@
 name: Rich-codex
-on: [push]
+on:
+  # Run when changes are pushed to main branch (e.g., when PRs are merged)
+  push:
+    branches:
+      - main
+    paths:
+      - "README.md"
+      - pangbank_cli/*.py
+  # Allow manual workflow trigger
+  workflow_dispatch:
+
 jobs:
   rich_codex:
     runs-on: ubuntu-latest
