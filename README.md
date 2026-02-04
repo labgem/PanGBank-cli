@@ -1,3 +1,7 @@
+[![PyPI version](https://badge.fury.io/py/pangbank-cli.svg?cache-control=no-cache)](https://pypi.org/project/pangbank-cli/) [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/pangbank-cli/README.html) [![Anaconda-Server Badge](https://anaconda.org/bioconda/pangbank-cli/badges/version.svg)](https://anaconda.org/bioconda/pangbank-cli) [![Anaconda-Server Badge](https://anaconda.org/bioconda/pangbank-cli/badges/license.svg)](https://anaconda.org/bioconda/pangbank-cli)
+
+
+
 # PanGBank-cli
 
 **PanGBank-cli** is a command-line interface to **search, retrieve, and download pangenomes** from [PanGBank](https://pangbank.genoscope.cns.fr/) via the [PanGBank REST API](https://pangbank-api.genoscope.cns.fr/).
@@ -18,9 +22,27 @@ For interactive exploration, you can also browse PanGBank collections through th
 
 ## Installation
 
+### Option 1: Install from Bioconda
 
-### Option 1: Install using `conda`
+The easiest way to install PanGBank-cli with all dependencies (including Mash):
 
+```bash
+conda create -n pangbank-cli pangbank-cli
+conda activate pangbank-cli
+```
+
+### Option 2: Install from PyPI
+
+Install using pip:
+
+```bash
+pip install PanGBank-cli
+```
+
+> \[!WARNING]
+> Installing **PanGBank-cli** with pip will only set up the Python dependencies. The external tool [**Mash**](https://github.com/marbl/Mash) (required for the `match-pangenome` command) is **not** included and must be installed separately to enable full functionality.
+
+### Option 3: Install from source using `conda`
 
 ```bash
 # Create a new conda environment with Python
@@ -37,8 +59,7 @@ cd PanGBank-cli
 pip install .
 ```
 
-### Option 2: Install with `pip`
-
+### Option 4: Install from source with `pip`
 
 ```bash
 # Clone the repository
@@ -57,7 +78,7 @@ pip install .
 ```
 
 > \[!WARNING]
-> Installing **PanGBank-cli** with this method will only set up the Python dependencies. The external tool [**Mash**](https://github.com/marbl/Mash) (required for the `match-pangenome` command) is **not** included and must be installed separately to enable full functionality.
+> Installing **PanGBank-cli** from source with pip will only set up the Python dependencies. The external tool [**Mash**](https://github.com/marbl/Mash) (required for the `match-pangenome` command) is **not** included and must be installed separately to enable full functionality.
 
 
 ## Usage
