@@ -121,7 +121,7 @@ pangbank search-pangenomes --taxon "g__Escherichia"
 Searches PanGBank for pangenomes matching the given taxon.
 Results are saved as a **TSV file** named 'pangenomes_information.tsv' by default containing summary metrics for the matching pangenomes.
 
-![`pangbank search-pangenomes --taxon "g__Escherichia"`](docs/img/pangbank-search-pangenomes_taxon_Escherichia.svg)
+![`pangbank search-pangenomes --taxon "g__Escherichia" --no-progress`](docs/img/pangbank-search-pangenomes_taxon_Escherichia.svg)
 
 ### Download pangenomes
 
@@ -134,14 +134,13 @@ pangbank search-pangenomes --taxon "g__Chlamydia" \
 
 Searches for **Chlamydia** pangenomes in the `GTDB_refseq` collection, then downloads the corresponding pangenome files into `Chlamydia_pangenomes/`.
 
-![`pangbank search-pangenomes --taxon "g__Chlamydia" --collection GTDB_refseq --outdir Chlamydia_pangenomes/ --download`](docs/img/pangbank-search-pangenomes_taxon_Chlamydia_download.svg)
+![`pangbank search-pangenomes --taxon "g__Chlamydia" --collection GTDB_refseq --outdir Chlamydia_pangenomes/ --download --no-progress`](docs/img/pangbank-search-pangenomes_taxon_Chlamydia_download.svg)
 
 ### Match a genome to an existing pangenome
 
 ```bash
 pangbank match-pangenome --input-genome <genome.fasta> --collection GTDB_all
 ```
-
 
 Matches the given input genome (FASTA format) to the most similar pangenome in the selected collection using [**Mash**](https://github.com/marbl/Mash) and a precomputed sketch of the collection to identify the closest pangenome.
 The command outputs detailed information about the best matching pangenome.
