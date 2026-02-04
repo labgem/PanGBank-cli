@@ -55,7 +55,6 @@ def get_mash_sketch_file(
     output_file_path.parent.mkdir(parents=True, exist_ok=True)
 
     if output_file_path.exists():
-        # TODO apply when md5 will be in CollectionReleasePublicWithCount model
         md5_hash_existing_file = compute_md5(output_file_path)
         if md5_hash_existing_file == latest_release.mash_sketch_md5sum:
             logger.info(
