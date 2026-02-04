@@ -15,7 +15,7 @@ from pangbank_cli.pangenomes import (
     print_pangenome_info,
 )
 
-# from pangbank_cli.utils import compute_md5
+from pangbank_cli.utils import compute_md5
 
 
 logger = logging.getLogger(__name__)
@@ -56,16 +56,16 @@ def get_mash_sketch_file(
 
     if output_file_path.exists():
         # TODO apply when md5 will be in CollectionReleasePublicWithCount model
-        # md5_hash_existing_file = compute_md5(output_file_path)
-        # if md5_hash_existing_file == latest_release.mash_sketch_md5sum:
-        logger.info(
-            f"Mash sketch file for collection '{collection.name}' already exists at '{output_file_path}'. No re-download."
-        )
-        return output_file_path
-        # else:
-        #     logger.warning(
-        #         f"Mash sketch file for collection '{collection.name}' exists but MD5 mismatch. Re-downloading."
-        #     )
+        md5_hash_existing_file = compute_md5(output_file_path)
+        if md5_hash_existing_file == latest_release.mash_sketch_md5sum:
+            logger.info(
+                f"Mash sketch file for collection '{collection.name}' already exists at '{output_file_path}'. No re-download."
+            )
+            return output_file_path
+        else:
+            logger.warning(
+                f"Mash sketch file for collection '{collection.name}' exists but MD5 mismatch. Re-downloading."
+            )
 
     logger.info(
         f"Downloading mash sketch file for collection to '{collection.name}' release {latest_release.version}"
