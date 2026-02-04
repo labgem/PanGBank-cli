@@ -107,7 +107,9 @@ pangbank search-pangenomes --help
 pangbank list-collections
 ```
 
-Displays all pangenome collections available in PanGBank, along with their description and the number of pangenomes they contain.
+Displays the list all pangenome collections available in PanGBank, along with their description and the number of pangenomes they contain.
+
+Output is formatted as a rich table in the terminal, or as plain TSV when redirected (e.g., `pangbank list-collections > collections.tsv`).
 
 <!-- RICH-CODEX hide_command: true -->
 ![`TERMINAL_WIDTH=110 pangbank list-collections`](docs/img/pangbank-list-collections.svg)
@@ -119,7 +121,7 @@ pangbank search-pangenomes --taxon "g__Escherichia"
 ```
 
 Searches PanGBank for pangenomes matching the given taxon.
-Results are printed to **stdout** as a TSV table by default. Use `--table-path <file>` to save to a file instead (e.g., `--table-path pangenomes_information.tsv`), or `--no-table` to disable table output.
+Results are printed to **stdout** as plain TSV by default (suitable for piping or redirection). Use `--table-path <file>` to save directly to a file (e.g., `--table-path pangenomes_information.tsv`), or `--no-table` to disable table output.
 
 
 ![`pangbank search-pangenomes --taxon "g__Escherichia" --no-progress --table-path pangenome_information.tsv`](docs/img/pangbank-search-pangenomes_taxon_Escherichia.svg)
