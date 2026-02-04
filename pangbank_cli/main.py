@@ -234,17 +234,24 @@ def search_pangenomes(
             rich_help_panel="Output and downloads",
         ),
     ] = False,
-    table_path: Annotated[
-        Path,
+    table: Annotated[
+        bool,
         typer.Option(
-            "--table",
+            help="Output a TSV table summarizing the matching pangenomes to stdout.",
+            rich_help_panel="Output and downloads",
+        ),
+    ] = True,
+    table_path: Annotated[
+        Optional[Path],
+        typer.Option(
+            "--table-path",
             help=(
-                "Save a TSV table summarizing the matching pangenomes. "
-                "Use '-' to print the table to stdout."
+                "Save TSV table to a file instead of stdout (e.g., pangenomes_information.tsv). "
+                "Implies --table."
             ),
             rich_help_panel="Output and downloads",
         ),
-    ] = Path("pangenomes_information.tsv"),
+    ] = None,
     # Execution settings
     api_url: HttpUrl = ApiUrlOption,
     verbose: bool = Verbose,
@@ -282,14 +289,18 @@ def search_pangenomes(
 
     df = format_pangenomes_to_dataframe(pangenomes)
 
-    if str(table_path) == "-":
-        logger.info("Printing pangenomes information as TSV table to stdout")
-        output_handle: TextIO | Path = sys.stdout
-    else:
-        logger.info(f"Saving pangenomes information as TSV table to file: {table_path}")
-        output_handle: TextIO | Path = table_path
+    # Output table if enabled
+    if table or table_path is not None:
+        if table_path is not None:
+            logger.info(
+                f"Saving pangenomes information as TSV table to file: {table_path}"
+            )
+            output_handle: TextIO | Path = table_path
+        else:
+            logger.info("Printing pangenomes information as TSV table to stdout")
+            output_handle: TextIO | Path = sys.stdout
 
-    df.to_csv(output_handle, index=False, sep="\t")
+        df.to_csv(output_handle, index=False, sep="\t")
 
     if details:
         display_pangenome_summary_by_collection(pangenomes, True)
