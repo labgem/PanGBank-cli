@@ -110,7 +110,7 @@ pangbank list-collections
 
 Displays all pangenome collections available in PanGBank, along with their description and the number of pangenomes they contain.
 
-![`pangbank list-collections`](docs/img/pangbank-list-collections.svg)
+![`TERMINAL_WIDTH=120 pangbank list-collections`](docs/img/pangbank-list-collections.svg)
 
 ### Search for pangenomes
 
