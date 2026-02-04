@@ -101,6 +101,7 @@ pangbank list-collections
 
 Displays all pangenome collections available in PanGBank, along with their description and the number of pangenomes they contain.
 
+![`pangbank list-collections`](docs/img/pangbank-list-collections.svg)
 
 ### Search for pangenomes
 
@@ -111,6 +112,7 @@ pangbank search-pangenomes --taxon "g__Escherichia"
 Searches PanGBank for pangenomes matching the given taxon.
 Results are saved as a **TSV file** named 'pangenomes_information.tsv' by default containing summary metrics for the matching pangenomes.
 
+![`pangbank search-pangenomes --taxon "g__Escherichia"`](docs/img/pangbank-search-pangenomes_taxon_Escherichia.svg)
 
 ### Download pangenomes
 
@@ -123,6 +125,7 @@ pangbank search-pangenomes --taxon "g__Chlamydia" \
 
 Searches for **Chlamydia** pangenomes in the `GTDB_refseq` collection, then downloads the corresponding pangenome files into `Chlamydia_pangenomes/`.
 
+![`pangbank search-pangenomes --taxon "g__Chlamydia" --collection GTDB_refseq --outdir Chlamydia_pangenomes/ --download`](docs/img/pangbank-search-pangenomes_taxon_Chlamydia_download.svg)
 
 ### Match a genome to an existing pangenome
 
