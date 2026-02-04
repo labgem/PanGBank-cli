@@ -91,7 +91,7 @@ pangbank --help
 
 This will display the list of available commands and options.
 
-![`pangbank --help`](../img/pangbank-help.svg)
+![`pangbank --help`](docs/img/pangbank-help.svg)
 
 ### List available collections
 
