@@ -111,8 +111,6 @@ Displays the list all pangenome collections available in PanGBank, along with th
 
 Output is formatted as a rich table in the terminal, or as plain TSV when redirected (e.g., `pangbank list-collections > collections.tsv`).
 
-<!-- RICH-CODEX hide_command: true -->
-![`TERMINAL_WIDTH=110 pangbank list-collections`](docs/img/pangbank-list-collections.svg)
 
 ### Search for pangenomes
 
