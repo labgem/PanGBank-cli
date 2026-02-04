@@ -8,6 +8,7 @@ import pandas as pd
 import logging
 import shutil
 import yaml
+import os
 from rich.syntax import Syntax
 
 logger = logging.getLogger(__name__)
@@ -19,7 +20,15 @@ def print_dataframe_as_rich_table(df: pd.DataFrame, title: Optional[str] = None)
         print("No data available.")
         return
 
-    console = Console(stderr=True)
+    # Get terminal width from environment variable if set and valid
+    terminal_width = None
+    if "TERMINAL_WIDTH" in os.environ:
+        try:
+            terminal_width = int(os.environ["TERMINAL_WIDTH"])
+        except ValueError:
+            pass  # If not a valid integer, keep None
+
+    console = Console(stderr=True, width=terminal_width)
     table = Table(
         title=title,
         show_header=True,

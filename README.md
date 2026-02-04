@@ -1,7 +1,6 @@
 [![PyPI version](https://badge.fury.io/py/pangbank-cli.svg?cache-control=no-cache)](https://pypi.org/project/pangbank-cli/) [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/pangbank-cli/README.html) [![Anaconda-Server Badge](https://anaconda.org/bioconda/pangbank-cli/badges/version.svg)](https://anaconda.org/bioconda/pangbank-cli) [![Anaconda-Server Badge](https://anaconda.org/bioconda/pangbank-cli/badges/license.svg)](https://anaconda.org/bioconda/pangbank-cli)
 
 
-
 # PanGBank-cli
 
 **PanGBank-cli** is a command-line interface to **search, retrieve, and download pangenomes** from [PanGBank](https://pangbank.genoscope.cns.fr/) via the [PanGBank REST API](https://pangbank-api.genoscope.cns.fr/).
@@ -91,6 +90,17 @@ pangbank --help
 
 This will display the list of available commands and options.
 
+![`pangbank --help`](docs/img/pangbank-help.svg)
+
+Each command has a dedicated help section. For example:
+
+```bash
+pangbank search-pangenomes --help
+```
+
+![`pangbank search-pangenomes --help`](docs/img/pangbank-search-pangenomes_help.svg)
+
+
 ### List available collections
 
 ```bash
@@ -99,6 +109,8 @@ pangbank list-collections
 
 Displays all pangenome collections available in PanGBank, along with their description and the number of pangenomes they contain.
 
+<!-- RICH-CODEX hide_command: true -->
+![`TERMINAL_WIDTH=110 pangbank list-collections`](docs/img/pangbank-list-collections.svg)
 
 ### Search for pangenomes
 
@@ -109,6 +121,7 @@ pangbank search-pangenomes --taxon "g__Escherichia"
 Searches PanGBank for pangenomes matching the given taxon.
 Results are saved as a **TSV file** named 'pangenomes_information.tsv' by default containing summary metrics for the matching pangenomes.
 
+![`pangbank search-pangenomes --taxon "g__Escherichia" --no-progress`](docs/img/pangbank-search-pangenomes_taxon_Escherichia.svg)
 
 ### Download pangenomes
 
@@ -121,13 +134,13 @@ pangbank search-pangenomes --taxon "g__Chlamydia" \
 
 Searches for **Chlamydia** pangenomes in the `GTDB_refseq` collection, then downloads the corresponding pangenome files into `Chlamydia_pangenomes/`.
 
+![`pangbank search-pangenomes --taxon "g__Chlamydia" --collection GTDB_refseq --outdir Chlamydia_pangenomes/ --download --no-progress`](docs/img/pangbank-search-pangenomes_taxon_Chlamydia_download.svg)
 
 ### Match a genome to an existing pangenome
 
 ```bash
 pangbank match-pangenome --input-genome <genome.fasta> --collection GTDB_all
 ```
-
 
 Matches the given input genome (FASTA format) to the most similar pangenome in the selected collection using [**Mash**](https://github.com/marbl/Mash) and a precomputed sketch of the collection to identify the closest pangenome.
 The command outputs detailed information about the best matching pangenome.
