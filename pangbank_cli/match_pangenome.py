@@ -78,6 +78,11 @@ def get_mash_sketch_file(
         raise FileNotFoundError(
             f"Failed to download mash sketch file to '{output_file_path}'"
         )
+    md5_hash_downloaded_file = compute_md5(output_file_path)
+    if md5_hash_downloaded_file != latest_release.mash_sketch_md5sum:
+        raise ValueError(
+            f"MD5 checksum mismatch for downloaded mash sketch file '{output_file_path}'."
+        )
 
     return output_file_path
 
