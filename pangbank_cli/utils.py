@@ -28,7 +28,7 @@ def print_dataframe_as_rich_table(df: pd.DataFrame, title: Optional[str] = None)
         except ValueError:
             pass  # If not a valid integer, keep None
 
-    console = Console(stderr=True, width=terminal_width)
+    console = Console(width=terminal_width)
     table = Table(
         title=title,
         show_header=True,

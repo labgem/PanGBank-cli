@@ -174,7 +174,13 @@ def list_collections(
     logger.info(f"Found {len(collections)} collections in PanGBank.")
 
     df = format_collections_to_dataframe(collections)
-    print_dataframe_as_rich_table(df, title="Available collections of PanGBank:")
+
+    # Use rich formatting if interactive terminal, plain TSV if redirected
+    if sys.stdout.isatty():
+        print_dataframe_as_rich_table(df, title="Available collections of PanGBank:")
+    else:
+        df.to_csv(sys.stdout, index=False, sep="\t")
+
     print_yaml = False
     if print_yaml:
         yaml_collections = format_collections_to_yaml(collections)
