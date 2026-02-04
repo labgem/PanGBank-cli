@@ -17,7 +17,6 @@ from pangbank_cli.pangenomes import (
 
 from pangbank_cli.utils import compute_md5
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -80,7 +79,6 @@ def get_mash_sketch_file(
             f"Failed to download mash sketch file to '{output_file_path}'"
         )
 
-    # TODO check if md5 matches when md5 is available in CollectionReleasePublicWithCount
     return output_file_path
 
 
