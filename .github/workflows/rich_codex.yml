@@ -1,31 +1,23 @@
 name: Rich-codex
 on:
-  # Run when changes are pushed to main branch (e.g., when PRs are merged)
+  # Run when changes are pushed to any branch
   push:
-    branches:
-      - main
-    paths:
-      - "README.md"
-      - pangbank_cli/*.py
   # Run when a PR is closed and merged into main
   pull_request:
     types: [closed]
     branches:
       - main
-    paths:
-      - "README.md"
-      - pangbank_cli/*.py
   # Allow manual workflow trigger
   workflow_dispatch:
 
 jobs:
   rich_codex:
-    # Only run if it's a direct push to main, a merged PR, or manually triggered
+    # Run if: manual trigger, commit has [screenshots], on main branch, or merged PR to main
     if: |
       github.event_name == 'workflow_dispatch' ||
-      github.event_name == 'push' ||
-      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
-      contains(github.event.head_commit.message, '[screenshots]')
+      contains(github.event.head_commit.message, '[screenshots]') ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     runs-on: ubuntu-latest
     env:
       FORCE_COLOR: "true"
