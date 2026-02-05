@@ -118,11 +118,12 @@ Output is formatted as a rich table in the terminal, or as plain TSV when redire
 pangbank search-pangenomes --taxon "g__Escherichia"
 ```
 
-Searches PanGBank for pangenomes matching the given taxon.
+![`pangbank search-pangenomes --taxon "g__Escherichia" --no-progress --table-path pangenome_information.tsv`](docs/img/pangbank-search-pangenomes_taxon_Escherichia.svg)
+
+
+This command searches PanGBank for pangenomes matching the given taxon.
 Results are printed to **stdout** as plain TSV by default (suitable for piping or redirection). Use `--table-path <file>` to save directly to a file (e.g., `--table-path pangenomes_information.tsv`), or `--no-table` to disable table output.
 
-
-![`pangbank search-pangenomes --taxon "g__Escherichia" --no-progress --table-path pangenome_information.tsv`](docs/img/pangbank-search-pangenomes_taxon_Escherichia.svg)
 
 ### Download pangenomes
 
@@ -133,9 +134,10 @@ pangbank search-pangenomes --taxon "g__Chlamydia" \
     --download
 ```
 
-Searches for **Chlamydia** pangenomes in the `GTDB_refseq` collection, then downloads the corresponding pangenome files into `Chlamydia_pangenomes/`.
-
 ![`pangbank search-pangenomes --taxon "g__Chlamydia" --collection GTDB_refseq --outdir Chlamydia_pangenomes/ --download --no-progress`](docs/img/pangbank-search-pangenomes_taxon_Chlamydia_download.svg)
+
+This command searches for **Chlamydia** pangenomes in the `GTDB_refseq` collection, then downloads the corresponding pangenome files into `Chlamydia_pangenomes/`.
+
 
 ### Match a genome to an existing pangenome
 
