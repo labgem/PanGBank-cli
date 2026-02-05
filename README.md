@@ -107,10 +107,10 @@ pangbank search-pangenomes --help
 pangbank list-collections
 ```
 
-Displays all pangenome collections available in PanGBank, along with their description and the number of pangenomes they contain.
+Displays the list all pangenome collections available in PanGBank, along with their description and the number of pangenomes they contain.
 
-<!-- RICH-CODEX hide_command: true -->
-![`TERMINAL_WIDTH=110 pangbank list-collections`](docs/img/pangbank-list-collections.svg)
+Output is formatted as a rich table in the terminal, or as plain TSV when redirected (e.g., `pangbank list-collections > collections.tsv`).
+
 
 ### Search for pangenomes
 
@@ -118,10 +118,12 @@ Displays all pangenome collections available in PanGBank, along with their descr
 pangbank search-pangenomes --taxon "g__Escherichia"
 ```
 
-Searches PanGBank for pangenomes matching the given taxon.
-Results are saved as a **TSV file** named 'pangenomes_information.tsv' by default containing summary metrics for the matching pangenomes.
+![`pangbank search-pangenomes --taxon "g__Escherichia" --no-progress --table-path pangenome_information.tsv`](docs/img/pangbank-search-pangenomes_taxon_Escherichia.svg)
 
-![`pangbank search-pangenomes --taxon "g__Escherichia" --no-progress`](docs/img/pangbank-search-pangenomes_taxon_Escherichia.svg)
+
+This command searches PanGBank for pangenomes matching the given taxon.
+Results are printed to **stdout** as plain TSV by default (suitable for piping or redirection). Use `--table-path <file>` to save directly to a file (e.g., `--table-path pangenomes_information.tsv`), or `--no-table` to disable table output.
+
 
 ### Download pangenomes
 
@@ -132,9 +134,10 @@ pangbank search-pangenomes --taxon "g__Chlamydia" \
     --download
 ```
 
-Searches for **Chlamydia** pangenomes in the `GTDB_refseq` collection, then downloads the corresponding pangenome files into `Chlamydia_pangenomes/`.
-
 ![`pangbank search-pangenomes --taxon "g__Chlamydia" --collection GTDB_refseq --outdir Chlamydia_pangenomes/ --download --no-progress`](docs/img/pangbank-search-pangenomes_taxon_Chlamydia_download.svg)
+
+This command searches for **Chlamydia** pangenomes in the `GTDB_refseq` collection, then downloads the corresponding pangenome files into `Chlamydia_pangenomes/`.
+
 
 ### Match a genome to an existing pangenome
 
