@@ -24,6 +24,7 @@ from pangbank_cli.utils import (
 
 from pangbank_cli.pangenomes import (
     query_pangenomes,
+    query_pangenome_by_id,
     format_pangenomes_to_dataframe,
     download_pangenomes,
     display_pangenome_summary_by_collection,
@@ -187,6 +188,7 @@ def list_collections(
         print_yaml_with_rich(yaml_collections)
 
 
+@app.command("search", no_args_is_help=True, hidden=True)
 @app.command(no_args_is_help=True)
 def search_pangenomes(
     # Search filters
@@ -319,6 +321,47 @@ def search_pangenomes(
         )
 
 
+@app.command("get", no_args_is_help=True, hidden=True)
+@app.command(no_args_is_help=True)
+def get_pangenome(
+    id: Annotated[
+        int,
+        typer.Argument(
+            help="The unique numerical identifier of the pangenome in the pangbank database. "
+            "Use this to fetch a specific pangenome by its ID.",
+        ),
+    ],
+    # Output and downloads
+    download: Annotated[
+        bool,
+        Download,
+    ] = False,
+    outdir: Annotated[
+        Path,
+        Outdir,
+    ] = Path("pangbank"),
+    # Execution settings
+    api_url: HttpUrl = ApiUrlOption,
+    verbose: bool = Verbose,
+):
+    """Get a pangenome by ID."""
+
+    pangenome = query_pangenome_by_id(
+        api_url,
+        pangenome_id=id,
+    )
+
+    if not pangenome:
+        raise typer.Exit(code=1)
+
+    print_pangenome_info([pangenome])
+
+    if download:
+        outdir.mkdir(parents=True, exist_ok=True)
+        download_pangenomes(api_url, [pangenome], outdir, disable_progress_bar=True)
+
+
+@app.command("match", no_args_is_help=True, hidden=True)
 @app.command(no_args_is_help=True)
 def match_pangenome(
     collection_name: Annotated[
