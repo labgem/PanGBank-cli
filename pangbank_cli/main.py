@@ -209,6 +209,14 @@ def search_pangenomes(
             rich_help_panel="Search filters",
         ),
     ] = None,
+    latest: Annotated[
+        bool,
+        typer.Option(
+            "--latest-only",
+            "-l",
+            help="Search only in latest release of each collection.",
+        )
+    ] = False,
     taxon: Annotated[
         Optional[str],
         typer.Option(
@@ -284,14 +292,14 @@ def search_pangenomes(
         substring_taxon_match=not exact_match,
         collection_name=collection,
         genome_name=genome,
-        only_latest_release=True,
+        only_latest_release=latest,
         disable_progress_bar=not progress,
     )
 
     if not pangenomes:
 
         if collection is not None:
-            collections = query_collections(api_url)
+            collections = query_collections(api_url, latest=latest)
             existing_collection_names = [c.name for c in collections]
             if collection not in existing_collection_names:
                 names_formatted = ", ".join(
