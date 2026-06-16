@@ -173,7 +173,7 @@ def list_collections(
             "--latest-only",
             "-l",
             help="List only latest release of each collection.",
-        )
+        ),
     ] = False,
     api_url: HttpUrl = ApiUrlOption,
     verbose: bool = Verbose,
@@ -215,7 +215,7 @@ def search_pangenomes(
             "--latest-only",
             "-l",
             help="Search only in latest release of each collection.",
-        )
+        ),
     ] = False,
     taxon: Annotated[
         Optional[str],
