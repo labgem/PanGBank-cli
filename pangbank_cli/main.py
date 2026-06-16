@@ -180,7 +180,11 @@ def list_collections(
 ):
     """List available collections."""
     collections = query_collections(api_url, latest=latest)
-    logger.info(f"Found {len(collections)} collections in PanGBank.")
+
+    n_release = sum(1 for c in collections for _ in c.releases)
+    logger.info(
+        f"Found {len(collections)} collections ({n_release} releases) in PanGBank."
+    )
 
     df = format_collections_to_dataframe(collections, latest)
 

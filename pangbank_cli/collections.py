@@ -62,7 +62,7 @@ def format_collections_to_dataframe(
                 {
                     "Collection": collection.name,
                     "Description": collection.description,
-                    "Latest release": release.version,
+                    "Release": release.version,
                     "Release date": release.date.strftime("%d %b %Y"),
                     "Taxonomy": (
                         f"{release.taxonomy_source.name}:{release.taxonomy_source.version}"
