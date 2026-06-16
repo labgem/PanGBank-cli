@@ -167,14 +167,22 @@ ApiUrlOption = typer.Option(
 
 @app.command(no_args_is_help=False)
 def list_collections(
+    latest: Annotated[
+        bool,
+        typer.Option(
+            "--latest-only",
+            "-l",
+            help="List only latest release of each collection.",
+        )
+    ] = False,
     api_url: HttpUrl = ApiUrlOption,
     verbose: bool = Verbose,
 ):
     """List available collections."""
-    collections = query_collections(api_url)
+    collections = query_collections(api_url, latest=latest)
     logger.info(f"Found {len(collections)} collections in PanGBank.")
 
-    df = format_collections_to_dataframe(collections)
+    df = format_collections_to_dataframe(collections, latest)
 
     # Use rich formatting if interactive terminal, plain TSV if redirected
     if sys.stdout.isatty():

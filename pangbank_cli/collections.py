@@ -33,7 +33,7 @@ def validate_collections(collections: List[Any]) -> List[CollectionPublicWithRel
 
 
 def query_collections(
-    api_url: HttpUrl, collection_name: Optional[str] = None
+    api_url: HttpUrl, collection_name: Optional[str] = None, latest: bool = True
 ) -> List[CollectionPublicWithReleases]:
     """Fetch and validate collections from the given API URL."""
 
@@ -41,14 +41,14 @@ def query_collections(
 
     logger.debug(f"Fetching collections {name_query}")
     filter_params = FilterCollection(
-        collection_name=collection_name, only_latest_release=True
+        collection_name=collection_name, only_latest_release=latest
     )
     collections_response = get_collections(api_url, filter_params)
     return validate_collections(collections_response)
 
 
 def format_collections_to_dataframe(
-    collections: List[CollectionPublicWithReleases],
+    collections: List[CollectionPublicWithReleases], latest: bool = True
 ) -> pd.DataFrame:
     """Convert a list of CollectionPublicWithReleases objects into a pandas DataFrame."""
 
@@ -56,20 +56,20 @@ def format_collections_to_dataframe(
 
     for collection in collections:
         for release in collection.releases:
-            if release.latest:
-
-                data.append(
-                    {
-                        "Collection": collection.name,
-                        "Description": collection.description,
-                        "Latest release": release.version,
-                        "Release date": release.date.strftime("%d %b %Y"),
-                        "Taxonomy": (
-                            f"{release.taxonomy_source.name}:{release.taxonomy_source.version}"
-                        ),
-                        "Pangenome Count": release.pangenome_count,
-                    }
-                )
+            if latest and not release.latest:
+                continue
+            data.append(
+                {
+                    "Collection": collection.name,
+                    "Description": collection.description,
+                    "Latest release": release.version,
+                    "Release date": release.date.strftime("%d %b %Y"),
+                    "Taxonomy": (
+                        f"{release.taxonomy_source.name}:{release.taxonomy_source.version}"
+                    ),
+                    "Pangenome Count": release.pangenome_count,
+                }
+            )
 
     return pd.DataFrame(data)
 
