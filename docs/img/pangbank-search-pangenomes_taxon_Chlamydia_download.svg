@@ -1,4 +1,4 @@
-<svg class="rich-terminal" viewBox="0 0 994 123.19999999999999" xmlns="http://www.w3.org/2000/svg">
+<svg class="rich-terminal" viewBox="0 0 994 464.79999999999995" xmlns="http://www.w3.org/2000/svg">
     <!-- Generated with Rich https://www.textualize.io -->
     <style>
 
@@ -19,47 +19,112 @@
         font-weight: 700;
     }
 
-    .terminal-2213234249-matrix {
+    .terminal-2300106648-matrix {
         font-family: Fira Code, monospace;
         font-size: 20px;
         line-height: 24.4px;
         font-variant-east-asian: full-width;
     }
 
-    .terminal-2213234249-title {
+    .terminal-2300106648-title {
         font-size: 18px;
         font-weight: bold;
         font-family: arial;
     }
 
-    .terminal-2213234249-r1 { fill: #c5c8c6 }
+    .terminal-2300106648-r1 { fill: #c5c8c6 }
+.terminal-2300106648-r2 { fill: #4e707b }
+.terminal-2300106648-r3 { fill: #608ab1 }
+.terminal-2300106648-r4 { fill: #868887 }
+.terminal-2300106648-r5 { fill: #d0b344 }
+.terminal-2300106648-r6 { fill: #98729f }
+.terminal-2300106648-r7 { fill: #00823d;font-style: italic; }
+.terminal-2300106648-r8 { fill: #ff2627;font-style: italic; }
+.terminal-2300106648-r9 { fill: #68a0b3;font-weight: bold }
+.terminal-2300106648-r10 { fill: #98a84b }
     </style>
 
     <defs>
-    <clipPath id="terminal-2213234249-clip-terminal">
-      <rect x="0" y="0" width="975.0" height="72.19999999999999" />
+    <clipPath id="terminal-2300106648-clip-terminal">
+      <rect x="0" y="0" width="975.0" height="413.79999999999995" />
     </clipPath>
-    <clipPath id="terminal-2213234249-line-0">
+    <clipPath id="terminal-2300106648-line-0">
     <rect x="0" y="1.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2213234249-line-1">
+<clipPath id="terminal-2300106648-line-1">
     <rect x="0" y="25.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2300106648-line-2">
+    <rect x="0" y="50.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2300106648-line-3">
+    <rect x="0" y="74.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2300106648-line-4">
+    <rect x="0" y="99.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2300106648-line-5">
+    <rect x="0" y="123.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2300106648-line-6">
+    <rect x="0" y="147.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2300106648-line-7">
+    <rect x="0" y="172.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2300106648-line-8">
+    <rect x="0" y="196.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2300106648-line-9">
+    <rect x="0" y="221.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2300106648-line-10">
+    <rect x="0" y="245.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2300106648-line-11">
+    <rect x="0" y="269.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2300106648-line-12">
+    <rect x="0" y="294.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2300106648-line-13">
+    <rect x="0" y="318.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2300106648-line-14">
+    <rect x="0" y="343.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2300106648-line-15">
+    <rect x="0" y="367.5" width="976" height="24.65"/>
             </clipPath>
     </defs>
 
-    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="121.2" rx="8"/>
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="462.8" rx="8"/>
             <g transform="translate(26,22)">
             <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
             <circle cx="22" cy="0" r="7" fill="#febc2e"/>
             <circle cx="44" cy="0" r="7" fill="#28c840"/>
             </g>
         
-    <g transform="translate(9, 41)" clip-path="url(#terminal-2213234249-clip-terminal)">
+    <g transform="translate(9, 41)" clip-path="url(#terminal-2300106648-clip-terminal)">
     
-    <g class="terminal-2213234249-matrix">
-    <text class="terminal-2213234249-r1" x="0" y="20" textLength="939.4" clip-path="url(#terminal-2213234249-line-0)">$&#160;pangbank&#160;search-pangenomes&#160;--taxon&#160;&quot;g__Chlamydia&quot;&#160;--collection&#160;GTDB_refseq&#160;</text><text class="terminal-2213234249-r1" x="976" y="20" textLength="12.2" clip-path="url(#terminal-2213234249-line-0)">
-</text><text class="terminal-2213234249-r1" x="0" y="44.4" textLength="671" clip-path="url(#terminal-2213234249-line-1)">--outdir&#160;Chlamydia_pangenomes/&#160;--download&#160;--no-progress</text><text class="terminal-2213234249-r1" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-2213234249-line-1)">
-</text><text class="terminal-2213234249-r1" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-2213234249-line-2)">
+    <g class="terminal-2300106648-matrix">
+    <text class="terminal-2300106648-r1" x="0" y="20" textLength="939.4" clip-path="url(#terminal-2300106648-line-0)">$&#160;pangbank&#160;search-pangenomes&#160;--taxon&#160;&quot;g__Chlamydia&quot;&#160;--collection&#160;GTDB_refseq&#160;</text><text class="terminal-2300106648-r1" x="976" y="20" textLength="12.2" clip-path="url(#terminal-2300106648-line-0)">
+</text><text class="terminal-2300106648-r1" x="0" y="44.4" textLength="671" clip-path="url(#terminal-2300106648-line-1)">--outdir&#160;Chlamydia_pangenomes/&#160;--download&#160;--no-progress</text><text class="terminal-2300106648-r1" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-2300106648-line-1)">
+</text><text class="terminal-2300106648-r2" x="0" y="68.8" textLength="122" clip-path="url(#terminal-2300106648-line-2)">[15:39:48]</text><text class="terminal-2300106648-r3" x="134.2" y="68.8" textLength="97.6" clip-path="url(#terminal-2300106648-line-2)">INFO&#160;&#160;&#160;&#160;</text><text class="terminal-2300106648-r1" x="231.8" y="68.8" textLength="536.8" clip-path="url(#terminal-2300106648-line-2)">&#160;Counting&#160;pangenomes&#160;for&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2300106648-r4" x="768.6" y="68.8" textLength="158.6" clip-path="url(#terminal-2300106648-line-2)">pangenomes.py</text><text class="terminal-2300106648-r4" x="927.2" y="68.8" textLength="12.2" clip-path="url(#terminal-2300106648-line-2)">:</text><text class="terminal-2300106648-r4" x="939.4" y="68.8" textLength="36.6" clip-path="url(#terminal-2300106648-line-2)">155</text><text class="terminal-2300106648-r1" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-2300106648-line-2)">
+</text><text class="terminal-2300106648-r5" x="244" y="93.2" textLength="122" clip-path="url(#terminal-2300106648-line-3)">taxon_name</text><text class="terminal-2300106648-r1" x="366" y="93.2" textLength="12.2" clip-path="url(#terminal-2300106648-line-3)">=</text><text class="terminal-2300106648-r6" x="378.2" y="93.2" textLength="146.4" clip-path="url(#terminal-2300106648-line-3)">g__Chlamydia</text><text class="terminal-2300106648-r1" x="524.6" y="93.2" textLength="244" clip-path="url(#terminal-2300106648-line-3)">&#160;&amp;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2300106648-r1" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-2300106648-line-3)">
+</text><text class="terminal-2300106648-r5" x="244" y="117.6" textLength="256.2" clip-path="url(#terminal-2300106648-line-4)">substring_taxon_match</text><text class="terminal-2300106648-r1" x="500.2" y="117.6" textLength="12.2" clip-path="url(#terminal-2300106648-line-4)">=</text><text class="terminal-2300106648-r7" x="512.4" y="117.6" textLength="48.8" clip-path="url(#terminal-2300106648-line-4)">True</text><text class="terminal-2300106648-r1" x="561.2" y="117.6" textLength="207.4" clip-path="url(#terminal-2300106648-line-4)">&#160;&amp;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2300106648-r1" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-2300106648-line-4)">
+</text><text class="terminal-2300106648-r5" x="244" y="142" textLength="231.8" clip-path="url(#terminal-2300106648-line-5)">only_latest_release</text><text class="terminal-2300106648-r1" x="475.8" y="142" textLength="12.2" clip-path="url(#terminal-2300106648-line-5)">=</text><text class="terminal-2300106648-r8" x="488" y="142" textLength="61" clip-path="url(#terminal-2300106648-line-5)">False</text><text class="terminal-2300106648-r1" x="549" y="142" textLength="219.6" clip-path="url(#terminal-2300106648-line-5)">&#160;&amp;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2300106648-r1" x="976" y="142" textLength="12.2" clip-path="url(#terminal-2300106648-line-5)">
+</text><text class="terminal-2300106648-r5" x="244" y="166.4" textLength="183" clip-path="url(#terminal-2300106648-line-6)">collection_name</text><text class="terminal-2300106648-r1" x="427" y="166.4" textLength="12.2" clip-path="url(#terminal-2300106648-line-6)">=</text><text class="terminal-2300106648-r6" x="439.2" y="166.4" textLength="134.2" clip-path="url(#terminal-2300106648-line-6)">GTDB_refseq</text><text class="terminal-2300106648-r1" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-2300106648-line-6)">
+</text><text class="terminal-2300106648-r2" x="0" y="190.8" textLength="122" clip-path="url(#terminal-2300106648-line-7)">[15:39:49]</text><text class="terminal-2300106648-r3" x="134.2" y="190.8" textLength="97.6" clip-path="url(#terminal-2300106648-line-7)">INFO&#160;&#160;&#160;&#160;</text><text class="terminal-2300106648-r1" x="231.8" y="190.8" textLength="85.4" clip-path="url(#terminal-2300106648-line-7)">&#160;Found&#160;</text><text class="terminal-2300106648-r9" x="317.2" y="190.8" textLength="24.4" clip-path="url(#terminal-2300106648-line-7)">11</text><text class="terminal-2300106648-r1" x="341.6" y="190.8" textLength="427" clip-path="url(#terminal-2300106648-line-7)">&#160;pangenomes&#160;matching&#160;search&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2300106648-r4" x="768.6" y="190.8" textLength="158.6" clip-path="url(#terminal-2300106648-line-7)">pangenomes.py</text><text class="terminal-2300106648-r4" x="927.2" y="190.8" textLength="12.2" clip-path="url(#terminal-2300106648-line-7)">:</text><text class="terminal-2300106648-r4" x="939.4" y="190.8" textLength="36.6" clip-path="url(#terminal-2300106648-line-7)">164</text><text class="terminal-2300106648-r1" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-2300106648-line-7)">
+</text><text class="terminal-2300106648-r1" x="134.2" y="215.2" textLength="634.4" clip-path="url(#terminal-2300106648-line-8)">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;criteria.&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2300106648-r1" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-2300106648-line-8)">
+</text><text class="terminal-2300106648-r3" x="134.2" y="239.6" textLength="97.6" clip-path="url(#terminal-2300106648-line-9)">INFO&#160;&#160;&#160;&#160;</text><text class="terminal-2300106648-r1" x="231.8" y="239.6" textLength="317.2" clip-path="url(#terminal-2300106648-line-9)">&#160;Fetching&#160;information&#160;for&#160;</text><text class="terminal-2300106648-r9" x="549" y="239.6" textLength="24.4" clip-path="url(#terminal-2300106648-line-9)">11</text><text class="terminal-2300106648-r1" x="573.4" y="239.6" textLength="195.2" clip-path="url(#terminal-2300106648-line-9)">&#160;pangenomes.&#160;&#160;&#160;&#160;</text><text class="terminal-2300106648-r4" x="768.6" y="239.6" textLength="158.6" clip-path="url(#terminal-2300106648-line-9)">pangenomes.py</text><text class="terminal-2300106648-r4" x="927.2" y="239.6" textLength="12.2" clip-path="url(#terminal-2300106648-line-9)">:</text><text class="terminal-2300106648-r4" x="939.4" y="239.6" textLength="36.6" clip-path="url(#terminal-2300106648-line-9)">166</text><text class="terminal-2300106648-r1" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-2300106648-line-9)">
+</text><text class="terminal-2300106648-r2" x="0" y="264" textLength="122" clip-path="url(#terminal-2300106648-line-10)">[15:39:50]</text><text class="terminal-2300106648-r3" x="134.2" y="264" textLength="97.6" clip-path="url(#terminal-2300106648-line-10)">INFO&#160;&#160;&#160;&#160;</text><text class="terminal-2300106648-r1" x="231.8" y="264" textLength="61" clip-path="url(#terminal-2300106648-line-10)">&#160;The&#160;</text><text class="terminal-2300106648-r9" x="292.8" y="264" textLength="24.4" clip-path="url(#terminal-2300106648-line-10)">11</text><text class="terminal-2300106648-r1" x="317.2" y="264" textLength="451.4" clip-path="url(#terminal-2300106648-line-10)">&#160;pangenomes&#160;matching&#160;search&#160;criteria&#160;</text><text class="terminal-2300106648-r4" x="768.6" y="264" textLength="158.6" clip-path="url(#terminal-2300106648-line-10)">pangenomes.py</text><text class="terminal-2300106648-r4" x="927.2" y="264" textLength="12.2" clip-path="url(#terminal-2300106648-line-10)">:</text><text class="terminal-2300106648-r4" x="939.4" y="264" textLength="36.6" clip-path="url(#terminal-2300106648-line-10)">220</text><text class="terminal-2300106648-r1" x="976" y="264" textLength="12.2" clip-path="url(#terminal-2300106648-line-10)">
+</text><text class="terminal-2300106648-r1" x="134.2" y="288.4" textLength="219.6" clip-path="url(#terminal-2300106648-line-11)">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;are&#160;from&#160;</text><text class="terminal-2300106648-r9" x="353.8" y="288.4" textLength="12.2" clip-path="url(#terminal-2300106648-line-11)">1</text><text class="terminal-2300106648-r1" x="366" y="288.4" textLength="170.8" clip-path="url(#terminal-2300106648-line-11)">&#160;collection&#160;:&#160;</text><text class="terminal-2300106648-r10" x="536.8" y="288.4" textLength="158.6" clip-path="url(#terminal-2300106648-line-11)">&#x27;GTDB_refseq&#x27;</text><text class="terminal-2300106648-r1" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-2300106648-line-11)">
+</text><text class="terminal-2300106648-r3" x="134.2" y="312.8" textLength="97.6" clip-path="url(#terminal-2300106648-line-12)">INFO&#160;&#160;&#160;&#160;</text><text class="terminal-2300106648-r1" x="231.8" y="312.8" textLength="610" clip-path="url(#terminal-2300106648-line-12)">&#160;Printing&#160;pangenomes&#160;information&#160;as&#160;TSV&#160;table&#160;to&#160;&#160;</text><text class="terminal-2300106648-r4" x="841.8" y="312.8" textLength="85.4" clip-path="url(#terminal-2300106648-line-12)">main.py</text><text class="terminal-2300106648-r4" x="927.2" y="312.8" textLength="12.2" clip-path="url(#terminal-2300106648-line-12)">:</text><text class="terminal-2300106648-r4" x="939.4" y="312.8" textLength="36.6" clip-path="url(#terminal-2300106648-line-12)">392</text><text class="terminal-2300106648-r1" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-2300106648-line-12)">
+</text><text class="terminal-2300106648-r1" x="134.2" y="337.2" textLength="707.6" clip-path="url(#terminal-2300106648-line-13)">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;stdout&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2300106648-r1" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-2300106648-line-13)">
+</text><text class="terminal-2300106648-r3" x="134.2" y="361.6" textLength="97.6" clip-path="url(#terminal-2300106648-line-14)">INFO&#160;&#160;&#160;&#160;</text><text class="terminal-2300106648-r1" x="231.8" y="361.6" textLength="158.6" clip-path="url(#terminal-2300106648-line-14)">&#160;Downloading&#160;</text><text class="terminal-2300106648-r9" x="390.4" y="361.6" textLength="24.4" clip-path="url(#terminal-2300106648-line-14)">11</text><text class="terminal-2300106648-r1" x="414.8" y="361.6" textLength="353.8" clip-path="url(#terminal-2300106648-line-14)">&#160;pangenome&#160;files&#160;to&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2300106648-r4" x="768.6" y="361.6" textLength="158.6" clip-path="url(#terminal-2300106648-line-14)">pangenomes.py</text><text class="terminal-2300106648-r4" x="927.2" y="361.6" textLength="12.2" clip-path="url(#terminal-2300106648-line-14)">:</text><text class="terminal-2300106648-r4" x="939.4" y="361.6" textLength="36.6" clip-path="url(#terminal-2300106648-line-14)">554</text><text class="terminal-2300106648-r1" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-2300106648-line-14)">
+</text><text class="terminal-2300106648-r10" x="244" y="386" textLength="280.6" clip-path="url(#terminal-2300106648-line-15)">&#x27;Chlamydia_pangenomes/&#x27;</text><text class="terminal-2300106648-r1" x="976" y="386" textLength="12.2" clip-path="url(#terminal-2300106648-line-15)">
+</text><text class="terminal-2300106648-r1" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-2300106648-line-16)">
 </text>
     </g>
     </g>
