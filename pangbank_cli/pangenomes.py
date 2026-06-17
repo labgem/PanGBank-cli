@@ -402,7 +402,7 @@ def format_pangenome_info(pangenome: "PangenomePublic") -> List[str]:
         taxonomy_formated.append(f"[{tag}]{taxon}[/{tag}]")
     taxonomy_str = ";".join(taxonomy_formated)
 
-    yaml_lines.append(f"    pangenome_idi: {pangenome.id}")
+    yaml_lines.append(f"    pangenome_id: {pangenome.id}")
 
     yaml_lines.append(f"    collection: {pangenome.collection_release.collection_name}")
     yaml_lines.append(f"    collection_release: {pangenome.collection_release.version}")
