@@ -11,6 +11,7 @@ It acts as a convenient wrapper around the API, making PanGBank data easily acce
 With **PanGBank-cli** you can:
 
 * Search pangenomes by **taxon**, **genome**, or **collection**
+* Retrieve a pangenome directly by its numeric **ID**
 * Retrieve detailed metrics for selected pangenomes
 * Download pangenome files for downstream analyses
 * Map an input genome to its corresponding pangenome in PanGBank and fetch it automatically
@@ -137,6 +138,16 @@ pangbank search-pangenomes --taxon "g__Chlamydia" \
 ![`pangbank search-pangenomes --taxon "g__Chlamydia" --collection GTDB_refseq --outdir Chlamydia_pangenomes/ --download --no-progress`](docs/img/pangbank-search-pangenomes_taxon_Chlamydia_download.svg)
 
 This command searches for **Chlamydia** pangenomes in the `GTDB_refseq` collection, then downloads the corresponding pangenome files into `Chlamydia_pangenomes/`.
+
+### Get a pangenome by ID
+
+```bash
+pangbank get-pangenome <id>
+```
+![`pangbank get-pangenome 12767`](docs/img/pangbank-get-diabolicus_pangenomes.svg)
+
+
+Use this command when you already know the numeric identifier of a pangenome and want to inspect its full metadata without running a broader search first. The command prints the pangenome information to the terminal, and you can add `--download` to fetch the corresponding HDF5 file into the output directory.
 
 
 ### Match a genome to an existing pangenome

@@ -10,7 +10,7 @@ from pangbank_api.models import (  # type: ignore
     CollectionPublic,
     TaxonPublic,
 )
-from pangbank_cli.utils import compute_md5
+from pangbank_cli.utils import compute_md5, fetch_api_data
 from pangbank_api.crud.common import FilterGenomeTaxonGenomePangenome, PaginationParams  # type: ignore
 from itertools import groupby
 from operator import attrgetter
@@ -21,7 +21,7 @@ from rich.progress import Progress
 logger = logging.getLogger(__name__)
 
 
-def get_pangenomes(
+def get_pangenomes_OLD(
     api_url: HttpUrl,
     filter_params: FilterGenomeTaxonGenomePangenome,
     pagination_params: PaginationParams,
@@ -47,6 +47,28 @@ def get_pangenomes(
         raise requests.HTTPError(f"Failed to fetch pangenomes from {api_url}") from e
 
 
+def get_pangenomes(
+    api_url: HttpUrl,
+    filter_params: FilterGenomeTaxonGenomePangenome,
+    pagination_params: PaginationParams,
+) -> Any:
+    """
+    Fetch pangenomes from the API with filtering and pagination options.
+
+    Args:
+        api_url: Base URL of the API.
+        filter_params: Filter parameters for the request.
+        pagination_params: Pagination parameters for the request.
+
+    Returns:
+        Parsed JSON response containing pangenomes.
+    """
+
+    params = filter_params.model_dump()
+    params.update(pagination_params.model_dump())
+    return fetch_api_data(api_url, "/pangenomes/", params)
+
+
 def count_pangenomes(
     api_url: HttpUrl,
     filter_params: FilterGenomeTaxonGenomePangenome,
@@ -70,6 +92,19 @@ def count_pangenomes(
                 f"Failed to fetch pangenomes from {api_url}: {error_detail[0].get('msg', 'Unknown error')}"
             )
         raise requests.HTTPError(f"Failed to fetch pangenomes from {api_url}") from e
+
+
+def query_pangenome_by_id(
+    api_url: HttpUrl, pangenome_id: int
+) -> Optional[PangenomePublic]:
+    """Fetch a pangenome by its ID."""
+    try:
+        response = fetch_api_data(api_url, f"/pangenomes/{pangenome_id}/", {})
+        return PangenomePublic(**response)
+
+    except (requests.HTTPError, ValidationError) as e:
+        logger.error(f"Failed to fetch pangenome with ID {pangenome_id}: {e}")
+        return None
 
 
 def query_pangenomes(
@@ -216,6 +251,7 @@ def format_pangenomes_to_dataframe(
         ]
 
         pangenome_info: Dict[str, Any] = {
+            "pangenome_id": pangenome.id,
             "collection": pangenome.collection_release.collection_name,
             "release_version": pangenome.collection_release.version,
             "name": taxonomy[-1],
@@ -343,7 +379,7 @@ def print_pangenome_info(
         )
     else:
         logger.info(
-            f"Displaying information for the {len(pangenomes)} pangenome{'' if len(pangenomes) == 1 else 's'}:"
+            f"Displaying information for {len(pangenomes)} pangenome{'' if len(pangenomes) == 1 else 's'}:"
         )
 
     for pangenome in pangenomes[:display_count]:
@@ -365,7 +401,12 @@ def format_pangenome_info(pangenome: "PangenomePublic") -> List[str]:
         tag = "italic bright_green" if i % 2 else "italic green"
         taxonomy_formated.append(f"[{tag}]{taxon}[/{tag}]")
     taxonomy_str = ";".join(taxonomy_formated)
+
+    yaml_lines.append(f"    pangenome_id: {pangenome.id}")
+
     yaml_lines.append(f"    collection: {pangenome.collection_release.collection_name}")
+    yaml_lines.append(f"    collection_release: {pangenome.collection_release.version}")
+
     yaml_lines.append(f"    taxonomy: {taxonomy_str}")
     yaml_lines.append(
         f"    taxonomy_source: [bright_green]{pangenome.taxonomy.taxonomy_source.name} {pangenome.taxonomy.taxonomy_source.version}[/bright_green]"

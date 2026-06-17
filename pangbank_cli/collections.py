@@ -1,4 +1,3 @@
-import requests
 from pydantic import HttpUrl, ValidationError
 from typing import Any, List, Dict, Optional
 import logging
@@ -6,6 +5,7 @@ import pandas as pd
 
 from pangbank_api.models import CollectionPublicWithReleases  # type: ignore
 from pangbank_api.crud.common import FilterCollection  # type: ignore
+from pangbank_cli.utils import fetch_api_data
 
 logger = logging.getLogger(__name__)
 
@@ -15,13 +15,7 @@ def get_collections(api_url: HttpUrl, filter_params: FilterCollection):
 
     params = filter_params.model_dump()
 
-    try:
-        response = requests.get(f"{api_url}/collections/", params=params, timeout=10)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        logger.warning(f"Request failed: {e}")
-        raise requests.HTTPError(f"Failed to fetch collections from {api_url}") from e
+    return fetch_api_data(api_url, "/collections/", params)
 
 
 def validate_collections(collections: List[Any]) -> List[CollectionPublicWithReleases]:
