@@ -107,12 +107,29 @@ def query_pangenome_by_id(
         return None
 
 
+def filter_pangenomes_by_release_version(
+    pangenomes: List[PangenomePublic],
+    release_version: Optional[str],
+) -> List[PangenomePublic]:
+    """Keep only pangenomes that belong to the requested collection release version."""
+
+    if release_version is None:
+        return pangenomes
+
+    return [
+        pangenome
+        for pangenome in pangenomes
+        if pangenome.collection_release.version == release_version
+    ]
+
+
 def query_pangenomes(
     api_url: HttpUrl,
     taxon_name: Optional[str] = None,
     pangenome_name: Optional[str] = None,
     collection_name: Optional[str] = None,
     genome_name: Optional[str] = None,
+    release_version: Optional[str] = None,
     only_latest_release: bool = True,
     substring_taxon_match: bool = False,
     disable_progress_bar: bool = False,
@@ -120,13 +137,13 @@ def query_pangenomes(
 
     all_pangenomes: List[Any] = []
     offset = 0
-    limit = 100  # Number of pangenome we retrieve per request
+    limit = 100  # Number of pangenomes we retrieve per request
 
     filter_params = FilterGenomeTaxonGenomePangenome(
         taxon_name=taxon_name,
         pangenome_name=pangenome_name,
         collection_name=collection_name,
-        only_latest_release=only_latest_release,
+        only_latest_release=only_latest_release if release_version is None else False,
         substring_taxon_match=substring_taxon_match,
         genome_name=genome_name,
     )
@@ -146,7 +163,7 @@ def query_pangenomes(
     plural = "s" if pangenome_count > 1 else ""
     logger.info(f"Found {pangenome_count} pangenome{plural} matching search criteria.")
 
-    logger.info(f"Fetching information for the {pangenome_count} pangenome{plural}.")
+    logger.info(f"Fetching information for {pangenome_count} pangenome{plural}.")
 
     # Progress bar for fetching
     with Progress(disable=disable_progress_bar) as progress:
@@ -180,6 +197,22 @@ def query_pangenomes(
                 break
 
     pangenomes = validate_pangenomes(all_pangenomes)
+    pangenome_count_before_release_filter = len(pangenomes)
+    pangenomes = filter_pangenomes_by_release_version(pangenomes, release_version)
+
+    if release_version is not None:
+        filtered_out_count = pangenome_count_before_release_filter - len(pangenomes)
+        logger.info(
+            f"Release version filter '{release_version}' kept {len(pangenomes)} of {pangenome_count_before_release_filter} pangenome{'' if pangenome_count_before_release_filter == 1 else 's'} "
+            f"(filtered out {filtered_out_count})."
+        )
+
+    if not pangenomes:
+        if release_version is not None:
+            return []
+        logger.info("No pangenome found matching the search criteria.")
+        return []
+
     collection_names = {
         f"'{pan.collection_release.collection_name}'" for pan in pangenomes
     }

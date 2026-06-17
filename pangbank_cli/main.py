@@ -165,16 +165,85 @@ ApiUrlOption = typer.Option(
 )
 
 
+def log_no_pangenome_search_context(
+    api_url: HttpUrl,
+    collection: Optional[str],
+    release_version: Optional[str],
+):
+    """Log contextual warnings to explain why a pangenome search returned no result."""
+
+    collections = query_collections(api_url, latest=False)
+    existing_collection_names = [c.name for c in collections]
+
+    if collection is not None and collection not in existing_collection_names:
+        names_formatted = ", ".join((f"'{name}'" for name in existing_collection_names))
+        logger.warning(
+            f"Collection '{collection}' not found in PanGBank. "
+            f"Available collections are: {names_formatted}."
+        )
+
+    if release_version is not None:
+        if collection is None:
+            searchable_collections = collections
+        else:
+            searchable_collections = [c for c in collections if c.name == collection]
+
+        release_exists_in_scope = any(
+            release.version == release_version
+            for current_collection in searchable_collections
+            for release in current_collection.releases
+        )
+
+        if not release_exists_in_scope:
+            if collection is None:
+                logger.warning(
+                    f"Release version '{release_version}' was not found in PanGBank."
+                )
+            elif searchable_collections:
+                available_versions = sorted(
+                    {
+                        release.version
+                        for current_collection in searchable_collections
+                        for release in current_collection.releases
+                    }
+                )
+                if available_versions:
+                    logger.warning(
+                        f"Release version '{release_version}' was not found in collection '{collection}'. "
+                        f"Available releases are: {', '.join(available_versions)}."
+                    )
+                else:
+                    logger.warning(
+                        f"No releases were found for collection '{collection}'."
+                    )
+        else:
+            logger.warning(
+                f"Release version '{release_version}' exists, but no pangenomes matched the other search filters."
+            )
+
+
 @app.command(no_args_is_help=False)
 def list_collections(
+    latest: Annotated[
+        bool,
+        typer.Option(
+            "--latest-only",
+            "-l",
+            help="List only latest release of each collection.",
+        ),
+    ] = False,
     api_url: HttpUrl = ApiUrlOption,
     verbose: bool = Verbose,
 ):
     """List available collections."""
-    collections = query_collections(api_url)
-    logger.info(f"Found {len(collections)} collections in PanGBank.")
+    collections = query_collections(api_url, latest=latest)
 
-    df = format_collections_to_dataframe(collections)
+    n_release = sum(1 for c in collections for _ in c.releases)
+    logger.info(
+        f"Found {len(collections)} collections ({n_release} releases) in PanGBank."
+    )
+
+    df = format_collections_to_dataframe(collections, latest)
 
     # Use rich formatting if interactive terminal, plain TSV if redirected
     if sys.stdout.isatty():
@@ -198,6 +267,27 @@ def search_pangenomes(
             "--collection",
             "-c",
             help="Filter pangenomes by collection name (e.g. 'GTDB_refseq').",
+            rich_help_panel="Search filters",
+        ),
+    ] = None,
+    latest: Annotated[
+        bool,
+        typer.Option(
+            "--latest-only",
+            "-l",
+            help="Search only in latest release of each collection.",
+            rich_help_panel="Search filters",
+        ),
+    ] = False,
+    release_version: Annotated[
+        Optional[str],
+        typer.Option(
+            "--release-version",
+            "-r",
+            help=(
+                "Filter pangenomes to a specific collection release version "
+                "(e.g. '1.0.0')."
+            ),
             rich_help_panel="Search filters",
         ),
     ] = None,
@@ -276,23 +366,17 @@ def search_pangenomes(
         substring_taxon_match=not exact_match,
         collection_name=collection,
         genome_name=genome,
-        only_latest_release=True,
+        release_version=release_version,
+        only_latest_release=latest,
         disable_progress_bar=not progress,
     )
 
     if not pangenomes:
-
-        if collection is not None:
-            collections = query_collections(api_url)
-            existing_collection_names = [c.name for c in collections]
-            if collection not in existing_collection_names:
-                names_formatted = ", ".join(
-                    (f"'{name}'" for name in existing_collection_names)
-                )
-                logger.warning(
-                    f"Collection '{collection}' not found in PanGBank. "
-                    f"Available collections are: {names_formatted}."
-                )
+        log_no_pangenome_search_context(
+            api_url=api_url,
+            collection=collection,
+            release_version=release_version,
+        )
         raise typer.Exit(code=1)
 
     df = format_pangenomes_to_dataframe(pangenomes)
