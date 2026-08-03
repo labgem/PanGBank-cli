@@ -1,3 +1,4 @@
+from pangbank_api.sdk import PanGBankClient
 from pydantic import HttpUrl, ValidationError
 from typing import Any, List, Dict, Optional
 import logging
@@ -40,11 +41,14 @@ def query_collections(
     name_query = f"with name: '{collection_name}'" if collection_name else ""
 
     logger.debug(f"Fetching collections {name_query}")
-    filter_params = FilterCollection(
-        collection_name=collection_name, only_latest_release=latest
-    )
-    collections_response = get_collections(api_url, filter_params)
-    return validate_collections(collections_response)
+    with PanGBankClient(
+        base_url=str(api_url),
+    ) as client:
+        collections = client.collections.list(
+            collection_name=collection_name, only_latest_release=latest
+        )
+
+    return collections
 
 
 def format_collections_to_dataframe(

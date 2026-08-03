@@ -15,7 +15,28 @@ import requests
 from requests.exceptions import RequestException, HTTPError
 from pydantic import HttpUrl
 
+from contextlib import contextmanager
+
+from contextlib import contextmanager
+from collections.abc import Generator
+
 logger = logging.getLogger(__name__)
+
+
+@contextmanager
+def silence_logger(
+    name: str,
+    level: int = logging.WARNING,
+) -> Generator[None, None, None]:
+    """Temporarily change the logging level of a logger."""
+    target_logger = logging.getLogger(name)
+    previous_level = target_logger.getEffectiveLevel()
+
+    target_logger.setLevel(level)
+    try:
+        yield
+    finally:
+        target_logger.setLevel(previous_level)
 
 
 def print_dataframe_as_rich_table(df: pd.DataFrame, title: Optional[str] = None):

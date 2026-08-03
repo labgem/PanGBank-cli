@@ -210,7 +210,7 @@ def log_no_pangenome_search_context(
                 if available_versions:
                     logger.warning(
                         f"Release version '{release_version}' was not found in collection '{collection}'. "
-                        f"Available releases are: {', '.join(available_versions)}."
+                        f"Available releases are: {', '.join([f"'{version}'" for version in available_versions])}."
                     )
                 else:
                     logger.warning(
