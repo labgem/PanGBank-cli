@@ -16,7 +16,15 @@ from itertools import groupby
 from operator import attrgetter
 
 from rich.console import Console
-from rich.progress import Progress
+from rich.progress import (
+    Progress,
+    TaskID,
+    BarColumn,
+    DownloadColumn,
+    TransferSpeedColumn,
+    TimeRemainingColumn,
+    TextColumn,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -465,7 +473,12 @@ def format_pangenome_info(pangenome: "PangenomePublic") -> List[str]:
 
 
 def get_pangenome_file(
-    api_url: HttpUrl, pangenome_id: int, output_file: Path, expected_md5sum: str
+    api_url: HttpUrl,
+    pangenome_id: int,
+    output_file: Path,
+    expected_md5sum: str,
+    progress: Optional[Progress] = None,
+    task_id: Optional[TaskID] = None,
 ):
     url = f"{api_url}/pangenomes/{pangenome_id}/file"
 
@@ -476,6 +489,9 @@ def get_pangenome_file(
             logger.debug(
                 f"File '{output_file}' already exists with valid checksum. Skipping download."
             )
+            if progress is not None and task_id is not None:
+                file_size = output_file.stat().st_size
+                progress.update(task_id, total=file_size, completed=file_size)
             return output_file
         else:
             logger.warning(
@@ -492,12 +508,21 @@ def get_pangenome_file(
     # --- Download file ---
     try:
         logger.debug(f"Downloading pangenome {pangenome_id} from {url} ...")
-        response = requests.get(url, timeout=30, stream=True)
+        response = requests.get(
+            url, timeout=30, stream=True, headers={"Accept-Encoding": "identity"}
+        )
         response.raise_for_status()
+
+        content_length = response.headers.get("Content-Length")
+        if progress is not None and task_id is not None:
+            total = int(content_length) if content_length else None
+            progress.update(task_id, total=total, completed=0)
 
         with open(output_file, "wb") as f:
             for chunk in response.iter_content(chunk_size=8192):
                 f.write(chunk)
+                if progress is not None and task_id is not None:
+                    progress.update(task_id, advance=len(chunk))
 
         logger.debug(f"Pangenome {pangenome_id} successfully saved to '{output_file}'")
 
@@ -551,13 +576,21 @@ def download_pangenomes(
     disable_progress_bar: bool = False,
 ):
 
+    total = len(pangenomes)
     logger.info(
-        f"Downloading {len(pangenomes)} pangenome file{'' if len(pangenomes) == 1 else 's'} to '{outdir}/'"
+        f"Downloading {total} pangenome file{'' if total == 1 else 's'} to '{outdir}/'"
     )
-    with Progress(disable=disable_progress_bar) as progress:
-        task = progress.add_task("Downloading pangenome", total=len(pangenomes))
+    with Progress(
+        TextColumn("[progress.description]{task.description}"),
+        BarColumn(),
+        DownloadColumn(),
+        TransferSpeedColumn(),
+        TimeRemainingColumn(),
+        disable=disable_progress_bar,
+    ) as progress:
+        download_task = progress.add_task("Starting...")
 
-        for pangenome in pangenomes:
+        for i, pangenome in enumerate(pangenomes):
             last_taxon = sorted(pangenome.taxonomy.taxa, key=attrgetter("depth"))[
                 -1
             ].name.replace(" ", "_")
@@ -569,14 +602,20 @@ def download_pangenomes(
                 outdir / f"{collection_name}_{last_taxon}_id{pangenome.id}.h5"
             )
             output_file_path.parent.mkdir(parents=True, exist_ok=True)
+
+            progress.update(
+                download_task,
+                description=f"[bold cyan][{i + 1}/{total}][/bold cyan] {output_file_path.name}",
+                completed=0,
+            )
             get_pangenome_file(
                 api_url,
                 pangenome.id,
                 output_file_path,
                 expected_md5sum=pangenome.file_md5sum,
+                progress=progress,
+                task_id=download_task,
             )
-
-            progress.update(task, advance=1)
 
     logger.info(
         f"Successfully downloaded {len(pangenomes)} pangenome file{'' if len(pangenomes) == 1 else 's'} to '{outdir}/'."
