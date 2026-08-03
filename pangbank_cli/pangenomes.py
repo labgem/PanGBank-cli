@@ -10,6 +10,8 @@ from pangbank_api.models import (  # type: ignore
     CollectionPublic,
     TaxonPublic,
 )
+from pangbank_api.exports.pangenomes import build_table_of_pangenomes
+
 from pangbank_cli.utils import compute_md5, fetch_api_data
 from pangbank_api.crud.common import FilterGenomeTaxonGenomePangenome, PaginationParams  # type: ignore
 from itertools import groupby
@@ -265,45 +267,14 @@ def format_element_to_dict(element: Any, columns: list[str]):
 
 
 def format_pangenomes_to_dataframe(
-    pangenomes: List[PangenomePublic],
+    pangenomes: list[PangenomePublic],
 ) -> pd.DataFrame:
-    """Convert a list of CollectionPublicWithReleases objects into a pandas DataFrame."""
+    """
+    Convert pangenomes into a pandas DataFrame.
+    """
 
-    data: List[Dict[str, Any]] = []
-    columns: List[str] = [
-        "genome_count",
-        "gene_count",
-        "family_count",
-        "edge_count",
-        "persistent_family_count",
-        "shell_family_count",
-        "cloud_family_count",
-        "partition_count",
-        "rgp_count",
-        "spot_count",
-        "module_count",
-    ]
-
-    for pangenome in pangenomes:
-
-        taxonomy = [
-            taxon.name
-            for taxon in sorted(pangenome.taxonomy.taxa, key=lambda x: x.depth)
-        ]
-
-        pangenome_info: Dict[str, Any] = {
-            "pangenome_id": pangenome.id,
-            "collection": pangenome.collection_release.collection_name,
-            "release_version": pangenome.collection_release.version,
-            "name": taxonomy[-1],
-            "taxonomy": ";".join(taxonomy),
-        }
-
-        pangenome_info.update(format_element_to_dict(pangenome, columns=columns))
-
-        data.append(pangenome_info)
-
-    return pd.DataFrame(data)
+    headers, rows = build_table_of_pangenomes(pangenomes)
+    return pd.DataFrame(rows, columns=headers)
 
 
 def groupby_attribute(
