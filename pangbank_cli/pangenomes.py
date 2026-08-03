@@ -588,7 +588,7 @@ def download_pangenomes(
         TimeRemainingColumn(),
         disable=disable_progress_bar,
     ) as progress:
-        download_task = progress.add_task("Starting...", total=None)
+        download_task = progress.add_task("Starting...")
 
         for i, pangenome in enumerate(pangenomes):
             last_taxon = sorted(pangenome.taxonomy.taxa, key=attrgetter("depth"))[
@@ -607,7 +607,6 @@ def download_pangenomes(
                 download_task,
                 description=f"[bold cyan][{i + 1}/{total}][/bold cyan] {output_file_path.name}",
                 completed=0,
-                total=None,
             )
             get_pangenome_file(
                 api_url,
