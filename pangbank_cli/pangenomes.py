@@ -1,10 +1,10 @@
 import requests
-from pydantic import HttpUrl, ValidationError
+from pydantic import HttpUrl
 from typing import Any, Generator, Iterable, List, Dict, Optional, Tuple
 import logging
 import pandas as pd
 from pathlib import Path
-from pangbank_api.models import (  # type: ignore
+from pangbank_api.models import (
     CollectionReleasePublic,
     PangenomePublic,
     CollectionPublic,
@@ -12,7 +12,7 @@ from pangbank_api.models import (  # type: ignore
 )
 from pangbank_api.exports.pangenomes import build_table_of_pangenomes
 
-from pangbank_cli.utils import compute_md5, fetch_api_data
+from pangbank_cli.utils import compute_md5, silence_logger
 from pangbank_api.crud.common import FilterGenomeTaxonGenomePangenome, PaginationParams  # type: ignore
 from itertools import groupby
 from operator import attrgetter
@@ -28,40 +28,17 @@ from rich.progress import (
     TextColumn,
 )
 
+
+from pangbank_api.sdk import PanGBankClient, PanGBankNotFoundError
+
 logger = logging.getLogger(__name__)
-
-
-def get_pangenomes_OLD(
-    api_url: HttpUrl,
-    filter_params: FilterGenomeTaxonGenomePangenome,
-    pagination_params: PaginationParams,
-):
-    """Fetch pangenomes from the API with filtering options."""
-
-    params = filter_params.model_dump()
-    params.update(pagination_params.model_dump())
-    response = requests.get(f"{api_url}/pangenomes/", params=params, timeout=10)
-    try:
-        response.raise_for_status()
-        return response.json()
-
-    except requests.exceptions.RequestException as e:
-
-        error_detail = response.json().get("detail", [])
-
-        if error_detail:
-            logger.error(f"API error: {error_detail[0].get('msg', 'Unknown error')}")
-            raise requests.HTTPError(
-                f"Failed to fetch pangenomes from {api_url}: {error_detail[0].get('msg', 'Unknown error')}"
-            )
-        raise requests.HTTPError(f"Failed to fetch pangenomes from {api_url}") from e
 
 
 def get_pangenomes(
     api_url: HttpUrl,
     filter_params: FilterGenomeTaxonGenomePangenome,
     pagination_params: PaginationParams,
-) -> Any:
+) -> list[PangenomePublic]:
     """
     Fetch pangenomes from the API with filtering and pagination options.
 
@@ -74,9 +51,19 @@ def get_pangenomes(
         Parsed JSON response containing pangenomes.
     """
 
-    params = filter_params.model_dump()
-    params.update(pagination_params.model_dump())
-    return fetch_api_data(api_url, "/pangenomes/", params)
+    with PanGBankClient(
+        base_url=str(api_url),
+    ) as client:
+        try:
+            pangenomes = client.pangenomes.list(
+                **filter_params.model_dump(exclude_none=True),  # type: ignore
+                **pagination_params.model_dump(),
+            )
+        except PanGBankNotFoundError:
+            logger.warning("No pangenomes found matching the search criteria.")
+            return []
+
+        return pangenomes
 
 
 def count_pangenomes(
@@ -85,52 +72,35 @@ def count_pangenomes(
 ):
     """Fetch pangenomes from the API with filtering options."""
 
-    params = filter_params.model_dump()
-    response = requests.get(f"{api_url}/pangenomes/count/", params=params, timeout=10)
-
-    try:
-        response.raise_for_status()
-        return int(response.text)
-
-    except requests.exceptions.RequestException as e:
-
-        error_detail = response.json().get("detail", [])
-
-        if error_detail:
-            logger.error(f"API error: {error_detail[0].get('msg', 'Unknown error')}")
-            raise requests.HTTPError(
-                f"Failed to fetch pangenomes from {api_url}: {error_detail[0].get('msg', 'Unknown error')}"
+    with PanGBankClient(
+        base_url=str(api_url),
+    ) as client:
+        try:
+            count = client.pangenomes.count(
+                **filter_params.model_dump(exclude_none=True)  # type: ignore
             )
-        raise requests.HTTPError(f"Failed to fetch pangenomes from {api_url}") from e
+        except PanGBankNotFoundError:
+            logger.warning("No pangenomes found matching the search criteria.")
+            return 0
+        return count
 
 
 def query_pangenome_by_id(
     api_url: HttpUrl, pangenome_id: int
 ) -> Optional[PangenomePublic]:
     """Fetch a pangenome by its ID."""
-    try:
-        response = fetch_api_data(api_url, f"/pangenomes/{pangenome_id}/", {})
-        return PangenomePublic(**response)
 
-    except (requests.HTTPError, ValidationError) as e:
-        logger.error(f"Failed to fetch pangenome with ID {pangenome_id}: {e}")
-        return None
+    with PanGBankClient(
+        base_url=str(api_url),
+    ) as client:
 
+        try:
+            pangenome = client.pangenomes.get(pangenome_id)
+        except PanGBankNotFoundError:
+            logger.warning(f"Pangenome with ID {pangenome_id} not found.")
+            return None
 
-def filter_pangenomes_by_release_version(
-    pangenomes: List[PangenomePublic],
-    release_version: Optional[str],
-) -> List[PangenomePublic]:
-    """Keep only pangenomes that belong to the requested collection release version."""
-
-    if release_version is None:
-        return pangenomes
-
-    return [
-        pangenome
-        for pangenome in pangenomes
-        if pangenome.collection_release.version == release_version
-    ]
+    return pangenome
 
 
 def query_pangenomes(
@@ -153,9 +123,10 @@ def query_pangenomes(
         taxon_name=taxon_name,
         pangenome_name=pangenome_name,
         collection_name=collection_name,
-        only_latest_release=only_latest_release if release_version is None else False,
+        only_latest_release=only_latest_release,
         substring_taxon_match=substring_taxon_match,
         genome_name=genome_name,
+        release_version=release_version,
     )
 
     filter_logs = [
@@ -176,7 +147,11 @@ def query_pangenomes(
     logger.info(f"Fetching information for {pangenome_count} pangenome{plural}.")
 
     # Progress bar for fetching
-    with Progress(disable=disable_progress_bar) as progress:
+    progress_console = Console(stderr=True)
+    with (
+        Progress(console=progress_console, disable=disable_progress_bar) as progress,
+        silence_logger("httpx", logging.WARNING),
+    ):
         task = progress.add_task("Fetching pangenome", total=pangenome_count)
 
         while True:
@@ -206,20 +181,9 @@ def query_pangenomes(
             if len(responses_pangenomes) < limit:
                 break
 
-    pangenomes = validate_pangenomes(all_pangenomes)
-    pangenome_count_before_release_filter = len(pangenomes)
-    pangenomes = filter_pangenomes_by_release_version(pangenomes, release_version)
-
-    if release_version is not None:
-        filtered_out_count = pangenome_count_before_release_filter - len(pangenomes)
-        logger.info(
-            f"Release version filter '{release_version}' kept {len(pangenomes)} of {pangenome_count_before_release_filter} pangenome{'' if pangenome_count_before_release_filter == 1 else 's'} "
-            f"(filtered out {filtered_out_count})."
-        )
+    pangenomes = all_pangenomes
 
     if not pangenomes:
-        if release_version is not None:
-            return []
         logger.info("No pangenome found matching the search criteria.")
         return []
 
@@ -231,20 +195,6 @@ def query_pangenomes(
         f"The {len(pangenomes)} pangenome{plural} matching search criteria {'are' if len(pangenomes) > 1 else 'is'} from {len(collection_names)} collection{c_plural} : {', '.join(collection_names)}"
     )
     return pangenomes
-
-
-def validate_pangenomes(pangenomes: List[Any]) -> List[PangenomePublic]:
-    """Validate the fetched pangenomes against the PangenomePublic model."""
-    validated_pangenomes: List[PangenomePublic] = []
-
-    for i, collection in enumerate(pangenomes):
-        try:
-            validated_pangenomes.append(PangenomePublic(**collection))
-        except ValidationError as e:
-            logger.warning(f"Validation failed for collection at index {i}: {e}")
-            raise ValueError(f"Failed to validate pangenomes: {e}") from e
-
-    return validated_pangenomes
 
 
 def format_element_to_dict(element: Any, columns: list[str]):
@@ -328,22 +278,23 @@ def display_pangenome_summary_by_collection(
             sort_by_attribute="collection_release.version",
         )
 
-        # Only display latest release
-        release, pangenomes = list(release_and_pangenomes)[0]
+        for release, pangenomes in release_and_pangenomes:
 
-        yaml_lines.append(f"  release: [bold yellow]{release.version}[/bold yellow]")
-        yaml_lines.append(
-            f"  date: [bold yellow]{release.date.strftime('%d %b %Y')}[/bold yellow]"
-        )
-        yaml_lines.append(
-            f"  matching_pangenome: [bold magenta]{len(pangenomes)}[/bold magenta]"
-        )
-        list_of_taxa = [pangenome.taxonomy.taxa for pangenome in pangenomes]
-        common_taxa = get_common_taxonomy(list_of_taxa)
+            yaml_lines.append(
+                f"  release: [bold yellow]{release.version}[/bold yellow]"
+            )
+            yaml_lines.append(
+                f"  date: [bold yellow]{release.date.strftime('%d %b %Y')}[/bold yellow]"
+            )
+            yaml_lines.append(
+                f"  matching_pangenome: [bold magenta]{len(pangenomes)}[/bold magenta]"
+            )
+            list_of_taxa = [pangenome.taxonomy.taxa for pangenome in pangenomes]
+            common_taxa = get_common_taxonomy(list_of_taxa)
 
-        yaml_lines.append(
-            f"  common_taxonomy: [bold magenta]{format_taxonomy_to_string(common_taxa)}[/bold magenta]"
-        )
+            yaml_lines.append(
+                f"  common_taxonomy: [bold magenta]{format_taxonomy_to_string(common_taxa)}[/bold magenta]\n"
+            )
 
     # Convert list to string and print with syntax highlighting
     yaml_output = "\n".join(yaml_lines + [""])

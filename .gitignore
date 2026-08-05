@@ -172,3 +172,8 @@ cython_debug/
 
 
 .vscode/
+
+
+# Pangbank specific
+pangbank/*
+tmp*
