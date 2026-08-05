@@ -1,10 +1,10 @@
 import requests
-from pydantic import HttpUrl, ValidationError
-from typing import Any, Generator, Iterable, List, Dict, Optional, Tuple, Sequence
+from pydantic import HttpUrl
+from typing import Any, Generator, Iterable, List, Dict, Optional, Tuple
 import logging
 import pandas as pd
 from pathlib import Path
-from pangbank_api.models import (  # type: ignore
+from pangbank_api.models import (
     CollectionReleasePublic,
     PangenomePublic,
     CollectionPublic,
@@ -12,7 +12,7 @@ from pangbank_api.models import (  # type: ignore
 )
 from pangbank_api.exports.pangenomes import build_table_of_pangenomes
 
-from pangbank_cli.utils import compute_md5, fetch_api_data, silence_logger
+from pangbank_cli.utils import compute_md5, silence_logger
 from pangbank_api.crud.common import FilterGenomeTaxonGenomePangenome, PaginationParams  # type: ignore
 from itertools import groupby
 from operator import attrgetter
