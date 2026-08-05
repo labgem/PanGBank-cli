@@ -1,6 +1,6 @@
 from pangbank_api.sdk import PanGBankClient
 from pydantic import HttpUrl, ValidationError
-from typing import Any, List, Dict, Optional
+from typing import Any, List, Dict
 import logging
 import pandas as pd
 
