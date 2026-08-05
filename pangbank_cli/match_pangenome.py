@@ -1,20 +1,23 @@
-import requests
-from pydantic import BaseModel, HttpUrl
-from typing import Dict, List
 import logging
-from pathlib import Path
-from collections import defaultdict
 import subprocess
-from pangbank_api.models import (  # type: ignore
+from collections import defaultdict
+from pathlib import Path
+
+import requests
+from pangbank_api.models import (
     CollectionPublicWithReleases,
     PangenomePublic,
+    CollectionReleasePublic,
 )
+from pangbank_api.sdk import PanGBankClient
+
+from pydantic import BaseModel, HttpUrl
+
 from pangbank_cli.pangenomes import (
-    query_pangenomes,
     download_pangenomes,
     print_pangenome_info,
+    query_pangenomes,
 )
-
 from pangbank_cli.utils import compute_md5
 
 logger = logging.getLogger(__name__)
@@ -22,8 +25,6 @@ logger = logging.getLogger(__name__)
 
 class MashError(Exception):
     """Custom exception for Mash-related errors."""
-
-    pass
 
 
 class MashResult(BaseModel):
@@ -36,50 +37,47 @@ class MashResult(BaseModel):
 
 
 def get_mash_sketch_file(
-    api_url: HttpUrl, collection: CollectionPublicWithReleases, outdir: Path
+    api_url: HttpUrl,
+    collection: CollectionPublicWithReleases,
+    release: CollectionReleasePublic,
+    outdir: Path,
 ):
     """ """
-    latest_release = next(
-        (release for release in collection.releases if release.latest), None
-    )
-
-    if not latest_release:
-        raise ValueError(f"No latest release found for collection '{collection.name}'")
 
     output_file_path = (
-        outdir
-        / "mash_sketch"
-        / f"collection_{collection.name}_{latest_release.version}.msh"
+        outdir / "mash_sketch" / f"collection_{collection.name}_{release.version}.msh"
     )
     output_file_path.parent.mkdir(parents=True, exist_ok=True)
 
     if output_file_path.exists():
         md5_hash_existing_file = compute_md5(output_file_path)
-        if md5_hash_existing_file == latest_release.mash_sketch_md5sum:
+        if md5_hash_existing_file == release.mash_sketch_md5sum:
             logger.info(
-                f"Mash sketch file for collection '{collection.name}' already exists at '{output_file_path}'. No re-download."
+                f"Mash sketch file for collection '{collection.name}:{release.version}' already exists at '{output_file_path}'. No re-download."
             )
             return output_file_path
         else:
             logger.warning(
-                f"Mash sketch file for collection '{collection.name}' exists but MD5 mismatch. Re-downloading."
+                f"Mash sketch file for collection '{collection.name}:{release.version}' exists but MD5 mismatch. Re-downloading."
             )
 
     logger.info(
-        f"Downloading mash sketch file for collection to '{collection.name}' release {latest_release.version}"
+        f"Downloading mash sketch file for collection '{collection.name}:{release.version}' to '{output_file_path}'"
     )
-    download_mash_sketch(
-        api_url=api_url,
-        collection_id=collection.id,
-        output_file_path=output_file_path,
-    )
+
+    with PanGBankClient(base_url=str(api_url)) as client:
+        client.collections.download_mash_sketch(
+            collection_id=collection.id,
+            release_version=release.version,
+            dest=output_file_path,
+        )
 
     if not output_file_path.exists():
         raise FileNotFoundError(
             f"Failed to download mash sketch file to '{output_file_path}'"
         )
     md5_hash_downloaded_file = compute_md5(output_file_path)
-    if md5_hash_downloaded_file != latest_release.mash_sketch_md5sum:
+    if md5_hash_downloaded_file != release.mash_sketch_md5sum:
         raise ValueError(
             f"MD5 checksum mismatch for downloaded mash sketch file '{output_file_path}'."
         )
@@ -99,8 +97,7 @@ def download_mash_sketch(api_url: HttpUrl, collection_id: int, output_file_path:
         response.raise_for_status()
 
         with open(output_file_path, "wb") as f:
-            for chunk in response.iter_content(chunk_size=8192):
-                f.write(chunk)
+            f.writelines(response.iter_content(chunk_size=8192))
 
         logger.info(f"Mash sketch file saved to {output_file_path}")
     except requests.exceptions.RequestException as e:
@@ -110,7 +107,7 @@ def download_mash_sketch(api_url: HttpUrl, collection_id: int, output_file_path:
 
 def launch_mash_dist(
     mash_sketch_file: Path,
-    input_genome_files: List[Path],
+    input_genome_files: list[Path],
     max_distance: float = 0.05,
     threads: int = 1,
 ) -> str:
@@ -127,6 +124,7 @@ def launch_mash_dist(
     cmd += [input_file.as_posix() for input_file in input_genome_files]
 
     try:
+        logger.debug(f"Running command: {' '.join(cmd)}")
         result = subprocess.run(cmd, capture_output=True, text=True, check=True)
 
     except FileNotFoundError as e:
@@ -152,7 +150,7 @@ def launch_mash_dist(
 
 def compute_mash_distance(
     mash_sketch_file: Path,
-    input_genome_files: List[Path],
+    input_genome_files: list[Path],
     max_distance: float = 0.05,
     threads: int = 1,
 ):
@@ -173,7 +171,7 @@ def compute_mash_distance(
         )
         return
 
-    genome_to_mash_hits: Dict[str, List[MashResult]] = defaultdict(list)
+    genome_to_mash_hits: dict[str, list[MashResult]] = defaultdict(list)
 
     for result_line in mash_result.strip().split("\n"):
         reference, query, distance, p_value, _matching_hashes = result_line.split()
@@ -205,13 +203,13 @@ def compute_mash_distance(
 def get_matching_pangenome(
     api_url: HttpUrl,
     collection: CollectionPublicWithReleases,
-    query_to_best_match: Dict[str, MashResult],
+    query_to_best_match: dict[str, MashResult],
     outdir: Path,
     download: bool = False,
     progress: bool = True,
 ):
 
-    pangenome_to_download: List[PangenomePublic] = []
+    pangenome_to_download: list[PangenomePublic] = []
 
     for query, mash_result in query_to_best_match.items():
         pangenome_name = get_pangenome_name_from_mash_reference(mash_result.reference)

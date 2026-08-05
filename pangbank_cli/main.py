@@ -36,6 +36,7 @@ from pangbank_cli.match_pangenome import (
     compute_mash_distance,
     get_matching_pangenome,
 )
+from pangbank_api.models import CollectionPublicWithReleases
 
 logger = logging.getLogger(__name__)
 err_console = Console(stderr=True)
@@ -176,7 +177,7 @@ def log_no_pangenome_search_context(
     existing_collection_names = [c.name for c in collections]
 
     if collection is not None and collection not in existing_collection_names:
-        names_formatted = ", ".join((f"'{name}'" for name in existing_collection_names))
+        names_formatted = ", ".join(f"'{name}'" for name in existing_collection_names)
         logger.warning(
             f"Collection '{collection}' not found in PanGBank. "
             f"Available collections are: {names_formatted}."
@@ -286,7 +287,7 @@ def search_pangenomes(
             "-r",
             help=(
                 "Filter pangenomes to a specific collection release version "
-                "(e.g. '1.0.0')."
+                "(e.g. '2.0.0')."
             ),
             rich_help_panel="Search filters",
         ),
@@ -467,6 +468,27 @@ def match_pangenome(
             rich_help_panel="Match parameters",
         ),
     ],
+    release_version: Annotated[
+        Optional[str],
+        typer.Option(
+            "--release-version",
+            "-r",
+            help=(
+                "Filter collection to a specific collection release version "
+                "(e.g. '2.0.0'). Default is to search in the latest release of the collection."
+            ),
+            rich_help_panel="Match parameters",
+        ),
+    ] = None,
+    threads: Annotated[
+        int,
+        typer.Option(
+            "--threads",
+            "-t",
+            help="Number of threads to use for computing mash distances.",
+            rich_help_panel="Match parameters",
+        ),
+    ] = 1,
     download: Annotated[
         bool,
         Download,
@@ -483,15 +505,30 @@ def match_pangenome(
     verbose: bool = Verbose,
 ):
     """Match a pangenome from an input genome."""
+
+    latest = True
+    if release_version:
+        latest = False
+
     logger.info(
-        f"Searching a matching pangenome in collection '{collection_name}' for genome '{input_genome_file}'"
+        f"Searching a matching pangenome in collection '{collection_name}' ({'latest release' if latest else f'release version {release_version}'}) for genome '{input_genome_file}'"
     )
-    collections = query_collections(api_url, collection_name=collection_name)
+
+    collections: list[CollectionPublicWithReleases] = query_collections(
+        api_url,
+        collection_name=collection_name,
+        release_version=release_version,
+        latest=latest,
+    )
 
     check_mash_availability()
 
     if not collections:
-        logger.warning(f"No collections found for {collection_name}")
+        log_no_pangenome_search_context(
+            api_url=api_url,
+            collection=collection_name,
+            release_version=release_version,
+        )
         raise typer.Exit(code=1)
 
     elif len(collections) > 1:
@@ -503,10 +540,29 @@ def match_pangenome(
     else:
         collection = collections[0]
 
-    logger.debug(f"Collection found: {collection.name}")
-    mash_sketch_file = get_mash_sketch_file(api_url, collection, outdir)
+    if not collection.releases:
+        logger.warning(
+            f"No releases found for collection '{collection.name}'. Cannot proceed with matching."
+        )
+        raise typer.Exit(code=1)
 
-    query_to_best_match = compute_mash_distance(mash_sketch_file, [input_genome_file])
+    elif len(collection.releases) > 1:
+        logger.warning(
+            f"Only one release should be returned. Got {len(collection.releases)} "
+            f"when querying collection_name={collection_name} and release_version={release_version} and only_latest_release={latest}. "
+        )
+        raise typer.Exit(code=1)
+
+    release = collection.releases[0]
+
+    logger.debug(f"Collection found: {collection.name}: {release.version} ")
+
+    mash_sketch_file = get_mash_sketch_file(api_url, collection, release, outdir)
+
+    query_to_best_match = compute_mash_distance(
+        mash_sketch_file, [input_genome_file], threads=threads
+    )
+
     if query_to_best_match is None:
         raise typer.Exit(code=1)
 

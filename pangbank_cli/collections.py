@@ -34,7 +34,10 @@ def validate_collections(collections: List[Any]) -> List[CollectionPublicWithRel
 
 
 def query_collections(
-    api_url: HttpUrl, collection_name: Optional[str] = None, latest: bool = True
+    api_url: HttpUrl,
+    collection_name: None | str = None,
+    latest: bool | None = None,
+    release_version: None | str = None,
 ) -> List[CollectionPublicWithReleases]:
     """Fetch and validate collections from the given API URL."""
 
@@ -45,7 +48,9 @@ def query_collections(
         base_url=str(api_url),
     ) as client:
         collections = client.collections.list(
-            collection_name=collection_name, only_latest_release=latest
+            collection_name=collection_name,
+            only_latest_release=latest,
+            release_version=release_version,
         )
 
     return collections
