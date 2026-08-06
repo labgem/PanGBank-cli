@@ -49,38 +49,50 @@ def get_mash_sketch_file(
     )
     output_file_path.parent.mkdir(parents=True, exist_ok=True)
 
+    tmp_file = output_file_path.with_suffix(".tmp")
+
     if output_file_path.exists():
-        md5_hash_existing_file = compute_md5(output_file_path)
-        if md5_hash_existing_file == release.mash_sketch_md5sum:
+        existing_md5 = compute_md5(output_file_path)
+
+        if existing_md5 == release.mash_sketch_md5sum:
             logger.info(
-                f"Mash sketch file for collection '{collection.name}:{release.version}' already exists at '{output_file_path}'. No re-download."
+                f"Cached mash sketch for collection '{collection.name}:{release.version}' "
+                f"already exists at '{output_file_path}'. No download required."
             )
             return output_file_path
-        else:
-            logger.warning(
-                f"Mash sketch file for collection '{collection.name}:{release.version}' exists but MD5 mismatch. Re-downloading."
-            )
+
+        logger.warning(
+            f"Cached mash sketch for collection '{collection.name}:{release.version}' "
+            "checksum does not match the expected value. Re-downloading."
+        )
 
     logger.info(
-        f"Downloading mash sketch file for collection '{collection.name}:{release.version}' to '{output_file_path}'"
+        f"Downloading mash sketch for collection "
+        f"'{collection.name}:{release.version}' to '{output_file_path}'."
     )
 
-    with PanGBankClient(base_url=str(api_url)) as client:
-        client.collections.download_mash_sketch(
-            collection_id=collection.id,
-            release_version=release.version,
-            dest=output_file_path,
-        )
+    try:
+        with PanGBankClient(base_url=str(api_url)) as client:
+            client.collections.download_mash_sketch(
+                collection_id=collection.id,
+                release_version=release.version,
+                dest=tmp_file,
+            )
 
-    if not output_file_path.exists():
-        raise FileNotFoundError(
-            f"Failed to download mash sketch file to '{output_file_path}'"
-        )
-    md5_hash_downloaded_file = compute_md5(output_file_path)
-    if md5_hash_downloaded_file != release.mash_sketch_md5sum:
-        raise ValueError(
-            f"MD5 checksum mismatch for downloaded mash sketch file '{output_file_path}'."
-        )
+        if not tmp_file.exists():
+            raise FileNotFoundError(f"Failed to download mash sketch to '{tmp_file}'.")
+
+        downloaded_md5 = compute_md5(tmp_file)
+        if downloaded_md5 != release.mash_sketch_md5sum:
+            raise ValueError(
+                f"MD5 checksum mismatch for downloaded mash sketch '{tmp_file}'. "
+                f"Expected {release.mash_sketch_md5sum}, got {downloaded_md5}."
+            )
+
+        tmp_file.replace(output_file_path)
+
+    finally:
+        tmp_file.unlink(missing_ok=True)
 
     return output_file_path
 
@@ -207,6 +219,7 @@ def get_matching_pangenome(
     outdir: Path,
     download: bool = False,
     progress: bool = True,
+    force_redownload: bool = False,
 ):
 
     pangenome_to_download: list[PangenomePublic] = []
@@ -247,6 +260,7 @@ def get_matching_pangenome(
             pangenomes=pangenome_to_download,
             outdir=outdir,
             disable_progress_bar=not progress,
+            force_redownload=force_redownload,
         )
     else:
         logger.info("Download option is set to False. Skipping download.")

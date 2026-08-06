@@ -4,6 +4,7 @@ from typing import Any, Generator, Iterable, List, Dict, Optional, Tuple
 import logging
 import pandas as pd
 from pathlib import Path
+
 from pangbank_api.models import (
     CollectionReleasePublic,
     PangenomePublic,
@@ -13,7 +14,7 @@ from pangbank_api.models import (
 from pangbank_api.exports.pangenomes import build_table_of_pangenomes
 
 from pangbank_cli.utils import compute_md5, silence_logger
-from pangbank_api.crud.common import FilterGenomeTaxonGenomePangenome, PaginationParams  # type: ignore
+from pangbank_api.crud.common import FilterGenomeTaxonGenomePangenome, PaginationParams
 from itertools import groupby
 from operator import attrgetter
 
@@ -401,32 +402,46 @@ def get_pangenome_file(
     expected_md5sum: str,
     progress: Optional[Progress] = None,
     task_id: Optional[TaskID] = None,
+    force_redownload: bool = False,
 ):
     url = f"{api_url}/pangenomes/{pangenome_id}/file"
+    tmp_file = output_file.with_suffix(".tmp")
 
     # --- Check for existing file ---
     if output_file.exists():
         existing_md5 = compute_md5(output_file)
+
         if existing_md5 == expected_md5sum:
             logger.debug(
-                f"File '{output_file}' already exists with valid checksum. Skipping download."
+                f"File '{output_file}' already exists with valid checksum. "
+                "No download required."
             )
+
             if progress is not None and task_id is not None:
                 file_size = output_file.stat().st_size
                 progress.update(task_id, total=file_size, completed=file_size)
-            return output_file
-        else:
-            logger.warning(
-                f"File '{output_file}' exists but checksum mismatch. Redownloading..."
-            )
-            logger.debug(f"Expected MD5: {expected_md5sum}, Found MD5: {existing_md5}")
-            try:
-                output_file.unlink()
-            except Exception as cleanup_err:
-                logger.error(
-                    f"Failed to remove corrupted file '{output_file}': {cleanup_err}"
-                )
 
+            return output_file
+
+        logger.debug(
+            f"Existing file checksum mismatch for '{output_file}'. "
+            f"Expected: {expected_md5sum}, Found: {existing_md5}"
+        )
+
+        if not force_redownload:
+            if progress is not None and task_id is not None:
+                progress.update(task_id, total=0, completed=0)
+
+            logger.warning(
+                f"Skipping download of '{output_file}': existing file checksum does not match "
+                "the API version. The file may have been modified. Use --force to replace it."
+            )
+            return None
+
+        logger.info(
+            f"Replacing existing file '{output_file}' because --force was provided "
+            "(checksum mismatch detected)."
+        )
     # --- Download file ---
     try:
         logger.debug(f"Downloading pangenome {pangenome_id} from {url} ...")
@@ -440,13 +455,32 @@ def get_pangenome_file(
             total = int(content_length) if content_length else None
             progress.update(task_id, total=total, completed=0)
 
-        with open(output_file, "wb") as f:
+        with open(tmp_file, "wb") as f:
             for chunk in response.iter_content(chunk_size=8192):
                 f.write(chunk)
                 if progress is not None and task_id is not None:
                     progress.update(task_id, advance=len(chunk))
 
         logger.debug(f"Pangenome {pangenome_id} successfully saved to '{output_file}'")
+
+        # Verify checksum
+        file_md5sum = compute_md5(tmp_file)
+
+        if file_md5sum != expected_md5sum:
+            logger.error(f"MD5 checksum mismatch for '{tmp_file}'.")
+            logger.debug(f"Expected MD5: {expected_md5sum}, Found MD5: {file_md5sum}")
+
+            tmp_file.unlink(missing_ok=True)
+
+            raise ValueError(
+                f"MD5 checksum mismatch for pangenome {pangenome_id}. "
+                f"Expected {expected_md5sum}, got {file_md5sum}"
+            )
+
+        # Replace existing file only after successful validation
+        tmp_file.replace(output_file)
+
+        logger.debug(f"MD5 checksum verified for '{output_file}'")
 
     except requests.exceptions.Timeout:
         logger.error(
@@ -466,27 +500,10 @@ def get_pangenome_file(
         )
         raise
 
-    # Verify checksum
-    file_md5sum = compute_md5(output_file)
-    if file_md5sum != expected_md5sum:
-        logger.error(f"MD5 checksum mismatch for '{output_file}'.")
-
-        logger.debug(f"Expected MD5: {expected_md5sum}, Found MD5: {file_md5sum}")
-        # Delete corrupt file to avoid confusion
-        try:
-            output_file.unlink(missing_ok=True)
-            logger.warning(f"Corrupted file '{output_file}' has been removed.")
-        except Exception as cleanup_err:
-            logger.warning(
-                f"Failed to remove corrupted file '{output_file}': {cleanup_err}"
-            )
-
-        raise ValueError(
-            f"MD5 checksum mismatch for pangenome {pangenome_id}. "
-            f"Expected {expected_md5sum}, got {file_md5sum}"
-        )
-
-    logger.debug(f"MD5 checksum verified for '{output_file}'")
+    finally:
+        # Cleanup incomplete downloads
+        if tmp_file.exists():
+            tmp_file.unlink()
 
     return output_file
 
@@ -496,6 +513,7 @@ def download_pangenomes(
     pangenomes: List[PangenomePublic],
     outdir: Path,
     disable_progress_bar: bool = False,
+    force_redownload: bool = False,
 ):
 
     total = len(pangenomes)
@@ -510,12 +528,16 @@ def download_pangenomes(
         TimeRemainingColumn(),
         disable=disable_progress_bar,
     ) as progress:
+
         download_task = progress.add_task("Starting...")
+        downloaded = 0
+        skipped = 0
 
         for i, pangenome in enumerate(pangenomes):
-            last_taxon = sorted(pangenome.taxonomy.taxa, key=attrgetter("depth"))[
-                -1
-            ].name.replace(" ", "_")
+            last_taxon = max(
+                pangenome.taxonomy.taxa,
+                key=attrgetter("depth"),
+            ).name.replace(" ", "_")
 
             collection_name = pangenome.collection_release.collection.name.replace(
                 " ", "_"
@@ -523,6 +545,7 @@ def download_pangenomes(
             output_file_path = (
                 outdir / f"{collection_name}_{last_taxon}_id{pangenome.id}.h5"
             )
+
             output_file_path.parent.mkdir(parents=True, exist_ok=True)
 
             progress.update(
@@ -530,16 +553,26 @@ def download_pangenomes(
                 description=f"[bold cyan][{i + 1}/{total}][/bold cyan] {output_file_path.name}",
                 completed=0,
             )
-            get_pangenome_file(
+            result = get_pangenome_file(
                 api_url,
                 pangenome.id,
                 output_file_path,
                 expected_md5sum=pangenome.file_md5sum,
                 progress=progress,
                 task_id=download_task,
+                force_redownload=force_redownload,
             )
+            if result is None:
+                skipped += 1
+            else:
+                downloaded += 1
 
-    logger.info(
-        f"Successfully downloaded {len(pangenomes)} pangenome file{'' if len(pangenomes) == 1 else 's'} to '{outdir}/'."
-    )
+    if skipped:
+        logger.warning(
+            f"Completed with warnings: {downloaded}/{total} pangenomes are available. "
+            f"{skipped} existing file{'s' if skipped > 1 else ''} did not match the API checksum "
+            "and were left unchanged (use --force to replace them)."
+        )
+    else:
+        logger.info(f"All pangenomes are available: {downloaded}/{total} files.")
     return outdir
