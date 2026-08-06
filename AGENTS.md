@@ -25,6 +25,6 @@ Results derived from PanGBank must cite PanGBank and PPanGGOLiN, plus panRGP whe
 The CLI's flag semantics are **inverted relative to the raw API** in two places, and both silently change results:
 
 - `search-pangenomes` defaults to *substring* taxon matching; `--exact-match` opts into exact. The API is the opposite.
-- `--latest-only` defaults to **False**, so without `-l` you get every release. Use `-l` for "what is current" and `--release-version` for reproducible work — the latter is applied client-side, because the API parameter of that name does nothing.
+- `--latest-only` defaults to **False**, so without `-l` you get every release. Use `-l` for "what is current" and `--release-version` for reproducible work.
 
 `match-pangenome` requires **Mash** on `PATH` (not pulled in by `pip install pangbank-cli`), handles one genome per invocation, and hardcodes `mash dist -p 1 -d 0.05`. It downloads the collection sketch on first use (16–38 MB) into `--outdir`, so the cache is per-outdir.
