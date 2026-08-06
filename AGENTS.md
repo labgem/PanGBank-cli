@@ -26,8 +26,5 @@ The CLI's flag semantics are **inverted relative to the raw API** in two places,
 
 - `search-pangenomes` defaults to *substring* taxon matching; `--exact-match` opts into exact. The API is the opposite.
 - `--latest-only` defaults to **False**, so without `-l` you get every release. Use `-l` for "what is current" and `--release-version` for reproducible work — the latter is applied client-side, because the API parameter of that name does nothing.
-- The TSV `name` column holds the deepest taxon name *with spaces*, while the API/SDK `name` field holds the *underscored* pangenome name. Joining on `name` fails silently; join on `pangenome_id`.
 
 `match-pangenome` requires **Mash** on `PATH` (not pulled in by `pip install pangbank-cli`), handles one genome per invocation, and hardcodes `mash dist -p 1 -d 0.05`. It downloads the collection sketch on first use (16–38 MB) into `--outdir`, so the cache is per-outdir.
-
-**Destructive behaviour to be aware of when editing `get_pangenome_file()`:** an existing file whose md5 differs from `file_md5sum` is treated as corrupt and `unlink()`ed *before* the replacement download is attempted. Since `ppanggolin metadata` rewrites a pangenome in place, a user who annotated their download and re-runs the same command loses that work — and loses it entirely if the download then fails. Do not make this worse; ideally download to a temporary name and swap on success.
