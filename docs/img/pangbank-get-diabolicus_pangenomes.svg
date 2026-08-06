@@ -1,4 +1,4 @@
-<svg class="rich-terminal" viewBox="0 0 994 98.8" xmlns="http://www.w3.org/2000/svg">
+<svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
     <!-- Generated with Rich https://www.textualize.io -->
     <style>
 
@@ -19,43 +19,143 @@
         font-weight: 700;
     }
 
-    .terminal-93002065-matrix {
+    .terminal-4160532997-matrix {
         font-family: Fira Code, monospace;
         font-size: 20px;
         line-height: 24.4px;
         font-variant-east-asian: full-width;
     }
 
-    .terminal-93002065-title {
+    .terminal-4160532997-title {
         font-size: 18px;
         font-weight: bold;
         font-family: arial;
     }
 
-    .terminal-93002065-r1 { fill: #c5c8c6 }
+    .terminal-4160532997-r1 { fill: #c5c8c6 }
+.terminal-4160532997-r2 { fill: #4e707b }
+.terminal-4160532997-r3 { fill: #608ab1 }
+.terminal-4160532997-r4 { fill: #d0b344;font-weight: bold }
+.terminal-4160532997-r5 { fill: #868887 }
+.terminal-4160532997-r6 { fill: #1984e9;text-decoration: underline; }
+.terminal-4160532997-r7 { fill: #98a84b }
+.terminal-4160532997-r8 { fill: #68a0b3;font-weight: bold }
+.terminal-4160532997-r9 { fill: #c5c8c6;font-weight: bold }
+.terminal-4160532997-r10 { fill: #98a84b;font-style: italic; }
+.terminal-4160532997-r11 { fill: #00823d;font-style: italic; }
+.terminal-4160532997-r12 { fill: #00823d }
+.terminal-4160532997-r13 { fill: #00823d;font-weight: bold }
     </style>
 
     <defs>
-    <clipPath id="terminal-93002065-clip-terminal">
-      <rect x="0" y="0" width="975.0" height="47.8" />
+    <clipPath id="terminal-4160532997-clip-terminal">
+      <rect x="0" y="0" width="975.0" height="584.5999999999999" />
     </clipPath>
-    <clipPath id="terminal-93002065-line-0">
+    <clipPath id="terminal-4160532997-line-0">
     <rect x="0" y="1.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4160532997-line-1">
+    <rect x="0" y="25.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4160532997-line-2">
+    <rect x="0" y="50.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4160532997-line-3">
+    <rect x="0" y="74.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4160532997-line-4">
+    <rect x="0" y="99.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4160532997-line-5">
+    <rect x="0" y="123.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4160532997-line-6">
+    <rect x="0" y="147.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4160532997-line-7">
+    <rect x="0" y="172.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4160532997-line-8">
+    <rect x="0" y="196.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4160532997-line-9">
+    <rect x="0" y="221.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4160532997-line-10">
+    <rect x="0" y="245.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4160532997-line-11">
+    <rect x="0" y="269.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4160532997-line-12">
+    <rect x="0" y="294.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4160532997-line-13">
+    <rect x="0" y="318.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4160532997-line-14">
+    <rect x="0" y="343.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4160532997-line-15">
+    <rect x="0" y="367.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4160532997-line-16">
+    <rect x="0" y="391.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4160532997-line-17">
+    <rect x="0" y="416.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4160532997-line-18">
+    <rect x="0" y="440.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4160532997-line-19">
+    <rect x="0" y="465.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4160532997-line-20">
+    <rect x="0" y="489.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4160532997-line-21">
+    <rect x="0" y="513.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4160532997-line-22">
+    <rect x="0" y="538.3" width="976" height="24.65"/>
             </clipPath>
     </defs>
 
-    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="96.8" rx="8"/>
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/>
             <g transform="translate(26,22)">
             <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
             <circle cx="22" cy="0" r="7" fill="#febc2e"/>
             <circle cx="44" cy="0" r="7" fill="#28c840"/>
             </g>
         
-    <g transform="translate(9, 41)" clip-path="url(#terminal-93002065-clip-terminal)">
+    <g transform="translate(9, 41)" clip-path="url(#terminal-4160532997-clip-terminal)">
     
-    <g class="terminal-93002065-matrix">
-    <text class="terminal-93002065-r1" x="0" y="20" textLength="366" clip-path="url(#terminal-93002065-line-0)">$&#160;pangbank&#160;get-pangenome&#160;12767</text><text class="terminal-93002065-r1" x="976" y="20" textLength="12.2" clip-path="url(#terminal-93002065-line-0)">
-</text><text class="terminal-93002065-r1" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-93002065-line-1)">
+    <g class="terminal-4160532997-matrix">
+    <text class="terminal-4160532997-r1" x="0" y="20" textLength="366" clip-path="url(#terminal-4160532997-line-0)">$&#160;pangbank&#160;get-pangenome&#160;12767</text><text class="terminal-4160532997-r1" x="976" y="20" textLength="12.2" clip-path="url(#terminal-4160532997-line-0)">
+</text><text class="terminal-4160532997-r2" x="0" y="44.4" textLength="122" clip-path="url(#terminal-4160532997-line-1)">[14:35:39]</text><text class="terminal-4160532997-r3" x="134.2" y="44.4" textLength="97.6" clip-path="url(#terminal-4160532997-line-1)">INFO&#160;&#160;&#160;&#160;</text><text class="terminal-4160532997-r1" x="231.8" y="44.4" textLength="183" clip-path="url(#terminal-4160532997-line-1)">&#160;HTTP&#160;Request:&#160;</text><text class="terminal-4160532997-r4" x="414.8" y="44.4" textLength="36.6" clip-path="url(#terminal-4160532997-line-1)">GET</text><text class="terminal-4160532997-r5" x="793" y="44.4" textLength="122" clip-path="url(#terminal-4160532997-line-1)">_client.py</text><text class="terminal-4160532997-r5" x="915" y="44.4" textLength="12.2" clip-path="url(#terminal-4160532997-line-1)">:</text><text class="terminal-4160532997-r5" x="927.2" y="44.4" textLength="48.8" clip-path="url(#terminal-4160532997-line-1)">1025</text><text class="terminal-4160532997-r1" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-4160532997-line-1)">
+</text><text class="terminal-4160532997-r6" x="244" y="68.8" textLength="536.8" clip-path="url(#terminal-4160532997-line-2)">https://pangbank-api.genoscope.cns.fr/pangen</text><text class="terminal-4160532997-r1" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-4160532997-line-2)">
+</text><text class="terminal-4160532997-r6" x="244" y="93.2" textLength="122" clip-path="url(#terminal-4160532997-line-3)">omes/12767</text><text class="terminal-4160532997-r7" x="378.2" y="93.2" textLength="207.4" clip-path="url(#terminal-4160532997-line-3)">&quot;HTTP/1.1&#160;200&#160;OK&quot;</text><text class="terminal-4160532997-r1" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-4160532997-line-3)">
+</text><text class="terminal-4160532997-r3" x="134.2" y="117.6" textLength="97.6" clip-path="url(#terminal-4160532997-line-4)">INFO&#160;&#160;&#160;&#160;</text><text class="terminal-4160532997-r1" x="231.8" y="117.6" textLength="341.6" clip-path="url(#terminal-4160532997-line-4)">&#160;Displaying&#160;information&#160;for&#160;</text><text class="terminal-4160532997-r8" x="573.4" y="117.6" textLength="12.2" clip-path="url(#terminal-4160532997-line-4)">1</text><text class="terminal-4160532997-r1" x="585.6" y="117.6" textLength="183" clip-path="url(#terminal-4160532997-line-4)">&#160;pangenome:&#160;&#160;&#160;&#160;</text><text class="terminal-4160532997-r5" x="768.6" y="117.6" textLength="158.6" clip-path="url(#terminal-4160532997-line-4)">pangenomes.py</text><text class="terminal-4160532997-r5" x="927.2" y="117.6" textLength="12.2" clip-path="url(#terminal-4160532997-line-4)">:</text><text class="terminal-4160532997-r5" x="939.4" y="117.6" textLength="36.6" clip-path="url(#terminal-4160532997-line-4)">345</text><text class="terminal-4160532997-r1" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-4160532997-line-4)">
+</text><text class="terminal-4160532997-r9" x="0" y="142" textLength="244" clip-path="url(#terminal-4160532997-line-5)">s__Vibrio&#160;diabolicus</text><text class="terminal-4160532997-r1" x="244" y="142" textLength="12.2" clip-path="url(#terminal-4160532997-line-5)">:</text><text class="terminal-4160532997-r1" x="976" y="142" textLength="12.2" clip-path="url(#terminal-4160532997-line-5)">
+</text><text class="terminal-4160532997-r1" x="0" y="166.4" textLength="219.6" clip-path="url(#terminal-4160532997-line-6)">&#160;&#160;&#160;&#160;pangenome_id:&#160;</text><text class="terminal-4160532997-r8" x="219.6" y="166.4" textLength="61" clip-path="url(#terminal-4160532997-line-6)">12767</text><text class="terminal-4160532997-r1" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-4160532997-line-6)">
+</text><text class="terminal-4160532997-r1" x="0" y="190.8" textLength="329.4" clip-path="url(#terminal-4160532997-line-7)">&#160;&#160;&#160;&#160;collection:&#160;GTDB_refseq</text><text class="terminal-4160532997-r1" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-4160532997-line-7)">
+</text><text class="terminal-4160532997-r1" x="0" y="215.2" textLength="292.8" clip-path="url(#terminal-4160532997-line-8)">&#160;&#160;&#160;&#160;collection_release:&#160;</text><text class="terminal-4160532997-r8" x="292.8" y="215.2" textLength="36.6" clip-path="url(#terminal-4160532997-line-8)">2.0</text><text class="terminal-4160532997-r1" x="329.4" y="215.2" textLength="12.2" clip-path="url(#terminal-4160532997-line-8)">.</text><text class="terminal-4160532997-r8" x="341.6" y="215.2" textLength="12.2" clip-path="url(#terminal-4160532997-line-8)">0</text><text class="terminal-4160532997-r1" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-4160532997-line-8)">
+</text><text class="terminal-4160532997-r1" x="0" y="239.6" textLength="170.8" clip-path="url(#terminal-4160532997-line-9)">&#160;&#160;&#160;&#160;taxonomy:&#160;</text><text class="terminal-4160532997-r1" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-4160532997-line-9)">
+</text><text class="terminal-4160532997-r10" x="0" y="264" textLength="134.2" clip-path="url(#terminal-4160532997-line-10)">d__Bacteria</text><text class="terminal-4160532997-r1" x="134.2" y="264" textLength="12.2" clip-path="url(#terminal-4160532997-line-10)">;</text><text class="terminal-4160532997-r11" x="146.4" y="264" textLength="207.4" clip-path="url(#terminal-4160532997-line-10)">p__Pseudomonadota</text><text class="terminal-4160532997-r1" x="353.8" y="264" textLength="12.2" clip-path="url(#terminal-4160532997-line-10)">;</text><text class="terminal-4160532997-r10" x="366" y="264" textLength="268.4" clip-path="url(#terminal-4160532997-line-10)">c__Gammaproteobacteria</text><text class="terminal-4160532997-r1" x="634.4" y="264" textLength="12.2" clip-path="url(#terminal-4160532997-line-10)">;</text><text class="terminal-4160532997-r11" x="646.6" y="264" textLength="231.8" clip-path="url(#terminal-4160532997-line-10)">o__Enterobacterales</text><text class="terminal-4160532997-r1" x="878.4" y="264" textLength="12.2" clip-path="url(#terminal-4160532997-line-10)">;</text><text class="terminal-4160532997-r10" x="890.6" y="264" textLength="85.4" clip-path="url(#terminal-4160532997-line-10)">f__Vibr</text><text class="terminal-4160532997-r1" x="976" y="264" textLength="12.2" clip-path="url(#terminal-4160532997-line-10)">
+</text><text class="terminal-4160532997-r10" x="0" y="288.4" textLength="97.6" clip-path="url(#terminal-4160532997-line-11)">ionaceae</text><text class="terminal-4160532997-r1" x="97.6" y="288.4" textLength="12.2" clip-path="url(#terminal-4160532997-line-11)">;</text><text class="terminal-4160532997-r11" x="109.8" y="288.4" textLength="109.8" clip-path="url(#terminal-4160532997-line-11)">g__Vibrio</text><text class="terminal-4160532997-r1" x="219.6" y="288.4" textLength="12.2" clip-path="url(#terminal-4160532997-line-11)">;</text><text class="terminal-4160532997-r10" x="231.8" y="288.4" textLength="244" clip-path="url(#terminal-4160532997-line-11)">s__Vibrio&#160;diabolicus</text><text class="terminal-4160532997-r1" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-4160532997-line-11)">
+</text><text class="terminal-4160532997-r1" x="0" y="312.8" textLength="256.2" clip-path="url(#terminal-4160532997-line-12)">&#160;&#160;&#160;&#160;taxonomy_source:&#160;</text><text class="terminal-4160532997-r12" x="256.2" y="312.8" textLength="61" clip-path="url(#terminal-4160532997-line-12)">GTDB&#160;</text><text class="terminal-4160532997-r13" x="317.2" y="312.8" textLength="24.4" clip-path="url(#terminal-4160532997-line-12)">11</text><text class="terminal-4160532997-r12" x="341.6" y="312.8" textLength="73.2" clip-path="url(#terminal-4160532997-line-12)">-RS232</text><text class="terminal-4160532997-r1" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-4160532997-line-12)">
+</text><text class="terminal-4160532997-r1" x="0" y="337.2" textLength="158.6" clip-path="url(#terminal-4160532997-line-13)">&#160;&#160;&#160;&#160;genomes:&#160;</text><text class="terminal-4160532997-r8" x="158.6" y="337.2" textLength="36.6" clip-path="url(#terminal-4160532997-line-13)">200</text><text class="terminal-4160532997-r1" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-4160532997-line-13)">
+</text><text class="terminal-4160532997-r1" x="0" y="361.6" textLength="134.2" clip-path="url(#terminal-4160532997-line-14)">&#160;&#160;&#160;&#160;genes:&#160;</text><text class="terminal-4160532997-r8" x="134.2" y="361.6" textLength="73.2" clip-path="url(#terminal-4160532997-line-14)">911302</text><text class="terminal-4160532997-r1" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-4160532997-line-14)">
+</text><text class="terminal-4160532997-r1" x="0" y="386" textLength="170.8" clip-path="url(#terminal-4160532997-line-15)">&#160;&#160;&#160;&#160;families:&#160;</text><text class="terminal-4160532997-r8" x="170.8" y="386" textLength="61" clip-path="url(#terminal-4160532997-line-15)">24412</text><text class="terminal-4160532997-r1" x="976" y="386" textLength="12.2" clip-path="url(#terminal-4160532997-line-15)">
+</text><text class="terminal-4160532997-r1" x="0" y="410.4" textLength="183" clip-path="url(#terminal-4160532997-line-16)">&#160;&#160;&#160;&#160;partitions:</text><text class="terminal-4160532997-r1" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-4160532997-line-16)">
+</text><text class="terminal-4160532997-r1" x="0" y="434.8" textLength="353.8" clip-path="url(#terminal-4160532997-line-17)">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;persistent_families:&#160;</text><text class="terminal-4160532997-r8" x="353.8" y="434.8" textLength="48.8" clip-path="url(#terminal-4160532997-line-17)">3944</text><text class="terminal-4160532997-r1" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-4160532997-line-17)">
+</text><text class="terminal-4160532997-r1" x="0" y="459.2" textLength="292.8" clip-path="url(#terminal-4160532997-line-18)">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;shell_families:&#160;</text><text class="terminal-4160532997-r8" x="292.8" y="459.2" textLength="48.8" clip-path="url(#terminal-4160532997-line-18)">2042</text><text class="terminal-4160532997-r1" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-4160532997-line-18)">
+</text><text class="terminal-4160532997-r1" x="0" y="483.6" textLength="292.8" clip-path="url(#terminal-4160532997-line-19)">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;cloud_families:&#160;</text><text class="terminal-4160532997-r8" x="292.8" y="483.6" textLength="61" clip-path="url(#terminal-4160532997-line-19)">18426</text><text class="terminal-4160532997-r1" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-4160532997-line-19)">
+</text><text class="terminal-4160532997-r1" x="0" y="508" textLength="158.6" clip-path="url(#terminal-4160532997-line-20)">&#160;&#160;&#160;&#160;modules:&#160;</text><text class="terminal-4160532997-r8" x="158.6" y="508" textLength="36.6" clip-path="url(#terminal-4160532997-line-20)">782</text><text class="terminal-4160532997-r1" x="976" y="508" textLength="12.2" clip-path="url(#terminal-4160532997-line-20)">
+</text><text class="terminal-4160532997-r1" x="0" y="532.4" textLength="122" clip-path="url(#terminal-4160532997-line-21)">&#160;&#160;&#160;&#160;RGPs:&#160;</text><text class="terminal-4160532997-r8" x="122" y="532.4" textLength="48.8" clip-path="url(#terminal-4160532997-line-21)">6820</text><text class="terminal-4160532997-r1" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-4160532997-line-21)">
+</text><text class="terminal-4160532997-r1" x="0" y="556.8" textLength="134.2" clip-path="url(#terminal-4160532997-line-22)">&#160;&#160;&#160;&#160;spots:&#160;</text><text class="terminal-4160532997-r8" x="134.2" y="556.8" textLength="36.6" clip-path="url(#terminal-4160532997-line-22)">179</text><text class="terminal-4160532997-r1" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-4160532997-line-22)">
+</text><text class="terminal-4160532997-r1" x="976" y="581.2" textLength="12.2" clip-path="url(#terminal-4160532997-line-23)">
 </text>
     </g>
     </g>
