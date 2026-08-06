@@ -19,83 +19,83 @@
         font-weight: 700;
     }
 
-    .terminal-2840500466-matrix {
+    .terminal-2840631538-matrix {
         font-family: Fira Code, monospace;
         font-size: 20px;
         line-height: 24.4px;
         font-variant-east-asian: full-width;
     }
 
-    .terminal-2840500466-title {
+    .terminal-2840631538-title {
         font-size: 18px;
         font-weight: bold;
         font-family: arial;
     }
 
-    .terminal-2840500466-r1 { fill: #c5c8c6 }
-.terminal-2840500466-r2 { fill: #c5c8c6;font-weight: bold }
-.terminal-2840500466-r3 { fill: #d0b344;font-weight: bold }
-.terminal-2840500466-r4 { fill: #868887 }
-.terminal-2840500466-r5 { fill: #68a0b3;font-weight: bold }
-.terminal-2840500466-r6 { fill: #98a84b;font-weight: bold }
+    .terminal-2840631538-r1 { fill: #c5c8c6 }
+.terminal-2840631538-r2 { fill: #c5c8c6;font-weight: bold }
+.terminal-2840631538-r3 { fill: #d0b344;font-weight: bold }
+.terminal-2840631538-r4 { fill: #868887 }
+.terminal-2840631538-r5 { fill: #68a0b3;font-weight: bold }
+.terminal-2840631538-r6 { fill: #98a84b;font-weight: bold }
     </style>
 
     <defs>
-    <clipPath id="terminal-2840500466-clip-terminal">
+    <clipPath id="terminal-2840631538-clip-terminal">
       <rect x="0" y="0" width="975.0" height="462.59999999999997" />
     </clipPath>
-    <clipPath id="terminal-2840500466-line-0">
+    <clipPath id="terminal-2840631538-line-0">
     <rect x="0" y="1.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2840500466-line-1">
+<clipPath id="terminal-2840631538-line-1">
     <rect x="0" y="25.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2840500466-line-2">
+<clipPath id="terminal-2840631538-line-2">
     <rect x="0" y="50.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2840500466-line-3">
+<clipPath id="terminal-2840631538-line-3">
     <rect x="0" y="74.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2840500466-line-4">
+<clipPath id="terminal-2840631538-line-4">
     <rect x="0" y="99.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2840500466-line-5">
+<clipPath id="terminal-2840631538-line-5">
     <rect x="0" y="123.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2840500466-line-6">
+<clipPath id="terminal-2840631538-line-6">
     <rect x="0" y="147.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2840500466-line-7">
+<clipPath id="terminal-2840631538-line-7">
     <rect x="0" y="172.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2840500466-line-8">
+<clipPath id="terminal-2840631538-line-8">
     <rect x="0" y="196.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2840500466-line-9">
+<clipPath id="terminal-2840631538-line-9">
     <rect x="0" y="221.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2840500466-line-10">
+<clipPath id="terminal-2840631538-line-10">
     <rect x="0" y="245.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2840500466-line-11">
+<clipPath id="terminal-2840631538-line-11">
     <rect x="0" y="269.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2840500466-line-12">
+<clipPath id="terminal-2840631538-line-12">
     <rect x="0" y="294.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2840500466-line-13">
+<clipPath id="terminal-2840631538-line-13">
     <rect x="0" y="318.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2840500466-line-14">
+<clipPath id="terminal-2840631538-line-14">
     <rect x="0" y="343.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2840500466-line-15">
+<clipPath id="terminal-2840631538-line-15">
     <rect x="0" y="367.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2840500466-line-16">
+<clipPath id="terminal-2840631538-line-16">
     <rect x="0" y="391.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2840500466-line-17">
+<clipPath id="terminal-2840631538-line-17">
     <rect x="0" y="416.3" width="976" height="24.65"/>
             </clipPath>
     </defs>
@@ -107,28 +107,28 @@
             <circle cx="44" cy="0" r="7" fill="#28c840"/>
             </g>
         
-    <g transform="translate(9, 41)" clip-path="url(#terminal-2840500466-clip-terminal)">
+    <g transform="translate(9, 41)" clip-path="url(#terminal-2840631538-clip-terminal)">
     
-    <g class="terminal-2840500466-matrix">
-    <text class="terminal-2840500466-r1" x="0" y="20" textLength="207.4" clip-path="url(#terminal-2840500466-line-0)">$&#160;pangbank&#160;--help</text><text class="terminal-2840500466-r1" x="976" y="20" textLength="12.2" clip-path="url(#terminal-2840500466-line-0)">
-</text><text class="terminal-2840500466-r1" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-2840500466-line-1)">
-</text><text class="terminal-2840500466-r3" x="12.2" y="68.8" textLength="85.4" clip-path="url(#terminal-2840500466-line-2)">Usage:&#160;</text><text class="terminal-2840500466-r2" x="97.6" y="68.8" textLength="439.2" clip-path="url(#terminal-2840500466-line-2)">pangbank&#160;[OPTIONS]&#160;COMMAND&#160;[ARGS]...</text><text class="terminal-2840500466-r1" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-2840500466-line-2)">
-</text><text class="terminal-2840500466-r1" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-2840500466-line-3)">
-</text><text class="terminal-2840500466-r1" x="0" y="117.6" textLength="976" clip-path="url(#terminal-2840500466-line-4)">&#160;PanGBank&#160;CLI&#160;0.1.1:&#160;Command-line&#160;tool&#160;for&#160;retrieving&#160;pangenomes&#160;using&#160;the&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2840500466-r1" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-2840500466-line-4)">
-</text><text class="terminal-2840500466-r1" x="0" y="142" textLength="976" clip-path="url(#terminal-2840500466-line-5)">&#160;PanGBank&#160;API.&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2840500466-r1" x="976" y="142" textLength="12.2" clip-path="url(#terminal-2840500466-line-5)">
-</text><text class="terminal-2840500466-r1" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-2840500466-line-6)">
-</text><text class="terminal-2840500466-r4" x="0" y="190.8" textLength="24.4" clip-path="url(#terminal-2840500466-line-7)">╭─</text><text class="terminal-2840500466-r4" x="24.4" y="190.8" textLength="109.8" clip-path="url(#terminal-2840500466-line-7)">&#160;Options&#160;</text><text class="terminal-2840500466-r4" x="134.2" y="190.8" textLength="817.4" clip-path="url(#terminal-2840500466-line-7)">───────────────────────────────────────────────────────────────────</text><text class="terminal-2840500466-r4" x="951.6" y="190.8" textLength="24.4" clip-path="url(#terminal-2840500466-line-7)">─╮</text><text class="terminal-2840500466-r1" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-2840500466-line-7)">
-</text><text class="terminal-2840500466-r4" x="0" y="215.2" textLength="12.2" clip-path="url(#terminal-2840500466-line-8)">│</text><text class="terminal-2840500466-r5" x="24.4" y="215.2" textLength="12.2" clip-path="url(#terminal-2840500466-line-8)">-</text><text class="terminal-2840500466-r5" x="36.6" y="215.2" textLength="97.6" clip-path="url(#terminal-2840500466-line-8)">-version</text><text class="terminal-2840500466-r6" x="158.6" y="215.2" textLength="24.4" clip-path="url(#terminal-2840500466-line-8)">-v</text><text class="terminal-2840500466-r1" x="183" y="215.2" textLength="780.8" clip-path="url(#terminal-2840500466-line-8)">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Show&#160;the&#160;version&#160;and&#160;exit.&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2840500466-r4" x="963.8" y="215.2" textLength="12.2" clip-path="url(#terminal-2840500466-line-8)">│</text><text class="terminal-2840500466-r1" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-2840500466-line-8)">
-</text><text class="terminal-2840500466-r4" x="0" y="239.6" textLength="12.2" clip-path="url(#terminal-2840500466-line-9)">│</text><text class="terminal-2840500466-r5" x="24.4" y="239.6" textLength="12.2" clip-path="url(#terminal-2840500466-line-9)">-</text><text class="terminal-2840500466-r5" x="36.6" y="239.6" textLength="61" clip-path="url(#terminal-2840500466-line-9)">-help</text><text class="terminal-2840500466-r6" x="158.6" y="239.6" textLength="24.4" clip-path="url(#terminal-2840500466-line-9)">-h</text><text class="terminal-2840500466-r1" x="183" y="239.6" textLength="780.8" clip-path="url(#terminal-2840500466-line-9)">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Show&#160;this&#160;message&#160;and&#160;exit.&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2840500466-r4" x="963.8" y="239.6" textLength="12.2" clip-path="url(#terminal-2840500466-line-9)">│</text><text class="terminal-2840500466-r1" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-2840500466-line-9)">
-</text><text class="terminal-2840500466-r4" x="0" y="264" textLength="976" clip-path="url(#terminal-2840500466-line-10)">╰──────────────────────────────────────────────────────────────────────────────╯</text><text class="terminal-2840500466-r1" x="976" y="264" textLength="12.2" clip-path="url(#terminal-2840500466-line-10)">
-</text><text class="terminal-2840500466-r4" x="0" y="288.4" textLength="24.4" clip-path="url(#terminal-2840500466-line-11)">╭─</text><text class="terminal-2840500466-r4" x="24.4" y="288.4" textLength="122" clip-path="url(#terminal-2840500466-line-11)">&#160;Commands&#160;</text><text class="terminal-2840500466-r4" x="146.4" y="288.4" textLength="805.2" clip-path="url(#terminal-2840500466-line-11)">──────────────────────────────────────────────────────────────────</text><text class="terminal-2840500466-r4" x="951.6" y="288.4" textLength="24.4" clip-path="url(#terminal-2840500466-line-11)">─╮</text><text class="terminal-2840500466-r1" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-2840500466-line-11)">
-</text><text class="terminal-2840500466-r4" x="0" y="312.8" textLength="12.2" clip-path="url(#terminal-2840500466-line-12)">│</text><text class="terminal-2840500466-r5" x="24.4" y="312.8" textLength="207.4" clip-path="url(#terminal-2840500466-line-12)">list-collections&#160;</text><text class="terminal-2840500466-r1" x="244" y="312.8" textLength="719.8" clip-path="url(#terminal-2840500466-line-12)">&#160;List&#160;available&#160;collections.&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2840500466-r4" x="963.8" y="312.8" textLength="12.2" clip-path="url(#terminal-2840500466-line-12)">│</text><text class="terminal-2840500466-r1" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-2840500466-line-12)">
-</text><text class="terminal-2840500466-r4" x="0" y="337.2" textLength="12.2" clip-path="url(#terminal-2840500466-line-13)">│</text><text class="terminal-2840500466-r5" x="24.4" y="337.2" textLength="207.4" clip-path="url(#terminal-2840500466-line-13)">search-pangenomes</text><text class="terminal-2840500466-r1" x="244" y="337.2" textLength="719.8" clip-path="url(#terminal-2840500466-line-13)">&#160;Search&#160;for&#160;pangenomes.&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2840500466-r4" x="963.8" y="337.2" textLength="12.2" clip-path="url(#terminal-2840500466-line-13)">│</text><text class="terminal-2840500466-r1" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-2840500466-line-13)">
-</text><text class="terminal-2840500466-r4" x="0" y="361.6" textLength="12.2" clip-path="url(#terminal-2840500466-line-14)">│</text><text class="terminal-2840500466-r5" x="24.4" y="361.6" textLength="207.4" clip-path="url(#terminal-2840500466-line-14)">get-pangenome&#160;&#160;&#160;&#160;</text><text class="terminal-2840500466-r1" x="244" y="361.6" textLength="719.8" clip-path="url(#terminal-2840500466-line-14)">&#160;Get&#160;a&#160;pangenome&#160;by&#160;ID.&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2840500466-r4" x="963.8" y="361.6" textLength="12.2" clip-path="url(#terminal-2840500466-line-14)">│</text><text class="terminal-2840500466-r1" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-2840500466-line-14)">
-</text><text class="terminal-2840500466-r4" x="0" y="386" textLength="12.2" clip-path="url(#terminal-2840500466-line-15)">│</text><text class="terminal-2840500466-r5" x="24.4" y="386" textLength="207.4" clip-path="url(#terminal-2840500466-line-15)">match-pangenome&#160;&#160;</text><text class="terminal-2840500466-r1" x="244" y="386" textLength="719.8" clip-path="url(#terminal-2840500466-line-15)">&#160;Match&#160;a&#160;pangenome&#160;from&#160;an&#160;input&#160;genome.&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2840500466-r4" x="963.8" y="386" textLength="12.2" clip-path="url(#terminal-2840500466-line-15)">│</text><text class="terminal-2840500466-r1" x="976" y="386" textLength="12.2" clip-path="url(#terminal-2840500466-line-15)">
-</text><text class="terminal-2840500466-r4" x="0" y="410.4" textLength="976" clip-path="url(#terminal-2840500466-line-16)">╰──────────────────────────────────────────────────────────────────────────────╯</text><text class="terminal-2840500466-r1" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-2840500466-line-16)">
-</text><text class="terminal-2840500466-r1" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-2840500466-line-17)">
-</text><text class="terminal-2840500466-r1" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-2840500466-line-18)">
+    <g class="terminal-2840631538-matrix">
+    <text class="terminal-2840631538-r1" x="0" y="20" textLength="207.4" clip-path="url(#terminal-2840631538-line-0)">$&#160;pangbank&#160;--help</text><text class="terminal-2840631538-r1" x="976" y="20" textLength="12.2" clip-path="url(#terminal-2840631538-line-0)">
+</text><text class="terminal-2840631538-r1" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-2840631538-line-1)">
+</text><text class="terminal-2840631538-r3" x="12.2" y="68.8" textLength="85.4" clip-path="url(#terminal-2840631538-line-2)">Usage:&#160;</text><text class="terminal-2840631538-r2" x="97.6" y="68.8" textLength="439.2" clip-path="url(#terminal-2840631538-line-2)">pangbank&#160;[OPTIONS]&#160;COMMAND&#160;[ARGS]...</text><text class="terminal-2840631538-r1" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-2840631538-line-2)">
+</text><text class="terminal-2840631538-r1" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-2840631538-line-3)">
+</text><text class="terminal-2840631538-r1" x="0" y="117.6" textLength="976" clip-path="url(#terminal-2840631538-line-4)">&#160;PanGBank&#160;CLI&#160;0.2.0:&#160;Command-line&#160;tool&#160;for&#160;retrieving&#160;pangenomes&#160;using&#160;the&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2840631538-r1" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-2840631538-line-4)">
+</text><text class="terminal-2840631538-r1" x="0" y="142" textLength="976" clip-path="url(#terminal-2840631538-line-5)">&#160;PanGBank&#160;API.&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2840631538-r1" x="976" y="142" textLength="12.2" clip-path="url(#terminal-2840631538-line-5)">
+</text><text class="terminal-2840631538-r1" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-2840631538-line-6)">
+</text><text class="terminal-2840631538-r4" x="0" y="190.8" textLength="24.4" clip-path="url(#terminal-2840631538-line-7)">╭─</text><text class="terminal-2840631538-r4" x="24.4" y="190.8" textLength="109.8" clip-path="url(#terminal-2840631538-line-7)">&#160;Options&#160;</text><text class="terminal-2840631538-r4" x="134.2" y="190.8" textLength="817.4" clip-path="url(#terminal-2840631538-line-7)">───────────────────────────────────────────────────────────────────</text><text class="terminal-2840631538-r4" x="951.6" y="190.8" textLength="24.4" clip-path="url(#terminal-2840631538-line-7)">─╮</text><text class="terminal-2840631538-r1" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-2840631538-line-7)">
+</text><text class="terminal-2840631538-r4" x="0" y="215.2" textLength="12.2" clip-path="url(#terminal-2840631538-line-8)">│</text><text class="terminal-2840631538-r5" x="24.4" y="215.2" textLength="12.2" clip-path="url(#terminal-2840631538-line-8)">-</text><text class="terminal-2840631538-r5" x="36.6" y="215.2" textLength="97.6" clip-path="url(#terminal-2840631538-line-8)">-version</text><text class="terminal-2840631538-r6" x="158.6" y="215.2" textLength="24.4" clip-path="url(#terminal-2840631538-line-8)">-v</text><text class="terminal-2840631538-r1" x="183" y="215.2" textLength="780.8" clip-path="url(#terminal-2840631538-line-8)">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Show&#160;the&#160;version&#160;and&#160;exit.&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2840631538-r4" x="963.8" y="215.2" textLength="12.2" clip-path="url(#terminal-2840631538-line-8)">│</text><text class="terminal-2840631538-r1" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-2840631538-line-8)">
+</text><text class="terminal-2840631538-r4" x="0" y="239.6" textLength="12.2" clip-path="url(#terminal-2840631538-line-9)">│</text><text class="terminal-2840631538-r5" x="24.4" y="239.6" textLength="12.2" clip-path="url(#terminal-2840631538-line-9)">-</text><text class="terminal-2840631538-r5" x="36.6" y="239.6" textLength="61" clip-path="url(#terminal-2840631538-line-9)">-help</text><text class="terminal-2840631538-r6" x="158.6" y="239.6" textLength="24.4" clip-path="url(#terminal-2840631538-line-9)">-h</text><text class="terminal-2840631538-r1" x="183" y="239.6" textLength="780.8" clip-path="url(#terminal-2840631538-line-9)">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Show&#160;this&#160;message&#160;and&#160;exit.&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2840631538-r4" x="963.8" y="239.6" textLength="12.2" clip-path="url(#terminal-2840631538-line-9)">│</text><text class="terminal-2840631538-r1" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-2840631538-line-9)">
+</text><text class="terminal-2840631538-r4" x="0" y="264" textLength="976" clip-path="url(#terminal-2840631538-line-10)">╰──────────────────────────────────────────────────────────────────────────────╯</text><text class="terminal-2840631538-r1" x="976" y="264" textLength="12.2" clip-path="url(#terminal-2840631538-line-10)">
+</text><text class="terminal-2840631538-r4" x="0" y="288.4" textLength="24.4" clip-path="url(#terminal-2840631538-line-11)">╭─</text><text class="terminal-2840631538-r4" x="24.4" y="288.4" textLength="122" clip-path="url(#terminal-2840631538-line-11)">&#160;Commands&#160;</text><text class="terminal-2840631538-r4" x="146.4" y="288.4" textLength="805.2" clip-path="url(#terminal-2840631538-line-11)">──────────────────────────────────────────────────────────────────</text><text class="terminal-2840631538-r4" x="951.6" y="288.4" textLength="24.4" clip-path="url(#terminal-2840631538-line-11)">─╮</text><text class="terminal-2840631538-r1" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-2840631538-line-11)">
+</text><text class="terminal-2840631538-r4" x="0" y="312.8" textLength="12.2" clip-path="url(#terminal-2840631538-line-12)">│</text><text class="terminal-2840631538-r5" x="24.4" y="312.8" textLength="207.4" clip-path="url(#terminal-2840631538-line-12)">list-collections&#160;</text><text class="terminal-2840631538-r1" x="244" y="312.8" textLength="719.8" clip-path="url(#terminal-2840631538-line-12)">&#160;List&#160;available&#160;collections.&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2840631538-r4" x="963.8" y="312.8" textLength="12.2" clip-path="url(#terminal-2840631538-line-12)">│</text><text class="terminal-2840631538-r1" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-2840631538-line-12)">
+</text><text class="terminal-2840631538-r4" x="0" y="337.2" textLength="12.2" clip-path="url(#terminal-2840631538-line-13)">│</text><text class="terminal-2840631538-r5" x="24.4" y="337.2" textLength="207.4" clip-path="url(#terminal-2840631538-line-13)">search-pangenomes</text><text class="terminal-2840631538-r1" x="244" y="337.2" textLength="719.8" clip-path="url(#terminal-2840631538-line-13)">&#160;Search&#160;for&#160;pangenomes.&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2840631538-r4" x="963.8" y="337.2" textLength="12.2" clip-path="url(#terminal-2840631538-line-13)">│</text><text class="terminal-2840631538-r1" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-2840631538-line-13)">
+</text><text class="terminal-2840631538-r4" x="0" y="361.6" textLength="12.2" clip-path="url(#terminal-2840631538-line-14)">│</text><text class="terminal-2840631538-r5" x="24.4" y="361.6" textLength="207.4" clip-path="url(#terminal-2840631538-line-14)">get-pangenome&#160;&#160;&#160;&#160;</text><text class="terminal-2840631538-r1" x="244" y="361.6" textLength="719.8" clip-path="url(#terminal-2840631538-line-14)">&#160;Get&#160;a&#160;pangenome&#160;by&#160;ID.&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2840631538-r4" x="963.8" y="361.6" textLength="12.2" clip-path="url(#terminal-2840631538-line-14)">│</text><text class="terminal-2840631538-r1" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-2840631538-line-14)">
+</text><text class="terminal-2840631538-r4" x="0" y="386" textLength="12.2" clip-path="url(#terminal-2840631538-line-15)">│</text><text class="terminal-2840631538-r5" x="24.4" y="386" textLength="207.4" clip-path="url(#terminal-2840631538-line-15)">match-pangenome&#160;&#160;</text><text class="terminal-2840631538-r1" x="244" y="386" textLength="719.8" clip-path="url(#terminal-2840631538-line-15)">&#160;Match&#160;a&#160;pangenome&#160;from&#160;an&#160;input&#160;genome.&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2840631538-r4" x="963.8" y="386" textLength="12.2" clip-path="url(#terminal-2840631538-line-15)">│</text><text class="terminal-2840631538-r1" x="976" y="386" textLength="12.2" clip-path="url(#terminal-2840631538-line-15)">
+</text><text class="terminal-2840631538-r4" x="0" y="410.4" textLength="976" clip-path="url(#terminal-2840631538-line-16)">╰──────────────────────────────────────────────────────────────────────────────╯</text><text class="terminal-2840631538-r1" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-2840631538-line-16)">
+</text><text class="terminal-2840631538-r1" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-2840631538-line-17)">
+</text><text class="terminal-2840631538-r1" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-2840631538-line-18)">
 </text>
     </g>
     </g>
