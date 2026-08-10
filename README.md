@@ -176,22 +176,26 @@ The command outputs detailed information about the best matching pangenome.
 
 # Citation
 
-PanGBank pangenomes are constructed with PPanGGOLiN and its companion tools. If you use PanGBank or PanGBank-cli in your research, please cite the following references:
+If you use **PanGBank** in your research, please cite the PanGBank preprint:
 
+> **PanGBank: a large-scale resource of precomputed microbial pangenomes built with PPanGGOLiN**
+> Mainguy J *et al.* (2026)
+> *bioRxiv.*
+> doi: [10.64898/2026.08.05.742796](https://doi.org/10.64898/2026.08.05.742796)
+
+PanGBank pangenomes are constructed with **PPanGGOLiN** and its companion tools. If your research makes use of these underlying methods, please also cite the relevant references:
 
 > **PPanGGOLiN: Depicting microbial diversity via a partitioned pangenome graph**
-> Gautreau G et al. (2020)
+> Gautreau G *et al.* (2020)
 > *PLOS Computational Biology 16(3): e1007732.*
 > doi: [10.1371/journal.pcbi.1007732](https://doi.org/10.1371/journal.pcbi.1007732)
 
-
 > **panRGP: a pangenome-based method to predict genomic islands and explore their diversity**
-> Bazin et al. (2020)
-> *Bioinformatics, Volume 36, Issue Supplement_2, Pages i651–i658*
+> Bazin A *et al.* (2020)
+> *Bioinformatics, Volume 36, Issue Supplement_2, Pages i651–i658.*
 > doi: [10.1093/bioinformatics/btaa792](https://doi.org/10.1093/bioinformatics/btaa792)
 
-
 > **panModule: detecting conserved modules in the variable regions of a pangenome graph**
-> Bazin et al. (2021)
-> *bioRxiv* 
+> Bazin A *et al.* (2021)
+> *bioRxiv.*
 > doi: [10.1101/2021.12.06.471380](https://doi.org/10.1101/2021.12.06.471380)
