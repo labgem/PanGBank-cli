@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 import requests
 from pydantic import HttpUrl
 from typing import Any, Generator, Iterable, List, Dict, Optional, Tuple
@@ -188,13 +190,6 @@ def query_pangenomes(
         logger.info("No pangenome found matching the search criteria.")
         return []
 
-    collection_names = {
-        f"'{pan.collection_release.collection_name}'" for pan in pangenomes
-    }
-    c_plural = "s" if len(collection_names) > 1 else ""
-    logger.info(
-        f"The {len(pangenomes)} pangenome{plural} matching search criteria {'are' if len(pangenomes) > 1 else 'is'} from {len(collection_names)} collection{c_plural} : {', '.join(collection_names)}"
-    )
     return pangenomes
 
 
@@ -576,3 +571,46 @@ def download_pangenomes(
     else:
         logger.info(f"All pangenomes are available: {downloaded}/{total} files.")
     return outdir
+
+
+def log_found_pangenomes_summary(pangenomes: List[PangenomePublic]):
+
+    collection_names = {
+        f"'{pan.collection_release.collection_name}'" for pan in pangenomes
+    }
+    c_plural = "s" if len(collection_names) > 1 else ""
+    logger.info(
+        f"The {len(pangenomes)} pangenome{c_plural} matching search criteria {'are' if len(pangenomes) > 1 else 'is'} from {len(collection_names)} collection{c_plural} : {', '.join(collection_names)}"
+    )
+
+    collection_release_to_pangenome = defaultdict(list)
+    for pangenome in pangenomes:
+        collection_name = pangenome.collection_release.collection.name
+        collection_version = pangenome.collection_release.version
+
+        collection_release_to_pangenome[(collection_name, collection_version)].append(
+            pangenome
+        )
+
+    for (
+        collection_name,
+        collection_version,
+    ), pangenomes in collection_release_to_pangenome.items():
+
+        logger.info(
+            f"Collection '{collection_name}' release '{collection_version}' has {len(pangenomes)} matching pangenome{'s' if len(pangenomes) > 1 else ''}:"
+        )
+        for pangenome in pangenomes[
+            :10
+        ]:  # Display only the first 10 pangenomes for brevity
+            last_taxon = max(
+                pangenome.taxonomy.taxa,
+                key=attrgetter("depth"),
+            )
+            logger.info(
+                f"  id={pangenome.id} - {last_taxon.name}  {pangenome.genome_count} genomes"
+            )
+        if len(pangenomes) > 10:
+            logger.info(
+                f"  ... and {len(pangenomes) - 10} more pangenome{'s' if len(pangenomes) - 10 > 1 else ''}."
+            )

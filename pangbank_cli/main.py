@@ -30,6 +30,7 @@ from pangbank_cli.pangenomes import (
     download_pangenomes,
     display_pangenome_summary_by_collection,
     print_pangenome_info,
+    log_found_pangenomes_summary,
 )
 
 from pangbank_cli.match_pangenome import (
@@ -329,10 +330,12 @@ def search_pangenomes(
         )
         raise typer.Exit(code=1)
 
-    df = format_pangenomes_to_dataframe(pangenomes)
+    log_found_pangenomes_summary(pangenomes)
 
     # Output table if enabled
     if table or table_path is not None:
+        df = format_pangenomes_to_dataframe(pangenomes)
+
         if table_path is not None:
             logger.info(
                 f"Saving pangenomes information as TSV table to file: {table_path}"
