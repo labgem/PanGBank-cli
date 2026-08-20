@@ -101,21 +101,20 @@ def version_callback(
         raise typer.Exit()
 
 
-def verbose_callback(
-    verbose: bool,
-):
+def verbose_callback(verbose: bool):
     """Sets the logging level to DEBUG if --verbose is passed."""
-    lvl = logging.INFO
+    lvl = logging.DEBUG if verbose else logging.INFO
 
-    if verbose:
-        lvl = logging.DEBUG
+    handler = RichHandler(
+        console=err_console,
+        show_path=verbose,
+    )
 
-    # Set up logging
     logging.basicConfig(
         level=lvl,
         format="%(message)s",
         datefmt="[%X]",
-        handlers=[RichHandler(console=err_console)],
+        handlers=[handler],
     )
 
 
