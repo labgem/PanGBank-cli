@@ -288,7 +288,7 @@ def search_pangenomes(
             help="Output a TSV table summarizing the matching pangenomes to stdout.",
             rich_help_panel="Output and downloads",
         ),
-    ] = True,
+    ] = False,
     table_path: Annotated[
         Optional[Path],
         typer.Option(
