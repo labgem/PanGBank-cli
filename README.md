@@ -173,6 +173,35 @@ The command outputs detailed information about the best matching pangenome.
 > * The downloaded file can then be used with **PPanGGOLiN’s** `projection` command to annotate the input genome.
   See the [PPanGGOLiN documentation](https://ppanggolin.readthedocs.io/en/latest/user/projection.html) for details.
 
+## Using Downloaded Pangenome Files
+
+Pangenomes are distributed as **HDF5 files**, the central PPanGGOLiN format for storing all pangenome data and analyses, including the pangenome graph, partitioning, RGPs, spots, and modules.
+
+To analyze these files, install **PPanGGOLiN**:
+
+```bash
+# Install with conda
+conda install -c bioconda ppanggolin
+
+# Or install with pip
+pip install ppanggolin
+```
+
+Once installed, you can explore and analyze the downloaded pangenome files with PPanGGOLiN. For example:
+
+```bash
+# Get a summary of the pangenome content
+ppanggolin info -p pangenome_file.h5 --content
+
+# Project a new genome onto the pangenome
+ppanggolin projection -p pangenome_file.h5 --fasta input_genome.fasta -o output_dir
+
+# Generate visualizations (e.g., U-shaped plot, tile plot)
+ppanggolin draw -p pangenome_file.h5 -o figures --ucurve --tile_plot
+```
+
+For more details on PPanGGOLiN commands, workflows, and advanced usage, refer to the [PPanGGOLiN documentation](https://ppanggolin.readthedocs.io/).
+
 
 # Citation
 
