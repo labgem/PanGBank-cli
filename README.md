@@ -194,7 +194,7 @@ Once installed, you can explore and analyze the downloaded pangenome files with 
 ppanggolin info -p pangenome_file.h5 --content
 
 # Project a new genome onto the pangenome
-ppanggolin projection -p pangenome_file.h5 -i input_genome.fasta -o output_dir
+ppanggolin projection -p pangenome_file.h5 --fasta input_genome.fasta -o output_dir
 
 # Generate visualizations (e.g., U-shaped plot, tile plot)
 ppanggolin draw -p pangenome_file.h5 -o figures --ucurve --tile_plot
