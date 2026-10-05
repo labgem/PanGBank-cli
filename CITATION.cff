@@ -1,0 +1,57 @@
+cff-version: "1.2.0"
+message: "If you use PanGBank in your research, please cite the preferred reference below."
+title: "PanGBank-cli"
+authors:
+  - given-names: "Jean"
+    family-names: "Mainguy"
+    orcid: "https://orcid.org/0009-0006-9160-9744"
+  - given-names: "Téo"
+    family-names: "Lemane"
+    orcid: "https://orcid.org/0000-0002-7210-3178"
+  - given-names: "Alexandra"
+    family-names: "Calteau"
+    orcid: "https://orcid.org/0000-0002-5871-9347"
+  - given-names: "David"
+    family-names: "Vallenet"
+    orcid: "https://orcid.org/0000-0001-6648-0332"
+
+preferred-citation:
+  type: "article"
+  title: "PanGBank: a large-scale resource of precomputed microbial pangenomes built with PPanGGOLiN"
+  authors:
+    - given-names: "Jean"
+      family-names: "Mainguy"
+    - given-names: "Téo"
+      family-names: "Lemane"
+    - given-names: "Adelme"
+      family-names: "Bazin"
+    - given-names: "Jérôme"
+      family-names: "Arnoux"
+    - given-names: "Guillaume"
+      family-names: "Gautreau"
+    - given-names: "Claudine"
+      family-names: "Médigue"
+    - given-names: "Alexandra"
+      family-names: "Calteau"
+    - given-names: "David"
+      family-names: "Vallenet"
+  container-title: "Nucleic Acids Research"
+  year: 2026
+  month: 10
+  doi: "10.1093/nar/gkag948"
+  url: "https://doi.org/10.1093/nar/gkag948"
+
+# BibTeX entry for convenience
+bibtex: |-
+  @article{10.1093/nar/gkag948,
+      author = {Mainguy, Jean and Lemane, Téo and Bazin, Adelme and Arnoux, Jérôme and Gautreau, Guillaume and Médigue, Claudine and Calteau, Alexandra and Vallenet, David},
+      title = {PanGBank: a large-scale resource of precomputed microbial pangenomes built with PPanGGOLiN},
+      journal = {Nucleic Acids Research},
+      pages = {gkag948},
+      year = {2026},
+      month = {10},
+      issn = {1362-4962},
+      doi = {10.1093/nar/gkag948},
+      url = {https://doi.org/10.1093/nar/gkag948},
+      eprint = {https://academic.oup.com/nar/advance-article-pdf/doi/10.1093/nar/gkag948/71595364/gkag948.pdf},
+  }

@@ -205,12 +205,12 @@ For more details on PPanGGOLiN commands, workflows, and advanced usage, refer to
 
 # Citation
 
-If you use **PanGBank** in your research, please cite the PanGBank preprint:
+If you use **PanGBank** in your research, please cite the PanGBank ppblication:
 
 > **PanGBank: a large-scale resource of precomputed microbial pangenomes built with PPanGGOLiN**
 > Mainguy J *et al.* (2026)
-> *bioRxiv.*
-> doi: [10.64898/2026.08.05.742796](https://doi.org/10.64898/2026.08.05.742796)
+> *Nucleic Acids Research, gkag948.*
+> doi: [10.1093/nar/gkag948](https://doi.org/10.1093/nar/gkag948)
 
 PanGBank pangenomes are constructed with **PPanGGOLiN** and its companion tools. If your research makes use of these underlying methods, please also cite the relevant references:
 
