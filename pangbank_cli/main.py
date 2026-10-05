@@ -30,6 +30,7 @@ from pangbank_cli.pangenomes import (
     download_pangenomes,
     display_pangenome_summary_by_collection,
     print_pangenome_info,
+    log_found_pangenomes_summary,
 )
 
 from pangbank_cli.match_pangenome import (
@@ -101,21 +102,20 @@ def version_callback(
         raise typer.Exit()
 
 
-def verbose_callback(
-    verbose: bool,
-):
+def verbose_callback(verbose: bool):
     """Sets the logging level to DEBUG if --verbose is passed."""
-    lvl = logging.INFO
+    lvl = logging.DEBUG if verbose else logging.INFO
 
-    if verbose:
-        lvl = logging.DEBUG
+    handler = RichHandler(
+        console=err_console,
+        show_path=verbose,
+    )
 
-    # Set up logging
     logging.basicConfig(
         level=lvl,
         format="%(message)s",
         datefmt="[%X]",
-        handlers=[RichHandler(console=err_console)],
+        handlers=[handler],
     )
 
 
@@ -289,7 +289,7 @@ def search_pangenomes(
             help="Output a TSV table summarizing the matching pangenomes to stdout.",
             rich_help_panel="Output and downloads",
         ),
-    ] = True,
+    ] = False,
     table_path: Annotated[
         Optional[Path],
         typer.Option(
@@ -330,10 +330,12 @@ def search_pangenomes(
         )
         raise typer.Exit(code=1)
 
-    df = format_pangenomes_to_dataframe(pangenomes)
+    log_found_pangenomes_summary(pangenomes)
 
     # Output table if enabled
     if table or table_path is not None:
+        df = format_pangenomes_to_dataframe(pangenomes)
+
         if table_path is not None:
             logger.info(
                 f"Saving pangenomes information as TSV table to file: {table_path}"
