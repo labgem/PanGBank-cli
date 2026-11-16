@@ -205,7 +205,7 @@ For more details on PPanGGOLiN commands, workflows, and advanced usage, refer to
 
 # Citation
 
-If you use **PanGBank** in your research, please cite the PanGBank ppblication:
+If you use **PanGBank** in your research, please cite the PanGBank publication:
 
 > **PanGBank: a large-scale resource of precomputed microbial pangenomes built with PPanGGOLiN**
 > Mainguy J *et al.* (2026)
