@@ -172,18 +172,19 @@ ApiUrlOption = typer.Option(
 
 @app.command(no_args_is_help=False)
 def list_collections(
-    latest: Annotated[
+    all_releases: Annotated[
         bool,
         typer.Option(
-            "--latest-only",
-            "-l",
-            help="List only latest release of each collection.",
+            "--all-releases",
+            "-a",
+            help="List every release of each collection, not only the latest one.",
         ),
     ] = False,
     api_url: HttpUrl = ApiUrlOption,
     verbose: bool = Verbose,
 ):
     """List available collections."""
+    latest = not all_releases
     collections = query_collections(api_url, latest=latest)
 
     n_release = sum(1 for c in collections for _ in c.releases)
@@ -218,12 +219,15 @@ def search_pangenomes(
             rich_help_panel="Search filters",
         ),
     ] = None,
-    latest: Annotated[
+    all_releases: Annotated[
         bool,
         typer.Option(
-            "--latest-only",
-            "-l",
-            help="Search only in latest release of each collection.",
+            "--all-releases",
+            "-a",
+            help=(
+                "Search every release of each collection. "
+                "By default, only the latest release is searched."
+            ),
             rich_help_panel="Search filters",
         ),
     ] = False,
@@ -234,7 +238,7 @@ def search_pangenomes(
             "-r",
             help=(
                 "Filter pangenomes to a specific collection release version "
-                "(e.g. '2.0.0')."
+                "(e.g. '2.0.0'). Overrides the latest-release default."
             ),
             rich_help_panel="Search filters",
         ),
@@ -311,6 +315,21 @@ def search_pangenomes(
     ] = True,
 ):
     """Search for pangenomes."""
+
+    # Search only the latest release unless the user asked for all releases
+    # or pinned a specific one.
+    latest = not all_releases and release_version is None
+    if all_releases and release_version is not None:
+        logger.warning(
+            "--all-releases is ignored because --release-version is set: "
+            f"only release '{release_version}' is searched."
+        )
+    if release_version is not None:
+        logger.debug(f"Searching release '{release_version}'.")
+    elif latest:
+        logger.debug("Searching the latest release of each collection.")
+    else:
+        logger.debug("Searching all releases of each collection.")
 
     pangenomes = query_pangenomes(
         api_url,
