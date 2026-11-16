@@ -116,6 +116,7 @@ def verbose_callback(verbose: bool):
         format="%(message)s",
         datefmt="[%X]",
         handlers=[handler],
+        force=True,
     )
 
 
