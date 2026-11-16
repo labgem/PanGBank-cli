@@ -1,8 +1,9 @@
 from collections import defaultdict
+import re
 
 import requests
 from pydantic import HttpUrl
-from typing import Any, Generator, Iterable, List, Dict, Optional, Tuple
+from typing import Any, Callable, Generator, Iterable, List, Dict, Optional, Tuple
 import logging
 import pandas as pd
 from pathlib import Path
@@ -223,18 +224,42 @@ def format_pangenomes_to_dataframe(
     return pd.DataFrame(rows, columns=headers)
 
 
-def groupby_attribute(
-    elements: Iterable[Any], group_by_attribute: str, sort_by_attribute: Optional[str]
-):
-    """ """
+def version_sort_key(version: str) -> tuple[tuple[int, int | str], ...]:
+    """
+    Sort key that orders version strings numerically ('2.0.0' < '10.0.0').
 
-    if sort_by_attribute is None:
-        sort_by_attribute = group_by_attribute
+    Numeric parts compare as integers and come before text parts, so
+    non-standard versions (e.g. '2.0.0-beta') still sort without errors.
+    """
+    parts = re.findall(r"\d+|[^\d.\-_]+", version)
+    return tuple((0, int(p)) if p.isdigit() else (1, p) for p in parts)
+
+
+def groupby_attribute(
+    elements: Iterable[Any],
+    group_by_attribute: str,
+    sort_by_attribute: Optional[str] = None,
+    sort_key: Optional[Callable[[Any], Any]] = None,
+):
+    """
+    Sort elements, then group them by an attribute.
+
+    :param elements: Elements to group.
+    :param group_by_attribute: Dotted attribute path used as the group key.
+    :param sort_by_attribute: Dotted attribute path to sort on before grouping.
+        Defaults to ``group_by_attribute``.
+    :param sort_key: Function used to sort elements. Takes precedence over
+        ``sort_by_attribute``. Elements with the same group key must end up
+        next to each other after sorting.
+    :return: Generator of (group key, list of elements) tuples.
+    """
+    if sort_key is None:
+        sort_key = attrgetter(sort_by_attribute or group_by_attribute)
 
     attribute_and_elements = (
         (key, list(element_group))
         for key, element_group in groupby(
-            sorted(elements, key=attrgetter(sort_by_attribute)),
+            sorted(elements, key=sort_key),
             key=attrgetter(group_by_attribute),
         )
     )
@@ -271,7 +296,7 @@ def display_pangenome_summary_by_collection(
         ] = groupby_attribute(
             pangenomes,
             group_by_attribute="collection_release",
-            sort_by_attribute="collection_release.version",
+            sort_key=lambda pan: version_sort_key(pan.collection_release.version),
         )
 
         for release, pangenomes in release_and_pangenomes:
@@ -601,7 +626,8 @@ def log_found_pangenomes_summary(pangenomes: List[PangenomePublic]):
     )
 
     for (collection_name, collection_version), release_pangenomes in sorted(
-        collection_release_to_pangenomes.items()
+        collection_release_to_pangenomes.items(),
+        key=lambda item: (item[0][0], version_sort_key(item[0][1])),
     ):
         count = len(release_pangenomes)
         logger.info(
