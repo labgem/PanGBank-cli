@@ -573,44 +573,50 @@ def download_pangenomes(
     return outdir
 
 
-def log_found_pangenomes_summary(pangenomes: List[PangenomePublic]):
+MAX_PANGENOMES_PER_RELEASE = 10
 
-    collection_names = {
-        f"'{pan.collection_release.collection_name}'" for pan in pangenomes
-    }
+
+def log_found_pangenomes_summary(pangenomes: List[PangenomePublic]):
+    """Log how many pangenomes were found, grouped by collection release."""
+
+    collection_release_to_pangenomes: dict[tuple[str, str], list[PangenomePublic]] = (
+        defaultdict(list)
+    )
+    for pangenome in pangenomes:
+        key = (
+            pangenome.collection_release.collection.name,
+            pangenome.collection_release.version,
+        )
+        collection_release_to_pangenomes[key].append(pangenome)
+
+    collection_names = sorted(
+        {name for name, _ in collection_release_to_pangenomes}
+    )
+    p_plural = "s" if len(pangenomes) > 1 else ""
     c_plural = "s" if len(collection_names) > 1 else ""
     logger.info(
-        f"The {len(pangenomes)} pangenome{c_plural} matching search criteria {'are' if len(pangenomes) > 1 else 'is'} from {len(collection_names)} collection{c_plural} : {', '.join(collection_names)}"
+        f"The {len(pangenomes)} pangenome{p_plural} matching search criteria "
+        f"{'are' if len(pangenomes) > 1 else 'is'} from {len(collection_names)} "
+        f"collection{c_plural}: {', '.join(repr(name) for name in collection_names)}"
     )
 
-    collection_release_to_pangenome = defaultdict(list)
-    for pangenome in pangenomes:
-        collection_name = pangenome.collection_release.collection.name
-        collection_version = pangenome.collection_release.version
-
-        collection_release_to_pangenome[(collection_name, collection_version)].append(
-            pangenome
-        )
-
-    for (
-        collection_name,
-        collection_version,
-    ), pangenomes in collection_release_to_pangenome.items():
-
+    for (collection_name, collection_version), release_pangenomes in sorted(
+        collection_release_to_pangenomes.items()
+    ):
+        count = len(release_pangenomes)
         logger.info(
-            f"Collection '{collection_name}' release '{collection_version}' has {len(pangenomes)} matching pangenome{'s' if len(pangenomes) > 1 else ''}:"
+            f"Collection '{collection_name}' release '{collection_version}' "
+            f"has {count} matching pangenome{'s' if count > 1 else ''}:"
         )
-        for pangenome in pangenomes[
-            :10
-        ]:  # Display only the first 10 pangenomes for brevity
-            last_taxon = max(
-                pangenome.taxonomy.taxa,
-                key=attrgetter("depth"),
-            )
+        for pangenome in release_pangenomes[:MAX_PANGENOMES_PER_RELEASE]:
+            last_taxon = max(pangenome.taxonomy.taxa, key=attrgetter("depth"))
             logger.info(
-                f"  id={pangenome.id} - {last_taxon.name}  {pangenome.genome_count} genomes"
+                f"  id={pangenome.id} - {last_taxon.name} - "
+                f"{pangenome.genome_count} genomes"
             )
-        if len(pangenomes) > 10:
+
+        remaining = count - MAX_PANGENOMES_PER_RELEASE
+        if remaining > 0:
             logger.info(
-                f"  ... and {len(pangenomes) - 10} more pangenome{'s' if len(pangenomes) - 10 > 1 else ''}."
+                f"  ... and {remaining} more pangenome{'s' if remaining > 1 else ''}."
             )
