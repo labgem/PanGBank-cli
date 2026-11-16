@@ -614,9 +614,7 @@ def log_found_pangenomes_summary(pangenomes: List[PangenomePublic]):
         )
         collection_release_to_pangenomes[key].append(pangenome)
 
-    collection_names = sorted(
-        {name for name, _ in collection_release_to_pangenomes}
-    )
+    collection_names = sorted({name for name, _ in collection_release_to_pangenomes})
     p_plural = "s" if len(pangenomes) > 1 else ""
     c_plural = "s" if len(collection_names) > 1 else ""
     logger.info(
