@@ -127,6 +127,31 @@ Verbose = typer.Option(
     callback=verbose_callback,
     rich_help_panel="Execution settings",
 )
+# Deprecated in 0.4: latest release is now the default. Remove in 0.5.
+LatestOnlyDeprecated = typer.Option(
+    False,
+    "--latest-only",
+    "-l",
+    hidden=True,
+    help="Deprecated: the latest release is now used by default.",
+)
+
+
+def check_deprecated_latest_only(latest_only: bool, all_releases: bool) -> None:
+    """Warn about the deprecated --latest-only flag and reject contradictory use."""
+    if not latest_only:
+        return
+    if all_releases:
+        raise typer.BadParameter(
+            "--latest-only and --all-releases cannot be used together.",
+            param_hint="'--latest-only'",
+        )
+    logger.warning(
+        "--latest-only is deprecated and has no effect: only the latest release "
+        "is used by default. It will be removed in a future version."
+    )
+
+
 Outdir = typer.Option(
     help="Output directory for downloaded pangenomes.",
     rich_help_panel="Output and downloads",
@@ -180,10 +205,12 @@ def list_collections(
             help="List every release of each collection, not only the latest one.",
         ),
     ] = False,
+    latest_only: bool = LatestOnlyDeprecated,
     api_url: HttpUrl = ApiUrlOption,
     verbose: bool = Verbose,
 ):
     """List available collections."""
+    check_deprecated_latest_only(latest_only, all_releases)
     latest = not all_releases
     collections = query_collections(api_url, latest=latest)
 
@@ -231,6 +258,7 @@ def search_pangenomes(
             rich_help_panel="Search filters",
         ),
     ] = False,
+    latest_only: bool = LatestOnlyDeprecated,
     release_version: Annotated[
         Optional[str],
         typer.Option(
@@ -315,6 +343,8 @@ def search_pangenomes(
     ] = True,
 ):
     """Search for pangenomes."""
+
+    check_deprecated_latest_only(latest_only, all_releases)
 
     # Search only the latest release unless the user asked for all releases
     # or pinned a specific one.

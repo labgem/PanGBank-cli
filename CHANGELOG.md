@@ -10,11 +10,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `search-pangenomes` now logs a summary of the matching pangenomes, grouped by collection release (up to 10 pangenomes listed per release)
 - `CITATION.cff` file, so GitHub shows a "Cite this repository" button pointing to the PanGBank article in Nucleic Acids Research ([#21](https://github.com/labgem/PanGBank-cli/pull/21))
+
 
 ### Changed
 
+- **Breaking:** `search-pangenomes` no longer prints the TSV table to stdout by default. Use `--table` to print it or `--table-path <file>` to save it to a file
+- **Breaking:** `search-pangenomes` and `list-collections` now show only the latest release of each collection by default. Use the new `--all-releases`/`-a` flag to include every release. `--release-version` still selects a specific release
+- Collection releases are now sorted by version number (e.g. `2.0.0` before `10.0.0`) in the search summary and in `--details` output
+- Log messages no longer show the source file and line unless `--verbose` is set
 - README: updated the citation to the published PanGBank article and clarified how to use the downloaded pangenome HDF5 files ([#20](https://github.com/labgem/PanGBank-cli/pull/20), [#21](https://github.com/labgem/PanGBank-cli/pull/21))
+
+### Deprecated
+
+- `--latest-only`/`-l` on `search-pangenomes` and `list-collections` is deprecated and has no effect, since the latest release is now the default. It is hidden from `--help`, logs a warning when used, and will be removed in 0.5.
+
 
 ## [0.3.0] - 2026-08-06
 
