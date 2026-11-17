@@ -35,23 +35,8 @@ preferred-citation:
       family-names: "Calteau"
     - given-names: "David"
       family-names: "Vallenet"
-  container-title: "Nucleic Acids Research"
+  journal: "Nucleic Acids Research"
   year: 2026
   month: 10
   doi: "10.1093/nar/gkag948"
   url: "https://doi.org/10.1093/nar/gkag948"
-
-# BibTeX entry for convenience
-bibtex: |-
-  @article{10.1093/nar/gkag948,
-      author = {Mainguy, Jean and Lemane, Téo and Bazin, Adelme and Arnoux, Jérôme and Gautreau, Guillaume and Médigue, Claudine and Calteau, Alexandra and Vallenet, David},
-      title = {PanGBank: a large-scale resource of precomputed microbial pangenomes built with PPanGGOLiN},
-      journal = {Nucleic Acids Research},
-      pages = {gkag948},
-      year = {2026},
-      month = {10},
-      issn = {1362-4962},
-      doi = {10.1093/nar/gkag948},
-      url = {https://doi.org/10.1093/nar/gkag948},
-      eprint = {https://academic.oup.com/nar/advance-article-pdf/doi/10.1093/nar/gkag948/71595364/gkag948.pdf},
-  }

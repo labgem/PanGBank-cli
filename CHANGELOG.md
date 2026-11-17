@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `CITATION.cff` file, so GitHub shows a "Cite this repository" button pointing to the PanGBank article in Nucleic Acids Research ([#21](https://github.com/labgem/PanGBank-cli/pull/21))
+
 ### Changed
 
 - README: updated the citation to the published PanGBank article and clarified how to use the downloaded pangenome HDF5 files ([#20](https://github.com/labgem/PanGBank-cli/pull/20), [#21](https://github.com/labgem/PanGBank-cli/pull/21))
