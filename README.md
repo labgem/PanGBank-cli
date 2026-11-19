@@ -123,7 +123,7 @@ pangbank search-pangenomes --taxon "g__Escherichia"
 
 
 This command searches PanGBank for pangenomes matching the given taxon.
-Results are printed to **stdout** as plain TSV by default (suitable for piping or redirection). Use `--table-path <file>` to save directly to a file (e.g., `--table-path pangenomes_information.tsv`), or `--no-table` to disable table output.
+By default, a short summary of the matching pangenomes, grouped by collection release, is logged to **stderr**. Add `--table` to print a plain TSV table to **stdout** (suitable for piping or redirection), or `--table-path <file>` to save it directly to a file (e.g., `--table-path pangenomes_information.tsv`).
 
 To narrow the search to a specific collection release, add `--release-version <version>`:
 
@@ -131,7 +131,7 @@ To narrow the search to a specific collection release, add `--release-version <v
 pangbank search-pangenomes --collection GTDB_refseq --release-version 2.0.0
 ```
 
-This filter works alongside `--latest-only`. If both are provided, `--release-version` selects the release to search and `--latest-only` does not change the result set.
+By default, only the **latest release** of each collection is searched. Use `--release-version <version>` to search a specific release (recommended for reproducible work), or `--all-releases` to search every release. The same `--all-releases` flag is available on `list-collections`.
 
 
 ### Download pangenomes

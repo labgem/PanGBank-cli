@@ -28,8 +28,8 @@ from pangbank_cli.pangenomes import (
     query_pangenome_by_id,
     format_pangenomes_to_dataframe,
     download_pangenomes,
-    display_pangenome_summary_by_collection,
     print_pangenome_info,
+    log_found_pangenomes_summary,
 )
 
 from pangbank_cli.match_pangenome import (
@@ -101,22 +101,25 @@ def version_callback(
         raise typer.Exit()
 
 
-def verbose_callback(
-    verbose: bool,
-):
+def verbose_callback(verbose: bool):
     """Sets the logging level to DEBUG if --verbose is passed."""
-    lvl = logging.INFO
+    lvl = logging.DEBUG if verbose else logging.INFO
 
-    if verbose:
-        lvl = logging.DEBUG
+    handler = RichHandler(
+        console=err_console,
+        show_path=verbose,
+    )
 
-    # Set up logging
     logging.basicConfig(
         level=lvl,
         format="%(message)s",
         datefmt="[%X]",
-        handlers=[RichHandler(console=err_console)],
+        handlers=[handler],
+        force=True,
     )
+
+    # httpx logs every HTTP request at INFO: only show them with --verbose.
+    logging.getLogger("httpx").setLevel(logging.INFO if verbose else logging.WARNING)
 
 
 Verbose = typer.Option(
@@ -126,6 +129,31 @@ Verbose = typer.Option(
     callback=verbose_callback,
     rich_help_panel="Execution settings",
 )
+# Deprecated in 0.4: latest release is now the default. Remove in 0.5.
+LatestOnlyDeprecated = typer.Option(
+    False,
+    "--latest-only",
+    "-l",
+    hidden=True,
+    help="Deprecated: the latest release is now used by default.",
+)
+
+
+def check_deprecated_latest_only(latest_only: bool, all_releases: bool) -> None:
+    """Warn about the deprecated --latest-only flag and reject contradictory use."""
+    if not latest_only:
+        return
+    if all_releases:
+        raise typer.BadParameter(
+            "--latest-only and --all-releases cannot be used together.",
+            param_hint="'--latest-only'",
+        )
+    logger.warning(
+        "--latest-only is deprecated and has no effect: only the latest release "
+        "is used by default. It will be removed in a future version."
+    )
+
+
 Outdir = typer.Option(
     help="Output directory for downloaded pangenomes.",
     rich_help_panel="Output and downloads",
@@ -171,18 +199,21 @@ ApiUrlOption = typer.Option(
 
 @app.command(no_args_is_help=False)
 def list_collections(
-    latest: Annotated[
+    all_releases: Annotated[
         bool,
         typer.Option(
-            "--latest-only",
-            "-l",
-            help="List only latest release of each collection.",
+            "--all-releases",
+            "-a",
+            help="List every release of each collection, not only the latest one.",
         ),
     ] = False,
+    latest_only: bool = LatestOnlyDeprecated,
     api_url: HttpUrl = ApiUrlOption,
     verbose: bool = Verbose,
 ):
     """List available collections."""
+    check_deprecated_latest_only(latest_only, all_releases)
+    latest = not all_releases
     collections = query_collections(api_url, latest=latest)
 
     n_release = sum(1 for c in collections for _ in c.releases)
@@ -217,15 +248,19 @@ def search_pangenomes(
             rich_help_panel="Search filters",
         ),
     ] = None,
-    latest: Annotated[
+    all_releases: Annotated[
         bool,
         typer.Option(
-            "--latest-only",
-            "-l",
-            help="Search only in latest release of each collection.",
+            "--all-releases",
+            "-a",
+            help=(
+                "Search every release of each collection. "
+                "By default, only the latest release is searched."
+            ),
             rich_help_panel="Search filters",
         ),
     ] = False,
+    latest_only: bool = LatestOnlyDeprecated,
     release_version: Annotated[
         Optional[str],
         typer.Option(
@@ -233,7 +268,7 @@ def search_pangenomes(
             "-r",
             help=(
                 "Filter pangenomes to a specific collection release version "
-                "(e.g. '2.0.0')."
+                "(e.g. '2.0.0'). Overrides the latest-release default."
             ),
             rich_help_panel="Search filters",
         ),
@@ -289,7 +324,7 @@ def search_pangenomes(
             help="Output a TSV table summarizing the matching pangenomes to stdout.",
             rich_help_panel="Output and downloads",
         ),
-    ] = True,
+    ] = False,
     table_path: Annotated[
         Optional[Path],
         typer.Option(
@@ -311,6 +346,23 @@ def search_pangenomes(
 ):
     """Search for pangenomes."""
 
+    check_deprecated_latest_only(latest_only, all_releases)
+
+    # Search only the latest release unless the user asked for all releases
+    # or pinned a specific one.
+    latest = not all_releases and release_version is None
+    if all_releases and release_version is not None:
+        logger.warning(
+            "--all-releases is ignored because --release-version is set: "
+            f"only release '{release_version}' is searched."
+        )
+    if release_version is not None:
+        logger.debug(f"Searching release '{release_version}'.")
+    elif latest:
+        logger.debug("Searching the latest release of each collection.")
+    else:
+        logger.debug("Searching all releases of each collection.")
+
     pangenomes = query_pangenomes(
         api_url,
         taxon_name=taxon,
@@ -330,10 +382,12 @@ def search_pangenomes(
         )
         raise typer.Exit(code=1)
 
-    df = format_pangenomes_to_dataframe(pangenomes)
+    log_found_pangenomes_summary(pangenomes)
 
     # Output table if enabled
     if table or table_path is not None:
+        df = format_pangenomes_to_dataframe(pangenomes)
+
         if table_path is not None:
             logger.info(
                 f"Saving pangenomes information as TSV table to file: {table_path}"
@@ -346,7 +400,6 @@ def search_pangenomes(
         df.to_csv(output_handle, index=False, sep="\t")
 
     if details:
-        display_pangenome_summary_by_collection(pangenomes, True)
         print_pangenome_info(pangenomes)
 
     if download:
