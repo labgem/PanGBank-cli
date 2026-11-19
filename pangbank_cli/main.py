@@ -28,7 +28,6 @@ from pangbank_cli.pangenomes import (
     query_pangenome_by_id,
     format_pangenomes_to_dataframe,
     download_pangenomes,
-    display_pangenome_summary_by_collection,
     print_pangenome_info,
     log_found_pangenomes_summary,
 )
@@ -118,6 +117,9 @@ def verbose_callback(verbose: bool):
         handlers=[handler],
         force=True,
     )
+
+    # httpx logs every HTTP request at INFO: only show them with --verbose.
+    logging.getLogger("httpx").setLevel(logging.INFO if verbose else logging.WARNING)
 
 
 Verbose = typer.Option(
@@ -398,7 +400,6 @@ def search_pangenomes(
         df.to_csv(output_handle, index=False, sep="\t")
 
     if details:
-        display_pangenome_summary_by_collection(pangenomes, True)
         print_pangenome_info(pangenomes)
 
     if download:

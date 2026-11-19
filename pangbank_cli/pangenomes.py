@@ -3,7 +3,7 @@ import re
 
 import requests
 from pydantic import HttpUrl
-from typing import Any, Callable, Generator, Iterable, List, Dict, Optional, Tuple
+from typing import Any, List, Dict, Optional
 import logging
 import pandas as pd
 from pathlib import Path
@@ -18,10 +18,10 @@ from pangbank_api.exports.pangenomes import build_table_of_pangenomes
 
 from pangbank_cli.utils import compute_md5, silence_logger
 from pangbank_api.crud.common import FilterGenomeTaxonGenomePangenome, PaginationParams
-from itertools import groupby
 from operator import attrgetter
 
 from rich.console import Console
+from rich.markup import escape
 from rich.progress import (
     Progress,
     TaskID,
@@ -235,116 +235,13 @@ def version_sort_key(version: str) -> tuple[tuple[int, int | str], ...]:
     return tuple((0, int(p)) if p.isdigit() else (1, p) for p in parts)
 
 
-def groupby_attribute(
-    elements: Iterable[Any],
-    group_by_attribute: str,
-    sort_by_attribute: Optional[str] = None,
-    sort_key: Optional[Callable[[Any], Any]] = None,
-):
-    """
-    Sort elements, then group them by an attribute.
-
-    :param elements: Elements to group.
-    :param group_by_attribute: Dotted attribute path used as the group key.
-    :param sort_by_attribute: Dotted attribute path to sort on before grouping.
-        Defaults to ``group_by_attribute``.
-    :param sort_key: Function used to sort elements. Takes precedence over
-        ``sort_by_attribute``. Elements with the same group key must end up
-        next to each other after sorting.
-    :return: Generator of (group key, list of elements) tuples.
-    """
-    if sort_key is None:
-        sort_key = attrgetter(sort_by_attribute or group_by_attribute)
-
-    attribute_and_elements = (
-        (key, list(element_group))
-        for key, element_group in groupby(
-            sorted(elements, key=sort_key),
-            key=attrgetter(group_by_attribute),
-        )
-    )
-    return attribute_and_elements
-
-
-def display_pangenome_summary_by_collection(
-    pangenomes: List["PangenomePublic"], show_details: bool = True
-):
-    """
-    Displays pangenome information grouped by collection in a YAML-like format with colors.
-
-    :param pangenomes: List of PangenomePublic objects to display.
-    :param show_details: If True, shows genome count and taxonomies for each pangenome.
-    """
-    console = Console(stderr=True)
-
-    collection_and_pangenomes: Generator[
-        Tuple["CollectionPublic", List["PangenomePublic"]], None, None
-    ] = groupby_attribute(
-        pangenomes,
-        group_by_attribute="collection_release.collection",
-        sort_by_attribute="collection_release.collection.name",
-    )
-
-    yaml_lines: List[str] = []
-
-    for collection, pangenomes in collection_and_pangenomes:
-        yaml_lines.append(f"[bold cyan]{collection.name}[/bold cyan]:")
-        yaml_lines.append(f"  description: [italic]{collection.description}[/italic]")
-
-        release_and_pangenomes: Generator[
-            Tuple["CollectionReleasePublic", List["PangenomePublic"]], None, None
-        ] = groupby_attribute(
-            pangenomes,
-            group_by_attribute="collection_release",
-            sort_key=lambda pan: version_sort_key(pan.collection_release.version),
-        )
-
-        for release, pangenomes in release_and_pangenomes:
-
-            yaml_lines.append(
-                f"  release: [bold yellow]{release.version}[/bold yellow]"
-            )
-            yaml_lines.append(
-                f"  date: [bold yellow]{release.date.strftime('%d %b %Y')}[/bold yellow]"
-            )
-            yaml_lines.append(
-                f"  matching_pangenome: [bold magenta]{len(pangenomes)}[/bold magenta]"
-            )
-            list_of_taxa = [pangenome.taxonomy.taxa for pangenome in pangenomes]
-            common_taxa = get_common_taxonomy(list_of_taxa)
-
-            yaml_lines.append(
-                f"  common_taxonomy: [bold magenta]{format_taxonomy_to_string(common_taxa)}[/bold magenta]\n"
-            )
-
-    # Convert list to string and print with syntax highlighting
-    yaml_output = "\n".join(yaml_lines + [""])
-    console.print(yaml_output)
-
-
-def format_taxonomy_to_string(taxonomy: List[TaxonPublic]) -> str:
-    """Format a list of TaxonPublic objects into a string with alternating colors."""
-    taxa_names = [taxon.name for taxon in sorted(taxonomy, key=lambda x: x.depth)]
-
-    taxonomy_formated: List[str] = ["[italic bright_green]root[/italic bright_green]"]
-    for i, taxon_name in enumerate(taxa_names):
-        tag = "italic bright_green" if i % 2 else "italic green"
-        taxonomy_formated.append(f"[{tag}]{taxon_name}[/{tag}]")
-
-    taxonomy_str = ";".join(taxonomy_formated)
-
-    return taxonomy_str
-
-
-def get_common_taxonomy(list_of_taxa: List[List[TaxonPublic]]):
+def get_common_taxonomy(list_of_taxa: List[List[TaxonPublic]]) -> List[TaxonPublic]:
+    """Return the taxa shared by all taxonomies, from the root down to the deepest common rank."""
     common: List[TaxonPublic] = []
 
-    if not list_of_taxa:
-        return common
-
-    # zip will group taxa at the same level across all taxonomies
-    common: List[TaxonPublic] = []
-    for taxa in zip(*list_of_taxa):
+    # Sort each taxonomy by depth so zip groups taxa of the same rank together.
+    sorted_taxa = [sorted(taxa, key=attrgetter("depth")) for taxa in list_of_taxa]
+    for taxa in zip(*sorted_taxa):
         if all(taxon == taxa[0] for taxon in taxa):
             common.append(taxa[0])
         else:
@@ -601,46 +498,79 @@ def download_pangenomes(
 MAX_PANGENOMES_PER_RELEASE = 10
 
 
-def log_found_pangenomes_summary(pangenomes: List[PangenomePublic]):
-    """Log how many pangenomes were found, grouped by collection release."""
+def format_taxonomy(taxa: List[TaxonPublic]) -> str:
+    """Format a lineage as Rich markup, alternating two greens so ranks are easy to tell apart."""
+    if not taxa:
+        return "[dim]none[/dim]"
+    parts = []
+    for i, taxon in enumerate(sorted(taxa, key=attrgetter("depth"))):
+        colour = "bright_green" if i % 2 else "green"
+        parts.append(f"[{colour}]{escape(taxon.name)}[/{colour}]")
+    # "; " lets Rich wrap a long lineage between taxa rather than inside a name.
+    return "[dim];[/dim] ".join(parts)
 
-    collection_release_to_pangenomes: dict[tuple[str, str], list[PangenomePublic]] = (
-        defaultdict(list)
+
+def log_found_pangenomes_summary(pangenomes: List[PangenomePublic]):
+    """
+    Log the matching pangenomes grouped by collection release: release date,
+    common taxonomy, and up to MAX_PANGENOMES_PER_RELEASE pangenomes per release.
+
+    Messages use Rich markup for colours, rendered by the CLI's RichHandler.
+    """
+
+    def log(message: str) -> None:
+        logger.info(message, extra={"markup": True})
+
+    collection_to_releases: dict[str, dict[str, list[PangenomePublic]]] = defaultdict(
+        lambda: defaultdict(list)
     )
     for pangenome in pangenomes:
-        key = (
-            pangenome.collection_release.collection.name,
-            pangenome.collection_release.version,
+        release = pangenome.collection_release
+        collection_to_releases[release.collection.name][release.version].append(
+            pangenome
         )
-        collection_release_to_pangenomes[key].append(pangenome)
 
-    collection_names = sorted({name for name, _ in collection_release_to_pangenomes})
     p_plural = "s" if len(pangenomes) > 1 else ""
-    c_plural = "s" if len(collection_names) > 1 else ""
-    logger.info(
-        f"The {len(pangenomes)} pangenome{p_plural} matching search criteria "
-        f"{'are' if len(pangenomes) > 1 else 'is'} from {len(collection_names)} "
-        f"collection{c_plural}: {', '.join(repr(name) for name in collection_names)}"
+    c_plural = "s" if len(collection_to_releases) > 1 else ""
+    log(
+        f"Found [bold magenta]{len(pangenomes)}[/bold magenta] matching pangenome{p_plural} "
+        f"in {len(collection_to_releases)} collection{c_plural}"
     )
 
-    for (collection_name, collection_version), release_pangenomes in sorted(
-        collection_release_to_pangenomes.items(),
-        key=lambda item: (item[0][0], version_sort_key(item[0][1])),
-    ):
-        count = len(release_pangenomes)
-        logger.info(
-            f"Collection '{collection_name}' release '{collection_version}' "
-            f"has {count} matching pangenome{'s' if count > 1 else ''}:"
-        )
-        for pangenome in release_pangenomes[:MAX_PANGENOMES_PER_RELEASE]:
-            last_taxon = max(pangenome.taxonomy.taxa, key=attrgetter("depth"))
-            logger.info(
-                f"  id={pangenome.id} - {last_taxon.name} - "
-                f"{pangenome.genome_count} genomes"
+    for collection_name in sorted(collection_to_releases):
+        releases = collection_to_releases[collection_name]
+
+        for version in sorted(releases, key=version_sort_key):
+            release_pangenomes = releases[version]
+            count = len(release_pangenomes)
+            release_date = release_pangenomes[0].collection_release.date.strftime(
+                "%d %b %Y"
+            )
+            log(
+                f"[bold cyan]{escape(collection_name)}[/bold cyan] "
+                f"release [bold yellow]{escape(version)}[/bold yellow] "
+                f"[dim]({release_date})[/dim]: "
+                f"[bold magenta]{count}[/bold magenta] matching "
+                f"pangenome{'s' if count > 1 else ''}"
             )
 
-        remaining = count - MAX_PANGENOMES_PER_RELEASE
-        if remaining > 0:
-            logger.info(
-                f"  ... and {remaining} more pangenome{'s' if remaining > 1 else ''}."
+            common_taxa = get_common_taxonomy(
+                [pangenome.taxonomy.taxa for pangenome in release_pangenomes]
             )
+            log(f"  [bold]common taxonomy:[/bold] {format_taxonomy(common_taxa)}")
+
+            for pangenome in release_pangenomes[:MAX_PANGENOMES_PER_RELEASE]:
+                last_taxon = max(pangenome.taxonomy.taxa, key=attrgetter("depth"))
+                log(
+                    f"  [dim]id=[/dim]{pangenome.id}  "
+                    f"[italic green]{escape(last_taxon.name)}[/italic green]  "
+                    f"[dim]{pangenome.genome_count} genomes[/dim]"
+                )
+
+            remaining = count - MAX_PANGENOMES_PER_RELEASE
+            if remaining > 0:
+                log(
+                    f"  [dim]... and {remaining} more "
+                    f"pangenome{'s' if remaining > 1 else ''} "
+                    "(use --table or --details to see all)[/dim]"
+                )
