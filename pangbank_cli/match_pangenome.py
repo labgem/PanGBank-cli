@@ -215,6 +215,7 @@ def compute_mash_distance(
 def get_matching_pangenome(
     api_url: HttpUrl,
     collection: CollectionPublicWithReleases,
+    release: CollectionReleasePublic,
     query_to_best_match: dict[str, MashResult],
     outdir: Path,
     download: bool = False,
@@ -234,7 +235,10 @@ def get_matching_pangenome(
             api_url,
             collection_name=collection.name,
             pangenome_name=pangenome_name,
-            only_latest_release=True,
+            # Search the release the sketch came from: the same pangenome
+            # name can exist in several releases.
+            release_version=release.version,
+            only_latest_release=False,
             disable_progress_bar=not progress,
         )
 
@@ -272,7 +276,7 @@ def get_pangenome_name_from_mash_reference(mash_reference: str) -> str:
     mash_ref_path = Path(mash_reference)
     if ".gz" in mash_ref_path.suffix:
         mash_ref_path = mash_ref_path.with_suffix("")
-    if mash_ref_path.suffix in ["fna", ".fa", ".fasta"]:
+    if mash_ref_path.suffix in [".fna", ".fa", ".fasta"]:
         mash_ref_path = mash_ref_path.with_suffix("")
 
     return mash_ref_path.name

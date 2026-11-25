@@ -462,7 +462,7 @@ def get_pangenome(
             api_url,
             [pangenome],
             outdir,
-            disable_progress_bar=False,
+            disable_progress_bar=not progress,
             force_redownload=force,
         )
 
@@ -539,14 +539,15 @@ def match_pangenome(
         f"Searching a matching pangenome in collection '{collection_name}' ({'latest release' if latest else f'release version {release_version}'}) for genome '{input_genome_file}'"
     )
 
+    if not check_mash_availability():
+        raise typer.Exit(code=1)
+
     collections: list[CollectionPublicWithReleases] = query_collections(
         api_url,
         collection_name=collection_name,
         release_version=release_version,
         latest=latest,
     )
-
-    check_mash_availability()
 
     if not collections:
         log_no_pangenome_search_context(
@@ -594,6 +595,7 @@ def match_pangenome(
     get_matching_pangenome(
         api_url=api_url,
         collection=collection,
+        release=release,
         query_to_best_match=query_to_best_match,
         outdir=outdir,
         download=download,
