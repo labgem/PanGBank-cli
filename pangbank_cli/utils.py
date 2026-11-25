@@ -90,4 +90,3 @@ def compute_md5(file_path: Path):
         for chunk in iter(lambda: f.read(4096), b""):  # Read file in chunks
             md5_hash.update(chunk)
     return md5_hash.hexdigest()
-
