@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [0.4.0] - 2026-11-25
+
 ### Added
 
 - `search-pangenomes` now logs a coloured summary of the matching pangenomes, grouped by collection release, with releases sorted by version number (e.g. `2.0.0` before `10.0.0`). Each release shows its date, the common taxonomy of its matching pangenomes, and up to 10 pangenomes
@@ -89,7 +92,8 @@ First release of PanGBank-cli, a command-line tool to search, retrieve and downl
 - **Download pangenome files**: fetch pangenome files directly from PanGBank for downstream analysis with PPanGGOLiN.
 - **Match an input genome to a pangenome**: identify the most similar pangenome to a given genome using Mash sketches of the selected collection.
 
-[Unreleased]: https://github.com/labgem/PanGBank-cli/compare/0.3.0...HEAD
+[Unreleased]: https://github.com/labgem/PanGBank-cli/compare/0.4.0...HEAD
+[0.4.0]: https://github.com/labgem/PanGBank-cli/compare/0.3.0...0.4.0
 [0.3.0]: https://github.com/labgem/PanGBank-cli/compare/0.2.0...0.3.0
 [0.2.0]: https://github.com/labgem/PanGBank-cli/compare/0.1.1...0.2.0
 [0.1.1]: https://github.com/labgem/PanGBank-cli/compare/0.1.0...0.1.1
