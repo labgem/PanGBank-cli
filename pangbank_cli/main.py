@@ -14,13 +14,11 @@ from rich.console import Console
 from pangbank_cli.collections import (
     query_collections,
     format_collections_to_dataframe,
-    format_collections_to_yaml,
     log_no_pangenome_search_context,
 )
 from pangbank_cli.utils import (
     print_dataframe_as_rich_table,
     check_mash_availability,
-    print_yaml_with_rich,
 )
 
 from pangbank_cli.pangenomes import (
@@ -228,11 +226,6 @@ def list_collections(
         print_dataframe_as_rich_table(df, title="Available collections of PanGBank:")
     else:
         df.to_csv(sys.stdout, index=False, sep="\t")
-
-    print_yaml = False
-    if print_yaml:
-        yaml_collections = format_collections_to_yaml(collections)
-        print_yaml_with_rich(yaml_collections)
 
 
 @app.command("search", no_args_is_help=True, hidden=True)

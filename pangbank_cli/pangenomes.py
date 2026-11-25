@@ -3,15 +3,13 @@ import re
 
 import requests
 from pydantic import HttpUrl
-from typing import Any, List, Dict, Optional
+from typing import Any, List, Optional
 import logging
 import pandas as pd
 from pathlib import Path
 
 from pangbank_api.models import (
-    CollectionReleasePublic,
     PangenomePublic,
-    CollectionPublic,
     TaxonPublic,
 )
 from pangbank_api.exports.pangenomes import build_table_of_pangenomes
@@ -192,25 +190,6 @@ def query_pangenomes(
         return []
 
     return pangenomes
-
-
-def format_element_to_dict(element: Any, columns: list[str]):
-    """
-    Converts a list of elements into a pandas DataFrame with a specified subset of columns.
-
-    :param elements: List of elements to convert.
-    :param columns: List of strings specifying the subset of columns to include in the DataFrame.
-    :return: pandas DataFrame with the selected columns.
-    """
-
-    row: Dict[str, Optional[str]] = {}
-    for column in columns:
-        if hasattr(element, column):
-            row[column] = getattr(element, column)
-        else:
-            row[column] = None  # If column not found, set as None
-
-    return row
 
 
 def format_pangenomes_to_dataframe(
