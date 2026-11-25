@@ -22,6 +22,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Log messages no longer show the source file and line, and HTTP request logs are hidden, unless `--verbose` is set
 - README: updated the citation to the published PanGBank article and clarified how to use the downloaded pangenome HDF5 files ([#20](https://github.com/labgem/PanGBank-cli/pull/20), [#21](https://github.com/labgem/PanGBank-cli/pull/21))
 
+### Fixed
+
+- Package metadata now declares the CeCILL-2.1 licence instead of MIT
+
 ### Deprecated
 
 - `--latest-only`/`-l` on `search-pangenomes` and `list-collections` is deprecated and has no effect, since the latest release is now the default. It is hidden from `--help`, logs a warning when used, and will be removed in a future version.
