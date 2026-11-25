@@ -20,7 +20,7 @@ classifiers=[
     "Environment :: Console",
     "Intended Audience :: Science/Research",
     "Natural Language :: English",
-    "Operating System :: POSIX :: Linux",   
+    "Operating System :: POSIX :: Linux",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -48,10 +48,12 @@ dependencies = [
 dev = [
     "pytest>=8.0.0",
     "pytest-cov",
-    "black>=8.0.0",
-    
+    "ruff>=0.17.6",
+    "pyright>=1.1.414",
+    "pandas-stubs",
+    "prek",
 ]
-#
+
 [project.urls]
 Repository = "https://github.com/labgem/PanGBank-cli"
 Changelog = "https://github.com/labgem/PanGBank-cli/CHANGELOG.md"
@@ -66,3 +68,46 @@ packages = ["pangbank_cli"]
 
 [tool.setuptools.dynamic]
 version = {attr = "pangbank_cli.__version__"}
+
+
+[tool.ruff]
+target-version = "py310"
+line-length = 88
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes (unused imports, undefined names, ...)
+    "I",   # import sorting
+    "B",   # flake8-bugbear: likely bugs
+    "UP",  # pyupgrade: list[str], X | None, ...
+    "SIM", # simplifications
+    "RUF", # ruff-specific checks
+    "ANN", # every function has argument and return annotations
+]
+ignore = [
+    "E501",   # line length is handled by the formatter; long f-strings are fine
+    "ANN401", # allow explicit Any where it is really needed
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["ANN"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["pangbank_cli"]
+
+
+[tool.pyright]
+# Also read by Pylance, so VS Code shows exactly what pre-commit and CI enforce.
+include = ["pangbank_cli", "tests"]
+pythonVersion = "3.10"
+typeCheckingMode = "strict"
+# pangbank_api ships no py.typed marker: pyright still infers its types from
+# the source, so only silence the "stub file not found" noise.
+reportMissingTypeStubs = false
+reportUnnecessaryTypeIgnoreComment = "error"
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

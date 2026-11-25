@@ -1,18 +1,15 @@
-from typing import Optional
+import contextlib
+import hashlib
+import logging
+import os
+import shutil
+from collections.abc import Generator
+from contextlib import contextmanager
+from pathlib import Path
+
+import pandas as pd
 from rich.console import Console
 from rich.table import Table
-
-from pathlib import Path
-import hashlib
-import pandas as pd
-import logging
-import shutil
-import os
-
-
-from contextlib import contextmanager
-
-from collections.abc import Generator
 
 logger = logging.getLogger(__name__)
 
@@ -33,8 +30,8 @@ def silence_logger(
         target_logger.setLevel(previous_level)
 
 
-def print_dataframe_as_rich_table(df: pd.DataFrame, title: Optional[str] = None):
-    """Convert a Pandas DataFrame into a Rich table and print it efficiently using namedtuples."""
+def print_dataframe_as_rich_table(df: pd.DataFrame, title: str | None = None) -> None:
+    """Print a pandas DataFrame as a Rich table."""
     if df.empty:
         print("No data available.")
         return
@@ -42,10 +39,8 @@ def print_dataframe_as_rich_table(df: pd.DataFrame, title: Optional[str] = None)
     # Get terminal width from environment variable if set and valid
     terminal_width = None
     if "TERMINAL_WIDTH" in os.environ:
-        try:
+        with contextlib.suppress(ValueError):  # If not a valid integer, keep None
             terminal_width = int(os.environ["TERMINAL_WIDTH"])
-        except ValueError:
-            pass  # If not a valid integer, keep None
 
     console = Console(width=terminal_width)
     table = Table(
@@ -57,9 +52,9 @@ def print_dataframe_as_rich_table(df: pd.DataFrame, title: Optional[str] = None)
     )
 
     column_colors = ["deep_sky_blue1", "light_slate_grey"]  # Softer contrast
-    for i, column in enumerate(df.columns):
+    for i, column in enumerate(map(str, df.columns)):
         table.add_column(
-            str(column), style=column_colors[i % len(column_colors)], justify="left"
+            column, style=column_colors[i % len(column_colors)], justify="left"
         )
 
     row_styles = ["", "grey50"]  # Alternating row styles for better readability
@@ -69,12 +64,8 @@ def print_dataframe_as_rich_table(df: pd.DataFrame, title: Optional[str] = None)
     console.print(table, new_line_start=True)
 
 
-def check_mash_availability():
-    """
-    Check if the 'mash' tool is available in the system's PATH.
-
-    :return: None
-    """
+def check_mash_availability() -> bool:
+    """Return True if the 'mash' tool is on PATH, otherwise log an error and return False."""
     if shutil.which("mash") is None:
         logger.error(
             "The 'mash' tool is not found in the system's PATH. "
@@ -84,9 +75,10 @@ def check_mash_availability():
     return True
 
 
-def compute_md5(file_path: Path):
+def compute_md5(file_path: Path) -> str:
+    """Return the hex MD5 digest of a file, read in chunks."""
     md5_hash = hashlib.md5()
     with open(file_path, "rb") as f:
-        for chunk in iter(lambda: f.read(4096), b""):  # Read file in chunks
+        for chunk in iter(lambda: f.read(4096), b""):
             md5_hash.update(chunk)
     return md5_hash.hexdigest()

@@ -23,7 +23,7 @@ on:
         required: true
         type: boolean
         default: false
-    
+
 
 permissions:
   contents: read
@@ -61,7 +61,7 @@ jobs:
     environment:
       name: testpypi
       url: https://test.pypi.org/project/pangbank-cli/
-      
+
     steps:
       - name: Retrieve release distributions
         uses: actions/download-artifact@v4
@@ -84,7 +84,7 @@ jobs:
     environment:
       name: pypi
       url: https://pypi.org/project/pangbank-cli/
-      
+
     steps:
       - name: Retrieve release distributions
         uses: actions/download-artifact@v4
@@ -93,4 +93,4 @@ jobs:
           path: dist/
 
       - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1 
+        uses: pypa/gh-action-pypi-publish@release/v1

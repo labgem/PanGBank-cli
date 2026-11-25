@@ -5,11 +5,10 @@ from pathlib import Path
 
 from pangbank_api.models import (
     CollectionPublicWithReleases,
-    PangenomePublic,
     CollectionReleasePublic,
+    PangenomePublic,
 )
 from pangbank_api.sdk import PanGBankClient
-
 from pydantic import BaseModel, HttpUrl
 
 from pangbank_cli.pangenomes import (
@@ -40,8 +39,8 @@ def get_mash_sketch_file(
     collection: CollectionPublicWithReleases,
     release: CollectionReleasePublic,
     outdir: Path,
-):
-    """ """
+) -> Path:
+    """Return the collection release's Mash sketch, downloading it unless a valid cached copy exists."""
 
     output_file_path = (
         outdir / "mash_sketch" / f"collection_{collection.name}_{release.version}.msh"
@@ -144,8 +143,8 @@ def compute_mash_distance(
     input_genome_files: list[Path],
     max_distance: float = 0.05,
     threads: int = 1,
-):
-    """ """
+) -> dict[str, MashResult] | None:
+    """Run mash dist and return the closest reference within max_distance for each input genome."""
 
     mash_result = launch_mash_dist(
         mash_sketch_file=mash_sketch_file,
@@ -160,21 +159,21 @@ def compute_mash_distance(
         logger.warning(
             f"No matching pangenome found for the input genome files: '{input_genome_files_str}'"
         )
-        return
+        return None
 
     genome_to_mash_hits: dict[str, list[MashResult]] = defaultdict(list)
 
     for result_line in mash_result.strip().split("\n"):
         reference, query, distance, p_value, _matching_hashes = result_line.split()
-        mash_result = MashResult(
+        hit = MashResult(
             query=query,
             reference=reference,
             distance=float(distance),
             p_value=float(p_value),
         )
 
-        if mash_result.distance <= max_distance:
-            genome_to_mash_hits[query].append(mash_result)
+        if hit.distance <= max_distance:
+            genome_to_mash_hits[query].append(hit)
 
     query_to_best_match = {
         query: min(results, key=lambda x: x.distance)
@@ -200,7 +199,8 @@ def get_matching_pangenome(
     download: bool = False,
     progress: bool = True,
     force_redownload: bool = False,
-):
+) -> None:
+    """Look up, print and optionally download the pangenome matched by each genome."""
 
     pangenome_to_download: list[PangenomePublic] = []
 
