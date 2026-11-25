@@ -2,13 +2,20 @@ name: Rich-codex
 on:
   # Run when changes are pushed to any branch
   push:
+  # Refresh the screenshots on the default branch for every new release
+  release:
+    types: [released]
   # Allow manual workflow trigger
   workflow_dispatch:
 
+permissions:
+  contents: write # the bot commits the regenerated images
+
 jobs:
   rich_codex:
-    # Run if: manual trigger or commit message contains [screenshots]
+    # Run if: release, manual trigger or commit message contains [screenshots]
     if: |
+      github.event_name == 'release' ||
       github.event_name == 'workflow_dispatch' ||
       contains(github.event.head_commit.message, '[screenshots]')
     runs-on: ubuntu-latest
@@ -18,6 +25,16 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v6
+        with:
+          # A release checks out its tag (detached HEAD), where the bot cannot
+          # push: use the default branch instead. Other events keep their ref.
+          ref: ${{ github.event_name == 'release' && github.event.repository.default_branch || '' }}
+
+      # Pin Python instead of using the runner default, which can be newer
+      # than the versions the package supports.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
 
       - name: Install your custom tools
         run: pip install .
