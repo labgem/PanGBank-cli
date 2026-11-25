@@ -1,36 +1,12 @@
 from pangbank_api.sdk import PanGBankClient
-from pydantic import HttpUrl, ValidationError
+from pydantic import HttpUrl
 from typing import Any, List, Dict
 import logging
 import pandas as pd
 
 from pangbank_api.models import CollectionPublicWithReleases
-from pangbank_api.crud.common import FilterCollection
-from pangbank_cli.utils import fetch_api_data
 
 logger = logging.getLogger(__name__)
-
-
-def get_collections(api_url: HttpUrl, filter_params: FilterCollection):
-    """Fetch collections from the given API URL."""
-
-    params = filter_params.model_dump()
-
-    return fetch_api_data(api_url, "/collections/", params)
-
-
-def validate_collections(collections: List[Any]) -> List[CollectionPublicWithReleases]:
-    """Validate the fetched collections against the CollectionPublicWithReleases model."""
-    validated_collections: List[CollectionPublicWithReleases] = []
-
-    for i, collection in enumerate(collections):
-        try:
-            validated_collections.append(CollectionPublicWithReleases(**collection))
-        except ValidationError as e:
-            logger.warning(f"Validation failed for collection at index {i}: {e}")
-            raise ValueError(f"Failed to validate collections: {e}") from e
-
-    return validated_collections
 
 
 def query_collections(
@@ -81,33 +57,6 @@ def format_collections_to_dataframe(
             )
 
     return pd.DataFrame(data)
-
-
-def format_collections_to_yaml(
-    collections: List[CollectionPublicWithReleases],
-):
-    """Convert a list of CollectionPublicWithReleases objects into a YAML string."""
-
-    data: List[Dict[str, Any]] = []
-
-    for collection in collections:
-        for release in collection.releases:
-            if release.latest:
-                data.append(
-                    {
-                        "Collection": collection.name,
-                        "Description": collection.description,
-                        "Latest release": release.version,
-                        "Release date": release.date.strftime("%d %b %Y"),
-                        "Taxonomy": {
-                            "name": release.taxonomy_source.name,
-                            "version": release.taxonomy_source.version,
-                        },
-                        "Pangenome Count": release.pangenome_count,
-                    }
-                )
-
-    return data
 
 
 def log_no_pangenome_search_context(

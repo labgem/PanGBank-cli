@@ -3,7 +3,6 @@ import subprocess
 from collections import defaultdict
 from pathlib import Path
 
-import requests
 from pangbank_api.models import (
     CollectionPublicWithReleases,
     PangenomePublic,
@@ -95,26 +94,6 @@ def get_mash_sketch_file(
         tmp_file.unlink(missing_ok=True)
 
     return output_file_path
-
-
-def download_mash_sketch(api_url: HttpUrl, collection_id: int, output_file_path: Path):
-    """ """
-
-    try:
-        response = requests.get(
-            f"{api_url}/collections/{collection_id}/mash_sketch",
-            timeout=10,
-            stream=True,
-        )
-        response.raise_for_status()
-
-        with open(output_file_path, "wb") as f:
-            f.writelines(response.iter_content(chunk_size=8192))
-
-        logger.info(f"Mash sketch file saved to {output_file_path}")
-    except requests.exceptions.RequestException as e:
-        logger.error(f"Request failed: {e}")
-        exit(1)
 
 
 def launch_mash_dist(

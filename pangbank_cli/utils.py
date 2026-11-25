@@ -1,4 +1,4 @@
-from typing import Optional, Dict, Any, List
+from typing import Optional
 from rich.console import Console
 from rich.table import Table
 
@@ -7,17 +7,11 @@ import hashlib
 import pandas as pd
 import logging
 import shutil
-import yaml
 import os
-from rich.syntax import Syntax
 
-import requests
-from requests.exceptions import RequestException, HTTPError
-from pydantic import HttpUrl
 
 from contextlib import contextmanager
 
-from contextlib import contextmanager
 from collections.abc import Generator
 
 logger = logging.getLogger(__name__)
@@ -90,16 +84,6 @@ def check_mash_availability():
     return True
 
 
-def print_yaml_with_rich(data: List[Dict[str, Any]]) -> None:
-    """Pretty-print a list of dicts as YAML using Rich."""
-
-    console = Console()
-
-    yaml_str = yaml.safe_dump(data, sort_keys=False, indent=2)
-    syntax = Syntax(yaml_str, "yaml", line_numbers=False, background_color="default")
-    console.print(syntax)
-
-
 def compute_md5(file_path: Path):
     md5_hash = hashlib.md5()
     with open(file_path, "rb") as f:
@@ -107,43 +91,3 @@ def compute_md5(file_path: Path):
             md5_hash.update(chunk)
     return md5_hash.hexdigest()
 
-
-def fetch_api_data(api_url: HttpUrl, route: str, params: Dict[str, Any]) -> Any:
-    """
-    Generic function to fetch data from an API endpoint with error handling.
-
-    Args:
-        api_url: Base URL of the API.
-        route: Endpoint route (e.g., "/pangenomes/").
-        params: Dictionary of query parameters.
-
-    Returns:
-        Parsed JSON response from the API.
-
-    Raises:
-        HTTPError: If the API request fails or returns an error.
-    """
-
-    url = f"{api_url}{route}"
-    response = requests.get(url, params=params, timeout=10)
-
-    try:
-        response.raise_for_status()
-        return response.json()
-
-    except RequestException as e:
-        error_detail: List[Dict[str, Any]] = []
-        try:
-            error_detail = response.json().get("detail", [])
-            if isinstance(error_detail, str):
-                error_detail = [{"msg": error_detail}]
-        except (ValueError, AttributeError):
-            pass
-
-        if error_detail:
-            error_msg = error_detail[0].get("msg", "Unknown error")
-            logger.error(f"API error: {error_msg}")
-            raise HTTPError(f"Failed to fetch data from {url}: {error_msg}") from e
-        else:
-            logger.error(f"API request failed: {str(e)}")
-            raise HTTPError(f"Failed to fetch data from {url}") from e
