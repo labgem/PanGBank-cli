@@ -321,7 +321,8 @@ def get_pangenome_file(
     task_id: Optional[TaskID] = None,
     force_redownload: bool = False,
 ):
-    url = f"{api_url}/pangenomes/{pangenome_id}/file"
+    # HttpUrl always ends with "/": strip it to avoid a "//pangenomes" path.
+    url = f"{str(api_url).rstrip('/')}/pangenomes/{pangenome_id}/file"
     tmp_file = output_file.with_suffix(".tmp")
 
     # --- Check for existing file ---

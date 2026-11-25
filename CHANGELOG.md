@@ -25,6 +25,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Package metadata now declares the CeCILL-2.1 licence instead of MIT
+- `match-pangenome --release-version` now returns the pangenome from the requested release, not the latest one
+- `match-pangenome` now recognises `.fna` references and stops early if Mash is not installed
+- `get-pangenome --no-progress` now hides the progress bar
+- Download URLs no longer contain `//`
 
 ### Deprecated
 

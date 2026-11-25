@@ -82,9 +82,9 @@ def check_mash_availability():
     :return: None
     """
     if shutil.which("mash") is None:
-        logger.warning(
+        logger.error(
             "The 'mash' tool is not found in the system's PATH. "
-            "Please install it to ensure 'pangbank match-pangenome' works correctly."
+            "Please install it to use 'pangbank match-pangenome'."
         )
         return False
     return True
