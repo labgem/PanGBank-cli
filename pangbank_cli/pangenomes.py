@@ -1,101 +1,88 @@
-from collections import defaultdict
-import re
-
-import requests
-from pydantic import HttpUrl
-from typing import Any, List, Optional
 import logging
-import pandas as pd
-from pathlib import Path
-
-from pangbank_api.models import (
-    PangenomePublic,
-    TaxonPublic,
-)
-from pangbank_api.exports.pangenomes import build_table_of_pangenomes
-
-from pangbank_cli.utils import compute_md5, silence_logger
-from pangbank_api.crud.common import FilterGenomeTaxonGenomePangenome, PaginationParams
+import re
+from collections import defaultdict
 from operator import attrgetter
+from pathlib import Path
+from typing import TypedDict
 
+import pandas as pd
+import requests
+from pangbank_api.exports.pangenomes import build_table_of_pangenomes
+from pangbank_api.models import PangenomePublic, TaxonPublic
+from pangbank_api.sdk import PanGBankClient, PanGBankNotFoundError
+from pydantic import HttpUrl
 from rich.console import Console
 from rich.markup import escape
 from rich.progress import (
-    Progress,
-    TaskID,
     BarColumn,
     DownloadColumn,
-    TransferSpeedColumn,
-    TimeRemainingColumn,
+    Progress,
+    TaskID,
     TextColumn,
+    TimeRemainingColumn,
+    TransferSpeedColumn,
 )
 
-
-from pangbank_api.sdk import PanGBankClient, PanGBankNotFoundError
+from pangbank_cli.utils import compute_md5, silence_logger
 
 logger = logging.getLogger(__name__)
 
 
+class PangenomeFilters(TypedDict):
+    """Filters accepted by the SDK's `pangenomes.list` and `pangenomes.count`.
+
+    Unpacked with `**` into those calls, so pyright checks every key and value
+    type against the SDK signature: a renamed SDK parameter is a type error.
+    """
+
+    taxon_name: str | None
+    pangenome_name: str | None
+    collection_name: str | None
+    genome_name: str | None
+    release_version: str | None
+    only_latest_release: bool
+    substring_taxon_match: bool
+
+
 def get_pangenomes(
     api_url: HttpUrl,
-    filter_params: FilterGenomeTaxonGenomePangenome,
-    pagination_params: PaginationParams,
+    filters: PangenomeFilters,
+    offset: int,
+    limit: int,
 ) -> list[PangenomePublic]:
-    """
-    Fetch pangenomes from the API with filtering and pagination options.
-
-    Args:
-        api_url: Base URL of the API.
-        filter_params: Filter parameters for the request.
-        pagination_params: Pagination parameters for the request.
-
-    Returns:
-        Parsed JSON response containing pangenomes.
-    """
+    """Fetch one page of pangenomes matching the filters."""
 
     with PanGBankClient(
         base_url=str(api_url),
     ) as client:
         try:
-            pangenomes = client.pangenomes.list(
-                **filter_params.model_dump(exclude_none=True),  # type: ignore
-                **pagination_params.model_dump(),
-            )
+            return client.pangenomes.list(**filters, offset=offset, limit=limit)
         except PanGBankNotFoundError:
             logger.warning("No pangenomes found matching the search criteria.")
             return []
 
-        return pangenomes
 
-
-def count_pangenomes(
-    api_url: HttpUrl,
-    filter_params: FilterGenomeTaxonGenomePangenome,
-):
-    """Fetch pangenomes from the API with filtering options."""
+def count_pangenomes(api_url: HttpUrl, filters: PangenomeFilters) -> int:
+    """Count pangenomes matching the filters."""
 
     with PanGBankClient(
         base_url=str(api_url),
     ) as client:
         try:
-            count = client.pangenomes.count(
-                **filter_params.model_dump(exclude_none=True)  # type: ignore
-            )
+            return client.pangenomes.count(**filters)
         except PanGBankNotFoundError:
             logger.warning("No pangenomes found matching the search criteria.")
             return 0
-        return count
 
 
 def query_pangenome_by_id(
     api_url: HttpUrl, pangenome_id: int
-) -> Optional[PangenomePublic]:
+) -> PangenomePublic | None:
     """Fetch a pangenome by its ID."""
 
     with PanGBankClient(
         base_url=str(api_url),
     ) as client:
-
         try:
             pangenome = client.pangenomes.get(pangenome_id)
         except PanGBankNotFoundError:
@@ -107,21 +94,22 @@ def query_pangenome_by_id(
 
 def query_pangenomes(
     api_url: HttpUrl,
-    taxon_name: Optional[str] = None,
-    pangenome_name: Optional[str] = None,
-    collection_name: Optional[str] = None,
-    genome_name: Optional[str] = None,
-    release_version: Optional[str] = None,
+    taxon_name: str | None = None,
+    pangenome_name: str | None = None,
+    collection_name: str | None = None,
+    genome_name: str | None = None,
+    release_version: str | None = None,
     only_latest_release: bool = True,
     substring_taxon_match: bool = False,
     disable_progress_bar: bool = False,
-) -> List[PangenomePublic]:
+) -> list[PangenomePublic]:
+    """Count then fetch, page by page, all pangenomes matching the filters."""
 
-    all_pangenomes: List[Any] = []
+    all_pangenomes: list[PangenomePublic] = []
     offset = 0
-    limit = 100  # Number of pangenomes we retrieve per request
+    limit = 100  # Number of pangenomes we retrieve per request (API maximum)
 
-    filter_params = FilterGenomeTaxonGenomePangenome(
+    filters = PangenomeFilters(
         taxon_name=taxon_name,
         pangenome_name=pangenome_name,
         collection_name=collection_name,
@@ -132,12 +120,11 @@ def query_pangenomes(
     )
 
     filter_logs = [
-        f"{param}={value}"
-        for param, value in filter_params.model_dump(exclude_none=True).items()
+        f"{param}={value}" for param, value in filters.items() if value is not None
     ]
     logger.info(f"Counting pangenomes for {' & '.join(filter_logs)}")
 
-    pangenome_count = count_pangenomes(api_url, filter_params)
+    pangenome_count = count_pangenomes(api_url, filters)
 
     if pangenome_count == 0:
         logger.info("No pangenomes found matching the search criteria.")
@@ -157,12 +144,11 @@ def query_pangenomes(
         task = progress.add_task("Fetching pangenome", total=pangenome_count)
 
         while True:
-
-            pagination_params = PaginationParams(offset=offset, limit=limit)
             responses_pangenomes = get_pangenomes(
                 api_url=api_url,
-                filter_params=filter_params,
-                pagination_params=pagination_params,
+                filters=filters,
+                offset=offset,
+                limit=limit,
             )
 
             logger.debug(
@@ -195,12 +181,10 @@ def query_pangenomes(
 def format_pangenomes_to_dataframe(
     pangenomes: list[PangenomePublic],
 ) -> pd.DataFrame:
-    """
-    Convert pangenomes into a pandas DataFrame.
-    """
+    """Convert pangenomes into a pandas DataFrame."""
 
     headers, rows = build_table_of_pangenomes(pangenomes)
-    return pd.DataFrame(rows, columns=headers)
+    return pd.DataFrame(rows, columns=pd.Index(headers))
 
 
 def version_sort_key(version: str) -> tuple[tuple[int, int | str], ...]:
@@ -214,13 +198,13 @@ def version_sort_key(version: str) -> tuple[tuple[int, int | str], ...]:
     return tuple((0, int(p)) if p.isdigit() else (1, p) for p in parts)
 
 
-def get_common_taxonomy(list_of_taxa: List[List[TaxonPublic]]) -> List[TaxonPublic]:
+def get_common_taxonomy(list_of_taxa: list[list[TaxonPublic]]) -> list[TaxonPublic]:
     """Return the taxa shared by all taxonomies, from the root down to the deepest common rank."""
-    common: List[TaxonPublic] = []
+    common: list[TaxonPublic] = []
 
     # Sort each taxonomy by depth so zip groups taxa of the same rank together.
     sorted_taxa = [sorted(taxa, key=attrgetter("depth")) for taxa in list_of_taxa]
-    for taxa in zip(*sorted_taxa):
+    for taxa in zip(*sorted_taxa, strict=False):
         if all(taxon == taxa[0] for taxon in taxa):
             common.append(taxa[0])
         else:
@@ -229,8 +213,8 @@ def get_common_taxonomy(list_of_taxa: List[List[TaxonPublic]]) -> List[TaxonPubl
 
 
 def print_pangenome_info(
-    pangenomes: List[PangenomePublic], display_count: Optional[int] = None
-):
+    pangenomes: list[PangenomePublic], display_count: int | None = None
+) -> None:
 
     console = Console(stderr=False)
     if display_count is not None and len(pangenomes) > display_count:
@@ -247,16 +231,16 @@ def print_pangenome_info(
         console.print("\n".join(pangenome_info))
 
 
-def format_pangenome_info(pangenome: "PangenomePublic") -> List[str]:
+def format_pangenome_info(pangenome: "PangenomePublic") -> list[str]:
 
     taxonomy = [
         taxon.name for taxon in sorted(pangenome.taxonomy.taxa, key=lambda x: x.depth)
     ]
 
-    yaml_lines: List[str] = []
+    yaml_lines: list[str] = []
     yaml_lines.append(f"[bold]{taxonomy[-1]}[/bold]:")
 
-    taxonomy_formated: List[str] = []
+    taxonomy_formated: list[str] = []
     for i, taxon in enumerate(taxonomy):
         tag = "italic bright_green" if i % 2 else "italic green"
         taxonomy_formated.append(f"[{tag}]{taxon}[/{tag}]")
@@ -296,10 +280,15 @@ def get_pangenome_file(
     pangenome_id: int,
     output_file: Path,
     expected_md5sum: str,
-    progress: Optional[Progress] = None,
-    task_id: Optional[TaskID] = None,
+    progress: Progress | None = None,
+    task_id: TaskID | None = None,
     force_redownload: bool = False,
-):
+) -> Path | None:
+    """Download one pangenome file and verify its MD5.
+
+    Return None when a local file with a different checksum exists and
+    force_redownload is False: that file is left untouched.
+    """
     # HttpUrl always ends with "/": strip it to avoid a "//pangenomes" path.
     url = f"{str(api_url).rstrip('/')}/pangenomes/{pangenome_id}/file"
     tmp_file = output_file.with_suffix(".tmp")
@@ -386,8 +375,9 @@ def get_pangenome_file(
         raise
 
     except requests.exceptions.HTTPError as e:
+        status = e.response.status_code if e.response is not None else "unknown"
         logger.error(
-            f"HTTP error {e.response.status_code} while fetching pangenome {pangenome_id} from {url}"
+            f"HTTP error {status} while fetching pangenome {pangenome_id} from {url}"
         )
         raise
 
@@ -407,11 +397,11 @@ def get_pangenome_file(
 
 def download_pangenomes(
     api_url: HttpUrl,
-    pangenomes: List[PangenomePublic],
+    pangenomes: list[PangenomePublic],
     outdir: Path,
     disable_progress_bar: bool = False,
     force_redownload: bool = False,
-):
+) -> Path:
 
     total = len(pangenomes)
     logger.info(
@@ -425,7 +415,6 @@ def download_pangenomes(
         TimeRemainingColumn(),
         disable=disable_progress_bar,
     ) as progress:
-
         download_task = progress.add_task("Starting...")
         downloaded = 0
         skipped = 0
@@ -478,11 +467,11 @@ def download_pangenomes(
 MAX_PANGENOMES_PER_RELEASE = 10
 
 
-def format_taxonomy(taxa: List[TaxonPublic]) -> str:
+def format_taxonomy(taxa: list[TaxonPublic]) -> str:
     """Format a lineage as Rich markup, alternating two greens so ranks are easy to tell apart."""
     if not taxa:
         return "[dim]none[/dim]"
-    parts = []
+    parts: list[str] = []
     for i, taxon in enumerate(sorted(taxa, key=attrgetter("depth"))):
         colour = "bright_green" if i % 2 else "green"
         parts.append(f"[{colour}]{escape(taxon.name)}[/{colour}]")
@@ -490,7 +479,7 @@ def format_taxonomy(taxa: List[TaxonPublic]) -> str:
     return "[dim];[/dim] ".join(parts)
 
 
-def log_found_pangenomes_summary(pangenomes: List[PangenomePublic]):
+def log_found_pangenomes_summary(pangenomes: list[PangenomePublic]) -> None:
     """
     Log the matching pangenomes grouped by collection release: release date,
     common taxonomy, and up to MAX_PANGENOMES_PER_RELEASE pangenomes per release.

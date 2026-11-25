@@ -1,21 +1,21 @@
+import logging
+from typing import Any
+
+import pandas as pd
+from pangbank_api.models import CollectionPublicWithReleases
 from pangbank_api.sdk import PanGBankClient
 from pydantic import HttpUrl
-from typing import Any, List, Dict
-import logging
-import pandas as pd
-
-from pangbank_api.models import CollectionPublicWithReleases
 
 logger = logging.getLogger(__name__)
 
 
 def query_collections(
     api_url: HttpUrl,
-    collection_name: None | str = None,
+    collection_name: str | None = None,
     latest: bool | None = None,
-    release_version: None | str = None,
-) -> List[CollectionPublicWithReleases]:
-    """Fetch and validate collections from the given API URL."""
+    release_version: str | None = None,
+) -> list[CollectionPublicWithReleases]:
+    """Fetch collections from the given API URL."""
 
     name_query = f"with name: '{collection_name}'" if collection_name else ""
 
@@ -33,11 +33,11 @@ def query_collections(
 
 
 def format_collections_to_dataframe(
-    collections: List[CollectionPublicWithReleases], latest: bool = True
+    collections: list[CollectionPublicWithReleases], latest: bool = True
 ) -> pd.DataFrame:
     """Convert a list of CollectionPublicWithReleases objects into a pandas DataFrame."""
 
-    data: List[Dict[str, Any]] = []
+    data: list[dict[str, Any]] = []
 
     for collection in collections:
         for release in collection.releases:
@@ -63,7 +63,7 @@ def log_no_pangenome_search_context(
     api_url: HttpUrl,
     collection: str | None,
     release_version: str | None,
-):
+) -> None:
     """Log contextual warnings to explain why a pangenome search returned no result."""
 
     collections = query_collections(api_url, latest=False)
@@ -104,7 +104,7 @@ def log_no_pangenome_search_context(
                 if available_versions:
                     logger.warning(
                         f"Release version '{release_version}' was not found in collection '{collection}'. "
-                        f"Available releases are: {', '.join([f'{version}' for version in available_versions])}."
+                        f"Available releases are: {', '.join(available_versions)}."
                     )
                 else:
                     logger.warning(

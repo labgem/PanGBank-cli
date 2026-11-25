@@ -5,11 +5,11 @@ name: CI
 
 on:
   pull_request:
-    branches: 
+    branches:
       - '*'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-    
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -17,7 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ['ubuntu-latest', 'macos-latest']
-        python-version: ['3.10', '3.12']
+        python-version: ['3.10', '3.13']
 
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -27,23 +27,15 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-    
+
     - name: Install PanGBank-cli
       run: |
         pip install .
         pangbank --help
 
-    - name: Lint with flake8
-      run: |
-        pip install flake8
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
     - name: Test with pytest
       run: |
-        pip install pytest pytest-cov
+        pip install '.[dev]'
         pytest --cov=pangbank_cli --cov-report=html --cov-report=xml
 
     # - name: Generate coverage badge
@@ -58,4 +50,3 @@ jobs:
     #   with:
     #     folder: htmlcov
     #     branch: gh-pages
-

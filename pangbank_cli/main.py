@@ -1,41 +1,38 @@
-from pathlib import Path
-from typing import Optional, TextIO
-import sys
-import typer
-from typing_extensions import Annotated
-
-from pangbank_cli import __version__
-from rich.logging import RichHandler
 import logging
-import requests
+import sys
+from pathlib import Path
+from typing import Annotated, TextIO
 
+import requests
+import typer
+from pangbank_api.models import CollectionPublicWithReleases
 from pydantic import HttpUrl
 from rich.console import Console
+from rich.logging import RichHandler
+
+from pangbank_cli import __version__
 from pangbank_cli.collections import (
-    query_collections,
     format_collections_to_dataframe,
     log_no_pangenome_search_context,
+    query_collections,
 )
-from pangbank_cli.utils import (
-    print_dataframe_as_rich_table,
-    check_mash_availability,
-)
-
-from pangbank_cli.pangenomes import (
-    query_pangenomes,
-    query_pangenome_by_id,
-    format_pangenomes_to_dataframe,
-    download_pangenomes,
-    print_pangenome_info,
-    log_found_pangenomes_summary,
-)
-
 from pangbank_cli.match_pangenome import (
-    get_mash_sketch_file,
     compute_mash_distance,
+    get_mash_sketch_file,
     get_matching_pangenome,
 )
-from pangbank_api.models import CollectionPublicWithReleases
+from pangbank_cli.pangenomes import (
+    download_pangenomes,
+    format_pangenomes_to_dataframe,
+    log_found_pangenomes_summary,
+    print_pangenome_info,
+    query_pangenome_by_id,
+    query_pangenomes,
+)
+from pangbank_cli.utils import (
+    check_mash_availability,
+    print_dataframe_as_rich_table,
+)
 
 logger = logging.getLogger(__name__)
 err_console = Console(stderr=True)
@@ -61,7 +58,7 @@ def validate_api_url(api_url: str) -> HttpUrl:
         err_console.print(
             "[yellow]Tip: Ensure the URL is correctly formatted. Example: https://api.example.com[/yellow]"
         )
-        raise typer.Exit(code=1)
+        raise typer.Exit(code=1) from None
 
     try:
         # Make a request to the API URL with a timeout
@@ -81,7 +78,7 @@ def validate_api_url(api_url: str) -> HttpUrl:
             f"[bold red]Error: Could not connect to API at {api_url}[/bold red]"
         )
         err_console.print(f"[red]{e}[/red]")
-        raise typer.Exit(code=1)
+        raise typer.Exit(code=1) from e
 
     return valid_url
 
@@ -89,7 +86,7 @@ def validate_api_url(api_url: str) -> HttpUrl:
 def version_callback(
     value: bool,
     ctx: typer.Context,
-):
+) -> None:
     """Prints the version and exits if --version is passed."""
     if ctx.resilient_parsing:
         return
@@ -99,7 +96,7 @@ def version_callback(
         raise typer.Exit()
 
 
-def verbose_callback(verbose: bool):
+def verbose_callback(verbose: bool) -> None:
     """Sets the logging level to DEBUG if --verbose is passed."""
     lvl = logging.DEBUG if verbose else logging.INFO
 
@@ -173,7 +170,7 @@ Progress = typer.Option(
 @app.callback(no_args_is_help=True)
 def main(
     version: Annotated[
-        Optional[bool],
+        bool | None,
         typer.Option(
             "--version",
             "-v",
@@ -182,7 +179,7 @@ def main(
             help="Show the version and exit.",
         ),
     ] = None,
-):
+) -> None:
     """Main entry point for PanGBank CLI."""
 
 
@@ -208,7 +205,7 @@ def list_collections(
     latest_only: bool = LatestOnlyDeprecated,
     api_url: HttpUrl = ApiUrlOption,
     verbose: bool = Verbose,
-):
+) -> None:
     """List available collections."""
     check_deprecated_latest_only(latest_only, all_releases)
     latest = not all_releases
@@ -233,7 +230,7 @@ def list_collections(
 def search_pangenomes(
     # Search filters
     collection: Annotated[
-        Optional[str],
+        str | None,
         typer.Option(
             "--collection",
             "-c",
@@ -255,7 +252,7 @@ def search_pangenomes(
     ] = False,
     latest_only: bool = LatestOnlyDeprecated,
     release_version: Annotated[
-        Optional[str],
+        str | None,
         typer.Option(
             "--release-version",
             "-r",
@@ -267,7 +264,7 @@ def search_pangenomes(
         ),
     ] = None,
     taxon: Annotated[
-        Optional[str],
+        str | None,
         typer.Option(
             "--taxon",
             "-t",
@@ -276,7 +273,7 @@ def search_pangenomes(
         ),
     ] = None,
     genome: Annotated[
-        Optional[str],
+        str | None,
         typer.Option(
             "--genome",
             "-g",
@@ -319,7 +316,7 @@ def search_pangenomes(
         ),
     ] = False,
     table_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--table-path",
             help=(
@@ -336,7 +333,7 @@ def search_pangenomes(
         bool,
         Progress,
     ] = True,
-):
+) -> None:
     """Search for pangenomes."""
 
     check_deprecated_latest_only(latest_only, all_releases)
@@ -388,7 +385,7 @@ def search_pangenomes(
             output_handle: TextIO | Path = table_path
         else:
             logger.info("Printing pangenomes information as TSV table to stdout")
-            output_handle: TextIO | Path = sys.stdout
+            output_handle = sys.stdout
 
         df.to_csv(output_handle, index=False, sep="\t")
 
@@ -436,7 +433,7 @@ def get_pangenome(
     # Execution settings
     api_url: HttpUrl = ApiUrlOption,
     verbose: bool = Verbose,
-):
+) -> None:
     """Get a pangenome by ID."""
 
     pangenome = query_pangenome_by_id(
@@ -483,7 +480,7 @@ def match_pangenome(
         ),
     ],
     release_version: Annotated[
-        Optional[str],
+        str | None,
         typer.Option(
             "--release-version",
             "-r",
@@ -521,7 +518,7 @@ def match_pangenome(
         Progress,
     ] = True,
     verbose: bool = Verbose,
-):
+) -> None:
     """Match a pangenome from an input genome."""
 
     latest = True

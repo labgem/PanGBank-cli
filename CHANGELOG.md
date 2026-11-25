@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Log messages no longer show the source file and line, and HTTP request logs are hidden, unless `--verbose` is set
 - README: updated the citation to the published PanGBank article and clarified how to use the downloaded pangenome HDF5 files ([#20](https://github.com/labgem/PanGBank-cli/pull/20), [#21](https://github.com/labgem/PanGBank-cli/pull/21))
 
+- Development: Ruff (lint, import sorting, formatting) and strict Pyright now run as pre-commit hooks and in CI, replacing Black and flake8
+
 ### Fixed
 
 - Package metadata now declares the CeCILL-2.1 licence instead of MIT
